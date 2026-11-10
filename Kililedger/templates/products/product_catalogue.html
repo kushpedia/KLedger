@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+{% load humanize %}
+
+{% block title %}Product Catalogue &amp; Buying Price (COGS) Management — KiliLedger Pro{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+    <!-- Top Header & Action Bar (Exact Stitch SCR-11 Design) -->
+    <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 bg-white p-6 rounded-[10px] border border-[#E2E8F0] shadow-sm">
+        <div class="max-w-3xl">
+            <div class="flex items-center gap-2 text-xs text-slate-500 mb-1">
+                <span>Products &amp; Profitability</span>
+                <span>/</span>
+                <span class="font-mono font-semibold text-[#0F766E]">
+                    {% if active_store %}{{ active_store.store_name }} [ID: {{ active_store.kilimall_store_id }}]{% else %}All My Stores{% endif %}
+                </span>
+                <span>/</span>
+                <span class="font-semibold text-slate-900">Product Catalogue &amp; Landed COGS</span>
+            </div>
+            <h1 class="text-2xl font-bold text-[#0F172A] tracking-tight">
+                Product Catalogue &amp; Buying Price (COGS) Management
+            </h1>
+            <p class="mt-1 text-xs leading-relaxed text-[#475569]">
+                Auto-discovered SKUs (<span class="font-mono font-semibold">goods_id</span>) extracted from your Kilimall settlement statements. Enter or update your wholesale buying price directly in the table below—HTMX saves instantly and recalculates your true pocket profit.
+            </p>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2.5 shrink-0">
+            <a href="{% url 'products:bulk_cogs_csv' %}"
+               class="inline-flex items-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50">
+                <span class="material-symbols-outlined text-[16px]">download</span>
+                <span>Download COGS CSV Template</span>
+            </a>
+            <a href="{% url 'products:profitability_rank' %}"
+               class="inline-flex items-center gap-1.5 rounded-lg bg-[#0F766E] px-4 py-2 text-xs font-bold text-white shadow-sm hover:bg-[#115E59]">
+                <span class="material-symbols-outlined text-[16px]">leaderboard</span>
+                <span>View SKU Profitability Leaderboard →</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Top COGS Completeness Progress Banner & Bulk CSV Upload Bar -->
+    <div class="grid grid-cols-1 gap-6 lg:grid-cols-12">
+        <!-- Left (8 Cols): COGS Coverage Progress Bar -->
+        <div class="lg:col-span-8 rounded-[10px] border border-[#E2E8F0] bg-white p-5 shadow-sm flex flex-col justify-between">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-wider text-slate-500">Catalogue COGS Coverage</span>
+                    <div class="mt-1 flex items-baseline gap-2">
+                        <span class="font-mono text-2xl font-bold text-slate-900">{{ priced_skus }} of {{ total_skus }} SKUs Priced</span>
+                        <span class="font-mono text-sm font-bold text-[#0F766E]">({{ coverage_pct }}%)</span>
+                    </div>
+                </div>
+                {% if missing_skus > 0 %}
+                <a href="?filter=missing_cogs"
+                   class="inline-flex items-center gap-1.5 rounded-full border border-[#FDE68A] bg-[#FEF3C7] px-3.5 py-1 text-xs font-bold text-[#B45309] hover:bg-amber-100">
+                    <span class="h-2 w-2 rounded-full bg-amber-500 animate-pulse"></span>
+                    <span>Show Only {{ missing_skus }} Unpriced SKU(s)</span>
+                </a>
+                {% else %}
+                <span class="inline-flex items-center gap-1.5 rounded-full bg-[#DCFCE7] px-3 py-1 font-mono text-xs font-bold text-[#15803D]">
+                    ✓ 100% COGS Coverage Verified
+                </span>
+                {% endif %}
+            </div>
+
+            <div class="mt-4 h-2.5 w-full rounded-full bg-slate-100 overflow-hidden">
+                <div class="h-full bg-[#0F766E] transition-all duration-300" style="width: {{ coverage_pct }}%"></div>
+            </div>
+            <p class="mt-2 text-[11px] text-slate-500">
+                Historical Buying Price Versioning Active: Updating a buying price records an effective-date entry and backfills unpriced orders so locked past monthly reports are preserved.
+            </p>
+        </div>
+
+        <!-- Right (4 Cols): Bulk CSV Import Card -->
+        <div class="lg:col-span-4 rounded-[10px] border border-[#E2E8F0] bg-white p-5 shadow-sm">
+            <h2 class="text-xs font-bold uppercase tracking-wider text-slate-700">Bulk CSV Buying Price Import</h2>
+            <p class="mt-1 text-[11px] text-slate-500">Upload a CSV with <span class="font-mono">goods_id,buying_price</span> to update all SKUs at once.</p>
+            <form method="post" action="{% url 'products:bulk_cogs_csv' %}" enctype="multipart/form-data" class="mt-3 flex items-center gap-2">
+                {% csrf_token %}
+                <input type="file" name="csv_file" accept=".csv" required
+                       class="block w-full text-xs text-slate-600 file:mr-2 file:rounded file:border-0 file:bg-slate-900 file:px-2.5 file:py-1.5 file:text-xs file:font-semibold file:text-white">
+                <button type="submit" class="shrink-0 rounded-md bg-[#0F766E] px-3 py-1.5 text-xs font-bold text-white hover:bg-[#115E59]">
+                    Import
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Interactive HTMX Product Catalogue & Buying Price Table -->
+    <div class="rounded-[10px] border border-[#E2E8F0] bg-white shadow-sm overflow-hidden">
+        <!-- Filter Tabs & Search Toolbar -->
+        <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 bg-[#F1F5F9] px-5 py-3.5">
+            <div class="flex flex-wrap gap-1.5 text-xs font-semibold">
+                <a href="?filter=all"
+                   class="rounded-md px-3 py-1.5 transition {% if cogs_filter == 'all' %}bg-[#0F766E] text-white shadow-xs{% else %}bg-white text-slate-700 hover:bg-slate-100{% endif %}">
+                    All Products ({{ total_skus }})
+                </a>
+                <a href="?filter=missing_cogs"
+                   class="rounded-md px-3 py-1.5 transition {% if cogs_filter == 'missing_cogs' %}bg-[#B45309] text-white shadow-xs{% else %}bg-white text-[#B45309] border border-amber-300 hover:bg-amber-50{% endif %}">
+                    Missing Buying Price ({{ missing_skus }})
+                </a>
+                <a href="?filter=priced"
+                   class="rounded-md px-3 py-1.5 transition {% if cogs_filter == 'priced' %}bg-[#15803D] text-white shadow-xs{% else %}bg-white text-[#15803D] border border-emerald-200 hover:bg-emerald-50{% endif %}">
+                    Verified COGS ({{ priced_skus }})
+                </a>
+            </div>
+
+            <form method="get" class="flex items-center gap-2">
+                <input type="hidden" name="filter" value="{{ cogs_filter }}">
+                <input type="text" name="q" value="{{ search_q }}"
+                       placeholder="Search Goods ID (e.g. 10007470517) or product name..."
+                       class="w-64 rounded-md border border-slate-300 bg-white px-3 py-1.5 text-xs focus:border-[#0F766E] focus:outline-none">
+                <button type="submit" class="rounded-md bg-slate-900 px-3 py-1.5 text-xs font-semibold text-white">Search</button>
+            </form>
+        </div>
+
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-slate-200 text-left text-[13px] tabular-nums">
+                <thead class="bg-slate-50 text-[11px] font-semibold uppercase tracking-wider text-[#475569]">
+                    <tr>
+                        <th class="px-4 py-3">Goods ID &amp; Store</th>
+                        <th class="px-4 py-3">Product Name &amp; Volume</th>
+                        <th class="px-4 py-3 text-right">Selling Price</th>
+                        <th class="px-4 py-3 text-right">Comm % &amp; Amt</th>
+                        <th class="px-4 py-3 text-right">Typical DS Fee</th>
+                        <th class="px-4 py-3 text-right">Net Payout/Unit</th>
+                        <th class="px-4 py-3">Buying Price / COGS (Inline HTMX)</th>
+                        <th class="px-4 py-3 text-right">Verified Unit Profit</th>
+                        <th class="px-4 py-3 text-right">Net Margin %</th>
+                        <th class="px-4 py-3 text-right">Cost Log</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-200 bg-white">
+                    {% for product in products %}
+                        {% include "components/_inline_cogs_cell.html" with product=product %}
+                    {% empty %}
+                    <tr>
+                        <td colspan="10" class="px-6 py-12 text-center text-slate-500">
+                            No products match the current filter. Upload a Kilimall settlement statement (.xlsx) to auto-discover your product catalogue.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

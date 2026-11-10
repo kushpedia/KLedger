@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+
+{% block title %}Store Setup & Onboarding Wizard — KiliLedger Pro{% endblock %}
+
+{% block content %}
+<div class="mx-auto max-w-[880px] space-y-6 py-4">
+    <!-- Top 3-Step Progress Bar (SCR-02) -->
+    <div class="rounded-[10px] border border-[#E2E8F0] bg-white p-5 shadow-sm">
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+            <div class="flex items-center gap-3">
+                <span class="flex h-7 w-7 items-center justify-center rounded-full bg-[#0F766E] font-mono text-xs font-bold text-white">1</span>
+                <div>
+                    <div class="text-xs font-bold text-[#0F172A]">Register First Store</div>
+                    <div class="text-[11px] text-[#0F766E] font-medium">Active Step</div>
+                </div>
+            </div>
+            <div class="flex items-center gap-3 opacity-60">
+                <span class="flex h-7 w-7 items-center justify-center rounded-full border border-slate-300 font-mono text-xs font-bold text-slate-600">2</span>
+                <div>
+                    <div class="text-xs font-semibold text-slate-700">Upload First Settlement (.xlsx)</div>
+                    <div class="text-[11px] text-slate-500">9-Sheet Validation</div>
+                </div>
+            </div>
+            <div class="flex items-center gap-3 opacity-60">
+                <span class="flex h-7 w-7 items-center justify-center rounded-full border border-slate-300 font-mono text-xs font-bold text-slate-600">3</span>
+                <div>
+                    <div class="text-xs font-semibold text-slate-700">Set Buying Costs (COGS)</div>
+                    <div class="text-[11px] text-slate-500">Unlock True Profit</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main 2-Column Onboarding Card -->
+    <div class="rounded-[10px] border border-[#E2E8F0] bg-white p-6 sm:p-8 shadow-sm">
+        <div class="grid grid-cols-1 gap-8 lg:grid-cols-12">
+            <!-- Left Column (7 Cols): Manual Store Registration Form -->
+            <div class="lg:col-span-7 space-y-5">
+                <div>
+                    <span class="rounded bg-orange-100 px-2 py-0.5 font-mono text-[11px] font-semibold text-[#EA580C]">OPTION A: MANUAL REGISTRATION</span>
+                    <h1 class="mt-2 text-xl font-bold text-[#0F172A]">Connect Your Kilimall Store</h1>
+                    <p class="mt-1 text-xs text-[#475569]">
+                        Enter your Kilimall Store ID and display name, or use the 1-Click Excel Auto-Setup on the right.
+                    </p>
+                </div>
+
+                {% if form.errors %}
+                <div class="rounded-lg border border-[#FCA5A5] bg-[#FEE2E2] p-3 text-xs font-medium text-[#B91C1C]">
+                    {% for field, errs in form.errors.items %}
+                        {% for err in errs %}<p>{{ err }}</p>{% endfor %}
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <form method="post" action="{% url 'stores:onboarding_wizard' %}" class="space-y-4">
+                    {% csrf_token %}
+                    <input type="hidden" name="onboarding_mode" value="manual">
+
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-[#475569]">Store Display Name</label>
+                        <div class="mt-1">{{ form.store_name }}</div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-[#475569]">Kilimall Store ID (Column A of 'bill' Sheet)</label>
+                        <div class="mt-1">{{ form.kilimall_store_id }}</div>
+                        <p class="mt-1 text-[11px] text-slate-500">Example: <span class="font-mono font-semibold">10344</span> for Kushpedia Stores4.</p>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-[#475569]">Known Secondary Workbook Alias (Optional)</label>
+                        <div class="mt-1">{{ form.secondary_alias }}</div>
+                        <p class="mt-1 text-[11px] text-slate-500">Example: <span class="font-mono">Harambee Ⅰ</span> (if Kilimall uses a different name on your <span class="font-mono">fine</span> tab).</p>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-[#475569]">Fulfillment Model</label>
+                        <div class="mt-1">{{ form.fulfillment_type }}</div>
+                    </div>
+
+                    <div class="pt-2 flex items-center justify-between gap-3">
+                        <a href="{% url 'analytics:dashboard' %}" class="text-xs font-semibold text-slate-500 hover:text-slate-800">
+                            Skip to Dashboard
+                        </a>
+                        <button type="submit" class="rounded-md bg-[#0F766E] px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-[#115E59]">
+                            Save Store &amp; Continue to Step 2 →
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Right Column (5 Cols): Fast-Track 1-Click Auto-Setup from Excel -->
+            <div class="lg:col-span-5 flex flex-col justify-between rounded-xl border-2 border-dashed border-[#0F766E]/60 bg-[#F1F5F9]/70 p-6">
+                <div class="space-y-3">
+                    <span class="inline-flex items-center rounded-full bg-[#DCFCE7] px-2.5 py-0.5 font-mono text-[11px] font-bold text-[#15803D]">
+                        FASTEST SETUP • RECOMMENDED
+                    </span>
+                    <h2 class="text-base font-bold text-[#0F172A]">Auto-Detect Store Directly from Your Kilimall Excel Bill</h2>
+                    <p class="text-xs leading-relaxed text-[#475569]">
+                        Don't want to look up your Store ID manually? Upload any weekly <span class="font-mono font-semibold">bill.xlsx</span> statement and KiliLedger Pro will automatically:
+                    </p>
+                    <ul class="space-y-1.5 text-xs text-slate-700">
+                        <li class="flex items-center gap-2"><span class="text-[#0F766E] font-bold">✓</span> Extract your <span class="font-mono">Store ID</span> &amp; <span class="font-mono">Store Name</span> from Row 2</li>
+                        <li class="flex items-center gap-2"><span class="text-[#0F766E] font-bold">✓</span> Detect secondary aliases on the <span class="font-mono">fine</span> tab</li>
+                        <li class="flex items-center gap-2"><span class="text-[#0F766E] font-bold">✓</span> Validate all 9 sheets &amp; preview your net payout</li>
+                    </ul>
+                </div>
+
+                <form method="post" action="{% url 'stores:onboarding_wizard' %}" enctype="multipart/form-data" class="mt-6 space-y-3 border-t border-slate-200 pt-4">
+                    {% csrf_token %}
+                    <input type="hidden" name="onboarding_mode" value="auto_excel">
+                    <input type="file" name="excel_file" accept=".xlsx" required
+                           class="block w-full text-xs text-slate-600 file:mr-3 file:rounded-md file:border-0 file:bg-slate-900 file:px-3 file:py-2 file:text-xs file:font-semibold file:text-white hover:file:bg-slate-800">
+                    <button type="submit" class="w-full rounded-md bg-[#0F766E] px-4 py-2.5 text-xs font-bold uppercase tracking-wider text-white shadow-sm hover:bg-[#115E59]">
+                        Auto-Setup Store &amp; Preview Bill →
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

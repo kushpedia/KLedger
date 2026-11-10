@@ -1,0 +1,10 @@
+# KiliLedger Pro — Production & Development Dependencies
+Django>=5.0,<5.2
+openpyxl>=3.1.2
+pandas>=2.2.0
+psycopg[binary]>=3.1.18
+gunicorn>=22.0.0
+whitenoise>=6.6.0
+weasyprint>=61.2
+pytest>=8.0.0
+pytest-django>=4.8.0

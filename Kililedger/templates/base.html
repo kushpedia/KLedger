@@ -1,0 +1,396 @@
+{% load static humanize %}
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-[#F8FAFC]">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta content="web_dashboard" name="shell-type">
+    <title>{% block title %}KiliLedger Pro — Kilimall Seller Financial Management &amp; Analytics{% endblock %}</title>
+    <!-- Google Fonts (Inter + JetBrains Mono) & Material Symbols Outlined (Exact Stitch Fonts & Icons) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+    <!-- Tailwind CSS with Unified Stitch Token Config -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        // Dashboard & Executive Shell Tokens
+                        sidebar: "#0F172A",
+                        "sidebar-active": "#1E293B",
+                        canvas: "#F8FAFC",
+                        "primary-hover": "#0D655E",
+                        "primary-light": "#F0FDFA",
+                        "primary-border": "#CCFBF1",
+                        border: "#E2E8F0",
+                        "border-subtle": "#F1F5F9",
+                        "text-main": "#0F172A",
+                        "text-muted": "#64748B",
+                        "text-subtle": "#94A3B8",
+                        brand: { DEFAULT: "#0F766E", hover: "#115E59", light: "#CCFBF1" },
+                        kilimall: "#EA580C",
+                        // Stitch Material / Workspace Tokens
+                        "on-primary-fixed": "#00201d",
+                        "on-secondary": "#ffffff",
+                        "surface-dim": "#d2d9f4",
+                        "surface-tint": "#006a63",
+                        "secondary-fixed": "#e2dfff",
+                        "surface-container": "#eaedff",
+                        "primary": "#0F766E",
+                        "surface": "#F8FAFC",
+                        "on-surface": "#131b2e",
+                        "background": "#F8FAFC",
+                        "on-error": "#ffffff",
+                        "surface-variant": "#dae2fd",
+                        "on-background": "#131b2e",
+                        "secondary-fixed-dim": "#c3c0ff",
+                        "on-secondary-fixed": "#0f0069",
+                        "on-primary-container": "#a3faef",
+                        "primary-container": "#0f766e",
+                        "on-tertiary-fixed": "#370e00",
+                        "tertiary": "#913200",
+                        "inverse-on-surface": "#eef0ff",
+                        "tertiary-fixed-dim": "#ffb599",
+                        "outline-variant": "#bdc9c6",
+                        "on-tertiary-fixed-variant": "#7f2b00",
+                        "surface-container-low": "#f2f3ff",
+                        "secondary-container": "#645efb",
+                        "tertiary-container": "#b94200",
+                        "error-container": "#ffdad6",
+                        "surface-container-high": "#e2e7ff",
+                        "inverse-surface": "#0F172A",
+                        "on-tertiary-container": "#ffe5dc",
+                        "secondary": "#4b41e1",
+                        "on-primary-fixed-variant": "#00504a",
+                        "on-secondary-container": "#fffbff",
+                        "on-error-container": "#93000a",
+                        "on-surface-variant": "#3e4947",
+                        "surface-container-highest": "#dae2fd",
+                        "error": "#ba1a1a",
+                        "on-secondary-fixed-variant": "#3323cc",
+                        "inverse-primary": "#80d5cb",
+                        "on-primary": "#ffffff",
+                        "primary-fixed-dim": "#80d5cb",
+                        "primary-fixed": "#9cf2e8",
+                        "surface-container-lowest": "#ffffff",
+                        "on-tertiary": "#ffffff",
+                        "surface-bright": "#faf8ff",
+                        "outline": "#6e7977",
+                        "tertiary-fixed": "#ffdbce"
+                    },
+                    borderRadius: {
+                        card: "10px",
+                        DEFAULT: "0.25rem",
+                        lg: "0.5rem",
+                        xl: "0.75rem",
+                        full: "9999px"
+                    },
+                    spacing: {
+                        "space-lg": "1rem",
+                        "space-xs": "0.25rem",
+                        "space-xl": "1.5rem",
+                        "margin-desktop": "2rem",
+                        "gutter-desktop": "1.5rem",
+                        "space-md": "0.75rem",
+                        "space-sm": "0.5rem",
+                        "margin": "1rem",
+                        "gutter": "1rem"
+                    },
+                    fontFamily: {
+                        sans: ["Inter", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "sans-serif"],
+                        mono: ["JetBrains Mono", "monospace"],
+                        "body-lg": ["Inter"],
+                        "financial-md": ["JetBrains Mono"],
+                        "body-md": ["Inter"],
+                        "headline-xl": ["Inter"],
+                        "label-caps": ["Inter"],
+                        "financial-xl": ["JetBrains Mono"],
+                        "headline-lg": ["Inter"],
+                        "financial-sm": ["JetBrains Mono"],
+                        "financial-lg": ["JetBrains Mono"],
+                        "body-sm": ["Inter"],
+                        "headline-md": ["Inter"]
+                    },
+                    fontSize: {
+                        "body-lg": ["15px", { lineHeight: "22px", fontWeight: "400" }],
+                        "financial-md": ["13px", { lineHeight: "16px", letterSpacing: "-0.005em", fontWeight: "500" }],
+                        "body-md": ["13px", { lineHeight: "18px", fontWeight: "400" }],
+                        "headline-xl": ["28px", { lineHeight: "34px", letterSpacing: "-0.02em", fontWeight: "700" }],
+                        "label-caps": ["11px", { lineHeight: "14px", letterSpacing: "0.04em", fontWeight: "600" }],
+                        "financial-xl": ["24px", { lineHeight: "28px", letterSpacing: "-0.02em", fontWeight: "600" }],
+                        "headline-lg": ["22px", { lineHeight: "28px", letterSpacing: "-0.015em", fontWeight: "600" }],
+                        "financial-sm": ["11px", { lineHeight: "14px", fontWeight: "500" }],
+                        "financial-lg": ["16px", { lineHeight: "20px", letterSpacing: "-0.01em", fontWeight: "600" }],
+                        "body-sm": ["12px", { lineHeight: "16px", fontWeight: "400" }],
+                        "headline-md": ["18px", { lineHeight: "24px", letterSpacing: "-0.01em", fontWeight: "600" }]
+                    }
+                }
+            }
+        };
+    </script>
+    <link rel="stylesheet" href="{% static 'css/tailwind.css' %}">
+    <!-- HTMX 2.x & Chart.js 4.x -->
+    <script src="https://unpkg.com/htmx.org@2.0.2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+    <style>
+        .font-mono-numbers, .font-mono-num {
+            font-family: 'JetBrains Mono', monospace;
+            font-variant-numeric: tabular-nums;
+            font-feature-settings: 'tnum' on, 'zero' on;
+        }
+    </style>
+</head>
+<body class="bg-canvas text-text-main antialiased text-[13px] selection:bg-teal-100 selection:text-teal-900" hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+
+<!-- Top HTMX Loading Progress Indicator -->
+<div id="htmx-progress-bar" class="htmx-indicator fixed top-0 left-0 right-0 z-50 h-0.5 bg-teal-600 transition-all duration-300"></div>
+
+<!-- ========================================================================= -->
+<!-- LEFT SIDEBAR (Exact Stitch 260px #0F172A Dark Slate Shell)               -->
+<!-- ========================================================================= -->
+<aside id="app-sidebar" class="fixed left-0 top-0 h-full w-[260px] bg-sidebar border-r border-slate-800 z-50 flex flex-col justify-between select-none transition-transform duration-200 lg:translate-x-0 -translate-x-full">
+    <div class="flex flex-col flex-1 min-h-0">
+        <!-- App Brand Logo Header -->
+        <div class="h-16 px-5 flex items-center justify-between border-b border-slate-800/80">
+            <a href="{% url 'analytics:dashboard' %}" class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-[8px] bg-teal-600 flex items-center justify-center text-white shadow-md shadow-teal-900/40">
+                    <span class="material-symbols-outlined text-[20px]">account_balance</span>
+                </div>
+                <div class="flex flex-col">
+                    <div class="flex items-center gap-1.5">
+                        <span class="font-bold text-[15px] text-white tracking-tight leading-tight">KiliLedger</span>
+                        <span class="px-1.5 py-0.5 rounded text-[9.5px] font-bold bg-teal-500/20 text-teal-300 border border-teal-500/30">PRO</span>
+                    </div>
+                    <span class="font-mono text-[10px] text-slate-400 tracking-wider">ENTERPRISE EDITION</span>
+                </div>
+            </a>
+            <span class="px-2 py-0.5 rounded-full bg-slate-800 text-[10px] font-semibold text-slate-300 border border-slate-700">KE</span>
+        </div>
+
+        <!-- Section Label -->
+        <div class="px-5 pt-5 pb-2">
+            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Financial Ledger</span>
+        </div>
+
+        <!-- 7 Navigation Items with Material Symbols & Active States -->
+        <nav class="flex-1 flex flex-col space-y-1 px-3 overflow-y-auto">
+            <!-- 1. Dashboard -->
+            <a href="{% url 'analytics:dashboard' %}"
+               class="group flex items-center gap-3 px-3 py-2.5 rounded-[8px] transition-all border-l-4 {% if request.resolver_match.app_name == 'analytics' and request.resolver_match.url_name == 'dashboard' %}bg-[#1E293B] text-white font-semibold border-[#0F766E]{% else %}text-slate-400 hover:text-slate-100 hover:bg-slate-800/60 border-transparent{% endif %}">
+                <span class="material-symbols-outlined text-[19px] {% if request.resolver_match.app_name == 'analytics' and request.resolver_match.url_name == 'dashboard' %}text-teal-400{% else %}text-slate-400 group-hover:text-slate-200{% endif %}">dashboard</span>
+                <span class="text-[13px] tracking-tight">Dashboard</span>
+                {% if request.resolver_match.app_name == 'analytics' and request.resolver_match.url_name == 'dashboard' %}
+                <span class="ml-auto w-1.5 h-1.5 rounded-full bg-teal-400"></span>
+                {% endif %}
+            </a>
+
+            <!-- 2. Stores & Statements (with quick sub-links) -->
+            <div class="space-y-0.5">
+                <a href="{% url 'stores:store_directory' %}"
+                   class="group flex items-center gap-3 px-3 py-2.5 rounded-[8px] transition-all border-l-4 {% if request.resolver_match.app_name == 'stores' or request.resolver_match.app_name == 'statements' %}bg-[#1E293B] text-white font-semibold border-[#0F766E]{% else %}text-slate-400 hover:text-slate-100 hover:bg-slate-800/60 border-transparent{% endif %}">
+                    <span class="material-symbols-outlined text-[19px] {% if request.resolver_match.app_name == 'stores' or request.resolver_match.app_name == 'statements' %}text-teal-400{% else %}text-slate-400 group-hover:text-slate-200{% endif %}">storefront</span>
+                    <span class="text-[13px] tracking-tight">Stores &amp; Statements</span>
+                    <span class="ml-auto rounded bg-slate-800 px-1.5 py-0.5 font-mono text-[10px] text-slate-300">{{ vendor_stores|length|default:"1" }}</span>
+                </a>
+                <div class="pl-9 pr-2 space-y-0.5 text-[12px]">
+                    <a href="{% url 'stores:store_directory' %}" class="block py-1 {% if request.resolver_match.url_name == 'store_directory' %}text-teal-300 font-semibold{% else %}text-slate-400 hover:text-white{% endif %}">• Store Directory &amp; Aliases</a>
+                    <a href="{% url 'statements:upload_wizard' %}" class="block py-1 {% if request.resolver_match.url_name == 'upload_wizard' %}text-teal-300 font-semibold{% else %}text-slate-400 hover:text-white{% endif %}">• Upload Statement (.xlsx)</a>
+                    <a href="{% url 'statements:statement_list' %}" class="block py-1 {% if request.resolver_match.url_name == 'statement_list' or request.resolver_match.url_name == 'statement_detail' %}text-teal-300 font-semibold{% else %}text-slate-400 hover:text-white{% endif %}">• Statements Ledger</a>
+                </div>
+            </div>
+
+            <!-- 3. Financial Analytics -->
+            {% if request.user.can_view_financials %}
+            <a href="{% url 'analytics:pnl_statement' %}"
+               class="group flex items-center gap-3 px-3 py-2.5 rounded-[8px] transition-all border-l-4 {% if request.resolver_match.url_name == 'pnl_statement' %}bg-[#1E293B] text-white font-semibold border-[#0F766E]{% else %}text-slate-400 hover:text-slate-100 hover:bg-slate-800/60 border-transparent{% endif %}">
+                <span class="material-symbols-outlined text-[19px] {% if request.resolver_match.url_name == 'pnl_statement' %}text-teal-400{% else %}text-slate-400 group-hover:text-slate-200{% endif %}">analytics</span>
+                <span class="text-[13px] tracking-tight">Financial Analytics</span>
+            </a>
+            {% endif %}
+
+            <!-- 4. Orders & Reconciliation -->
+            <div class="space-y-0.5">
+                <a href="{% url 'orders:reconciliation_grid' %}"
+                   class="group flex items-center gap-3 px-3 py-2.5 rounded-[8px] transition-all border-l-4 {% if request.resolver_match.app_name == 'orders' and request.resolver_match.url_name != 'fees_penalties_audit' %}bg-[#1E293B] text-white font-semibold border-[#0F766E]{% else %}text-slate-400 hover:text-slate-100 hover:bg-slate-800/60 border-transparent{% endif %}">
+                    <span class="material-symbols-outlined text-[19px] {% if request.resolver_match.app_name == 'orders' and request.resolver_match.url_name != 'fees_penalties_audit' %}text-teal-400{% else %}text-slate-400 group-hover:text-slate-200{% endif %}">receipt_long</span>
+                    <span class="text-[13px] tracking-tight">Orders &amp; Reconciliation</span>
+                </a>
+                <div class="pl-9 pr-2 space-y-0.5 text-[12px]">
+                    <a href="{% url 'orders:reconciliation_grid' %}" class="block py-1 {% if request.resolver_match.url_name == 'reconciliation_grid' %}text-teal-300 font-semibold{% else %}text-slate-400 hover:text-white{% endif %}">• Master Order Ledger</a>
+                    <a href="{% url 'orders:pending_tracker' %}" class="block py-1 {% if request.resolver_match.url_name == 'pending_tracker' %}text-teal-300 font-semibold{% else %}text-slate-400 hover:text-white{% endif %}">• Pending Settlements (DS)</a>
+                </div>
+            </div>
+
+            <!-- 5. Products & Profitability -->
+            <div class="space-y-0.5">
+                <a href="{% url 'products:product_catalogue' %}"
+                   class="group flex items-center gap-3 px-3 py-2.5 rounded-[8px] transition-all border-l-4 {% if request.resolver_match.app_name == 'products' %}bg-[#1E293B] text-white font-semibold border-[#0F766E]{% else %}text-slate-400 hover:text-slate-100 hover:bg-slate-800/60 border-transparent{% endif %}">
+                    <span class="material-symbols-outlined text-[19px] {% if request.resolver_match.app_name == 'products' %}text-teal-400{% else %}text-slate-400 group-hover:text-slate-200{% endif %}">inventory_2</span>
+                    <span class="text-[13px] tracking-tight">Products &amp; Profitability</span>
+                    {% if missing_cogs_count %}
+                    <span class="ml-auto px-1.5 py-0.5 rounded text-[10px] font-bold bg-amber-500/20 text-amber-300">{{ missing_cogs_count }} COGS</span>
+                    {% endif %}
+                </a>
+                <div class="pl-9 pr-2 space-y-0.5 text-[12px]">
+                    <a href="{% url 'products:product_catalogue' %}" class="block py-1 {% if request.resolver_match.url_name == 'product_catalogue' %}text-teal-300 font-semibold{% else %}text-slate-400 hover:text-white{% endif %}">• Catalogue &amp; Buying Costs</a>
+                    <a href="{% url 'products:profitability_rank' %}" class="block py-1 {% if request.resolver_match.url_name == 'profitability_rank' %}text-teal-300 font-semibold{% else %}text-slate-400 hover:text-white{% endif %}">• Profitability Leaderboard</a>
+                </div>
+            </div>
+
+            <!-- 6. Fees & Penalties -->
+            <a href="{% url 'orders:fees_penalties_audit' %}"
+               class="group flex items-center gap-3 px-3 py-2.5 rounded-[8px] transition-all border-l-4 {% if request.resolver_match.url_name == 'fees_penalties_audit' %}bg-[#1E293B] text-white font-semibold border-[#0F766E]{% else %}text-slate-400 hover:text-slate-100 hover:bg-slate-800/60 border-transparent{% endif %}">
+                <span class="material-symbols-outlined text-[19px] {% if request.resolver_match.url_name == 'fees_penalties_audit' %}text-teal-400{% else %}text-slate-400 group-hover:text-slate-200{% endif %}">gavel</span>
+                <span class="text-[13px] tracking-tight">Fees &amp; Penalties</span>
+                <span class="ml-auto px-1.5 py-0.5 rounded text-[10px] font-bold bg-amber-500/20 text-amber-300">Audit</span>
+            </a>
+
+            <!-- 7. Reports & Exports -->
+            <a href="{% url 'reports:report_center' %}"
+               class="group flex items-center gap-3 px-3 py-2.5 rounded-[8px] transition-all border-l-4 {% if request.resolver_match.app_name == 'reports' %}bg-[#1E293B] text-white font-semibold border-[#0F766E]{% else %}text-slate-400 hover:text-slate-100 hover:bg-slate-800/60 border-transparent{% endif %}">
+                <span class="material-symbols-outlined text-[19px] {% if request.resolver_match.app_name == 'reports' %}text-teal-400{% else %}text-slate-400 group-hover:text-slate-200{% endif %}">description</span>
+                <span class="text-[13px] tracking-tight">Reports &amp; Exports</span>
+            </a>
+        </nav>
+    </div>
+
+    <!-- Pinned Bottom Controls (Exact Stitch Footer) -->
+    <div class="p-4 border-t border-slate-800/80 flex flex-col gap-2 bg-slate-900/60">
+        <a href="{% url 'accounts:settings_rules' %}"
+           class="flex items-center gap-2.5 px-2.5 py-2 rounded-[6px] transition-colors text-[12px] font-medium {% if request.resolver_match.url_name == 'settings_rules' %}bg-slate-800 text-white{% else %}text-slate-400 hover:text-white hover:bg-slate-800{% endif %}">
+            <span class="material-symbols-outlined text-[18px]">tune</span>
+            <span>Settings &amp; Rules ({{ current_tenant.pending_aging_threshold_days|default:"14" }}d)</span>
+        </a>
+
+        <div class="flex items-center justify-between px-2.5 py-1.5 rounded-[6px] bg-slate-800/50 border border-slate-800 text-[11px]">
+            <span class="flex items-center gap-2 text-slate-300 font-medium">
+                <span class="w-2 h-2 rounded-full {% if current_tenant.is_support_access_active %}bg-amber-400 animate-pulse{% else %}bg-emerald-400{% endif %}"></span>
+                Privacy Lock
+            </span>
+            <span class="font-mono text-[10px] font-semibold {% if current_tenant.is_support_access_active %}text-amber-300{% else %}text-emerald-400{% endif %} uppercase tracking-wider">
+                {% if current_tenant.is_support_access_active %}Support 24h{% else %}Strict{% endif %}
+            </span>
+        </div>
+
+        {% if request.user.is_platform_operator %}
+        <a href="{% url 'accounts:platform_admin_console' %}"
+           class="flex items-center justify-between px-2.5 py-1.5 rounded-[6px] bg-indigo-950/80 border border-indigo-700/60 text-[11px] font-mono text-indigo-300 hover:bg-indigo-900/80">
+            <span class="flex items-center gap-1.5">
+                <span class="material-symbols-outlined text-[14px]">admin_panel_settings</span>
+                <span>Platform Admin</span>
+            </span>
+            <span class="font-semibold">OPS</span>
+        </a>
+        {% endif %}
+
+        <form method="post" action="{% url 'accounts:logout' %}">
+            {% csrf_token %}
+            <button type="submit" class="w-full flex items-center justify-between px-2.5 py-1.5 rounded-[6px] text-slate-400 hover:text-rose-300 hover:bg-rose-950/30 text-[11px] font-medium transition-colors">
+                <span>Sign Out ({{ request.user.email|default:"Vendor"|truncatechars:18 }})</span>
+                <span class="material-symbols-outlined text-[15px]">logout</span>
+            </button>
+        </form>
+    </div>
+</aside>
+
+<!-- ========================================================================= -->
+<!-- MAIN APP SHELL CONTAINER (offset left 260px on desktop)                   -->
+<!-- ========================================================================= -->
+<div class="lg:pl-[260px] min-h-screen flex flex-col">
+    <!-- STICKY HEADER (64px, #FFFFFF — Exact Stitch Header) -->
+    <header class="sticky top-0 h-16 bg-white border-b border-[#E2E8F0] z-40 px-4 sm:px-6 flex items-center justify-between shadow-[0_1px_3px_rgba(15,23,42,0.03)]">
+        <div class="flex items-center gap-3">
+            <button type="button" onclick="toggleMobileSidebar()" class="p-2 rounded-lg text-slate-600 hover:bg-slate-100 lg:hidden">
+                <span class="material-symbols-outlined text-[20px]">menu</span>
+            </button>
+            <!-- Store Switcher Component -->
+            {% include "components/_store_switcher.html" %}
+        </div>
+
+        <!-- CENTER: Period Filter Pills -->
+        <div class="hidden xl:flex items-center bg-slate-100 p-1 rounded-[8px] border border-[#E2E8F0] font-medium text-[12px]">
+            <a href="?period=weekly" class="px-3 py-1 rounded-[6px] bg-[#0F766E] text-white font-semibold shadow-sm transition-all">Weekly</a>
+            <a href="?period=monthly" class="px-3 py-1 rounded-[6px] text-slate-600 hover:text-slate-900 hover:bg-white/60 transition-colors">Monthly</a>
+            <a href="?period=quarterly" class="px-3 py-1 rounded-[6px] text-slate-600 hover:text-slate-900 hover:bg-white/60 transition-colors">Quarterly</a>
+            <div class="h-4 w-px bg-slate-300 mx-1"></div>
+            <div class="px-2.5 py-0.5 rounded-[6px] bg-white border border-slate-200/80 text-slate-900 font-mono text-[11px] font-medium flex items-center gap-1.5">
+                <span class="material-symbols-outlined text-[14px] text-slate-500">date_range</span>
+                <span>Oct 26 – Oct 31, 2026</span>
+            </div>
+        </div>
+
+        <!-- RIGHT: COGS Alert, Upload CTA, Notification Bell, User Profile -->
+        <div class="flex items-center gap-3">
+            {% if missing_cogs_count and request.user.can_upload_statements_and_edit_cogs %}
+            <a href="{% url 'products:product_catalogue' %}?filter=missing_cogs"
+               class="hidden md:inline-flex items-center gap-1.5 px-2.5 py-1 bg-amber-50 hover:bg-amber-100 text-amber-800 rounded-full border border-amber-300 text-[11.5px] font-medium transition-colors">
+                <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
+                <span class="font-mono font-bold">{{ missing_cogs_count }}</span>
+                <span>SKUs Missing COGS</span>
+            </a>
+            {% endif %}
+
+            {% if request.user.can_upload_statements_and_edit_cogs %}
+            <a href="{% url 'statements:upload_wizard' %}"
+               class="h-9 px-3.5 bg-[#0F766E] hover:bg-[#0D655E] text-white rounded-[8px] font-semibold text-[12.5px] flex items-center gap-1.5 transition-all shadow-xs">
+                <span class="material-symbols-outlined text-[17px]">upload_file</span>
+                <span>+ Upload Settlement Excel</span>
+            </a>
+            {% endif %}
+
+            <!-- Notification Bell (Triggers HTMX Slide-Over Drawer) -->
+            <button type="button"
+                    hx-get="{% url 'accounts:notifications_drawer' %}"
+                    hx-target="#drawer-container"
+                    hx-swap="innerHTML"
+                    class="relative p-2 rounded-[8px] hover:bg-slate-100 text-slate-600 transition-colors">
+                <span class="material-symbols-outlined text-[20px]">notifications</span>
+                {% if unread_notifications_count %}
+                <span class="absolute top-1.5 right-1.5 w-4 h-4 bg-red-600 text-white rounded-full font-mono text-[10px] font-bold flex items-center justify-center leading-none">
+                    {{ unread_notifications_count }}
+                </span>
+                {% endif %}
+            </button>
+
+            <!-- User Avatar & Merchant Badge -->
+            <div class="hidden sm:flex items-center gap-2.5 pl-2 border-l border-[#E2E8F0]">
+                <div class="w-8 h-8 rounded-full bg-teal-700 text-white flex items-center justify-center font-bold text-[12px] shadow-2xs ring-1 ring-teal-600/30">
+                    {{ current_tenant.business_name|default:"KL"|slice:":2"|upper }}
+                </div>
+                <div class="hidden 2xl:flex flex-col text-left">
+                    <span class="font-semibold text-[12.5px] text-slate-900 leading-tight">{{ current_tenant.business_name|default:"Kushpedia Enterprises"|truncatechars:20 }}</span>
+                    <span class="font-mono text-[10.5px] text-slate-500 leading-tight">{{ request.user.get_role_display|default:"Vendor Owner"|truncatechars:22 }}</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Flash Messages Banner -->
+    {% if messages %}
+    <div class="mx-auto w-full max-w-[1600px] px-6 pt-4 space-y-2">
+        {% for message in messages %}
+        <div class="flex items-center justify-between rounded-lg border px-4 py-3 text-xs sm:text-sm {% if message.tags == 'error' %}border-[#FCA5A5] bg-[#FEE2E2] text-[#B91C1C]{% elif message.tags == 'warning' %}border-[#FDE68A] bg-[#FEF3C7] text-[#B45309]{% else %}border-[#86EFAC] bg-[#DCFCE7] text-[#15803D]{% endif %}">
+            <span class="font-medium">{{ message }}</span>
+            <button type="button" onclick="this.parentElement.remove()" class="text-xs font-semibold underline opacity-80 hover:opacity-100">Dismiss</button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- MAIN WORKSPACE CONTENT CANVAS -->
+    <main id="workspace-canvas" class="flex-1 p-4 sm:p-6 space-y-6 max-w-[1600px] w-full mx-auto">
+        {% block content %}{% endblock %}
+    </main>
+</div>
+
+<!-- Global Slide-Over Drawer Container -->
+<div id="drawer-container"></div>
+
+<script src="{% static 'js/app.js' %}"></script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>

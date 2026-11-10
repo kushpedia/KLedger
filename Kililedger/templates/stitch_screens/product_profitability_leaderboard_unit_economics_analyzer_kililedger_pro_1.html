@@ -1,0 +1,1036 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        "colors": {
+          "on-error-container": "#93000a",
+          "on-error": "#ffffff",
+          "on-primary": "#ffffff",
+          "on-surface": "#131b2e",
+          "on-tertiary": "#ffffff",
+          "surface-container-low": "#f2f3ff",
+          "on-primary-fixed-variant": "#00504a",
+          "on-secondary-container": "#fffbff",
+          "surface-container-high": "#e2e7ff",
+          "inverse-surface": "#283044",
+          "outline": "#6e7977",
+          "primary-fixed": "#9cf2e8",
+          "secondary-fixed-dim": "#c3c0ff",
+          "surface-container-lowest": "#ffffff",
+          "surface-container": "#eaedff",
+          "on-tertiary-fixed-variant": "#7f2b00",
+          "inverse-on-surface": "#eef0ff",
+          "surface-bright": "#faf8ff",
+          "surface-variant": "#dae2fd",
+          "surface-container-highest": "#dae2fd",
+          "tertiary-fixed-dim": "#ffb599",
+          "primary-fixed-dim": "#80d5cb",
+          "secondary-fixed": "#e2dfff",
+          "surface-dim": "#d2d9f4",
+          "surface-tint": "#006a63",
+          "background": "#faf8ff",
+          "secondary": "#4b41e1",
+          "surface": "#faf8ff",
+          "secondary-container": "#645efb",
+          "on-background": "#131b2e",
+          "on-primary-fixed": "#00201d",
+          "primary-container": "#0f766e",
+          "outline-variant": "#bdc9c6",
+          "on-secondary": "#ffffff",
+          "inverse-primary": "#80d5cb",
+          "on-tertiary-container": "#ffe5dc",
+          "on-primary-container": "#a3faef",
+          "tertiary-container": "#b94200",
+          "tertiary-fixed": "#ffdbce",
+          "error-container": "#ffdad6",
+          "on-surface-variant": "#3e4947",
+          "error": "#ba1a1a",
+          "on-secondary-fixed": "#0f0069",
+          "on-secondary-fixed-variant": "#3323cc",
+          "on-tertiary-fixed": "#370e00",
+          "tertiary": "#913200",
+          "primary": "#005c55"
+        },
+        "borderRadius": {
+          "DEFAULT": "0.25rem",
+          "lg": "0.5rem",
+          "xl": "0.75rem",
+          "full": "9999px"
+        },
+        "spacing": {
+          "space-xs": "0.25rem",
+          "gutter-desktop": "1.5rem",
+          "space-xl": "1.5rem",
+          "space-sm": "0.5rem",
+          "space-md": "0.75rem",
+          "gutter": "1rem",
+          "margin-desktop": "2rem",
+          "space-lg": "1rem",
+          "margin": "1rem"
+        },
+        "fontFamily": {
+          "financial-lg": [
+            "JetBrains Mono"
+          ],
+          "label-caps": [
+            "Inter"
+          ],
+          "financial-sm": [
+            "JetBrains Mono"
+          ],
+          "financial-xl": [
+            "JetBrains Mono"
+          ],
+          "body-lg": [
+            "Inter"
+          ],
+          "headline-lg": [
+            "Inter"
+          ],
+          "headline-md": [
+            "Inter"
+          ],
+          "body-md": [
+            "Inter"
+          ],
+          "body-sm": [
+            "Inter"
+          ],
+          "headline-xl": [
+            "Inter"
+          ],
+          "financial-md": [
+            "JetBrains Mono"
+          ]
+        },
+        "fontSize": {
+          "financial-lg": [
+            "16px",
+            {
+              "lineHeight": "20px",
+              "letterSpacing": "-0.01em",
+              "fontWeight": "600"
+            }
+          ],
+          "label-caps": [
+            "11px",
+            {
+              "lineHeight": "14px",
+              "letterSpacing": "0.04em",
+              "fontWeight": "600"
+            }
+          ],
+          "financial-sm": [
+            "11px",
+            {
+              "lineHeight": "14px",
+              "fontWeight": "500"
+            }
+          ],
+          "financial-xl": [
+            "24px",
+            {
+              "lineHeight": "28px",
+              "letterSpacing": "-0.02em",
+              "fontWeight": "600"
+            }
+          ],
+          "body-lg": [
+            "15px",
+            {
+              "lineHeight": "22px",
+              "fontWeight": "400"
+            }
+          ],
+          "headline-lg": [
+            "22px",
+            {
+              "lineHeight": "28px",
+              "letterSpacing": "-0.015em",
+              "fontWeight": "600"
+            }
+          ],
+          "headline-md": [
+            "18px",
+            {
+              "lineHeight": "24px",
+              "letterSpacing": "-0.01em",
+              "fontWeight": "600"
+            }
+          ],
+          "body-md": [
+            "13px",
+            {
+              "lineHeight": "18px",
+              "fontWeight": "400"
+            }
+          ],
+          "body-sm": [
+            "12px",
+            {
+              "lineHeight": "16px",
+              "fontWeight": "400"
+            }
+          ],
+          "headline-xl": [
+            "28px",
+            {
+              "lineHeight": "34px",
+              "letterSpacing": "-0.02em",
+              "fontWeight": "700"
+            }
+          ],
+          "financial-md": [
+            "13px",
+            {
+              "lineHeight": "16px",
+              "letterSpacing": "-0.005em",
+              "fontWeight": "500"
+            }
+          ]
+        }
+      }
+    }
+  }</script></head><body class="bg-background font-body-md text-on-surface antialiased"><aside class="fixed left-0 top-0 h-full w-[260px] bg-[#0F172A] z-50 flex flex-col justify-between shadow-[0_1px_8px_rgba(0,0,0,0.08)]"><div class="flex flex-col min-h-0"><div class="h-16 px-space-lg flex items-center gap-space-sm bg-[#0F172A]"><div class="w-8 h-8 rounded-lg bg-primary-container flex items-center justify-center"><span class="material-symbols-outlined text-on-primary-container text-[20px]">account_balance_wallet</span></div><div class="flex flex-col"><span class="font-headline-md text-headline-md font-bold tracking-tight text-inverse-on-surface">KiliLedger</span><span class="font-label-caps text-label-caps text-outline-variant uppercase tracking-wider">Settlement Pro</span></div></div><div class="px-space-md py-space-sm"><div class="font-label-caps text-label-caps text-outline-variant px-space-sm py-space-xs uppercase tracking-wider">Operational Navigation</div><nav class="flex flex-col gap-space-xs mt-space-xs" data-active-classes="bg-primary-container text-on-primary font-semibold rounded-lg"><a class="flex items-center px-space-sm py-space-sm rounded-lg text-inverse-on-surface hover:bg-surface-variant/20 hover:text-inverse-on-surface transition-colors font-body-md text-body-md" data-path="dashboard" href="/dashboard/">Dashboard</a><a class="flex items-center px-space-sm py-space-sm rounded-lg text-inverse-on-surface hover:bg-surface-variant/20 hover:text-inverse-on-surface transition-colors font-body-md text-body-md" data-path="stores-and-statements" href="#">Stores &amp; Statements</a><a class="flex items-center px-space-sm py-space-sm rounded-lg text-inverse-on-surface hover:bg-surface-variant/20 hover:text-inverse-on-surface transition-colors font-body-md text-body-md" data-path="financial-analytics" href="/dashboard/pnl/">Financial Analytics</a><a class="flex items-center px-space-sm py-space-sm rounded-lg text-inverse-on-surface hover:bg-surface-variant/20 hover:text-inverse-on-surface transition-colors font-body-md text-body-md" data-path="orders-and-reconciliation" href="#">Orders &amp; Reconciliation</a><div class="flex flex-col"><a class="flex items-center justify-between px-space-sm py-space-sm rounded-lg text-inverse-on-surface hover:bg-surface-variant/20 hover:text-inverse-on-surface transition-colors font-body-md text-body-md" data-path="products-and-profitability" href="#"><span>Products &amp; Profitability</span></a><div class="flex flex-col pl-space-lg pr-space-xs py-space-xs gap-space-xs"><a class="px-space-sm py-space-xs rounded text-inverse-on-surface hover:bg-surface-variant/20 hover:text-inverse-on-surface transition-colors font-body-sm text-body-sm" data-path="product-catalogue-and-cogs" href="#">Product Catalogue &amp; COGS</a><a class="px-space-sm py-space-xs rounded text-inverse-on-surface hover:bg-surface-variant/20 hover:text-inverse-on-surface transition-colors font-body-sm text-body-sm" data-path="sku-margins-and-landed-costs" href="#">SKU Margins &amp; Landed Costs</a></div></div><a class="flex items-center px-space-sm py-space-sm rounded-lg text-inverse-on-surface hover:bg-surface-variant/20 hover:text-inverse-on-surface transition-colors font-body-md text-body-md" data-path="fees-and-penalties" href="#">Fees &amp; Penalties</a><a class="flex items-center px-space-sm py-space-sm rounded-lg text-inverse-on-surface hover:bg-surface-variant/20 hover:text-inverse-on-surface transition-colors font-body-md text-body-md" data-path="reports-and-exports" href="#">Reports &amp; Exports</a></nav></div></div><div class="p-space-md bg-[#0F172A]/80 flex flex-col gap-space-xs"><div class="flex items-center justify-between px-space-sm py-space-xs rounded bg-inverse-surface/50"><div class="flex items-center gap-space-xs"><span class="w-2 h-2 rounded-full bg-primary-fixed"></span><span class="font-body-sm text-body-sm text-inverse-on-surface">Engine</span></div><span class="font-label-caps text-label-caps text-primary-fixed uppercase tracking-wider font-semibold">ONLINE</span></div><div class="flex items-center justify-between px-space-sm py-space-xs rounded bg-inverse-surface/50"><div class="flex items-center gap-space-xs"><span class="w-2 h-2 rounded-full bg-primary-fixed"></span><span class="font-body-sm text-body-sm text-inverse-on-surface">Kilimall Sync</span></div><span class="font-label-caps text-label-caps text-outline-variant uppercase tracking-wider">SYNCED</span></div></div></aside><div class="pl-[260px]"><header class="fixed top-0 left-[260px] right-0 h-16 bg-[#FFFFFF] z-40 px-gutter-desktop flex items-center justify-between shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="flex items-center gap-space-lg"><div class="flex items-center gap-space-sm px-space-sm py-space-xs rounded-lg bg-surface-container-low hover:bg-surface-container cursor-pointer transition-colors"><span class="material-symbols-outlined text-primary text-[20px]">store</span><div class="flex flex-col text-left"><div class="flex items-center gap-space-xs"><span class="font-body-md text-body-md font-semibold text-on-surface">Kushpedia Stores4</span><span class="font-financial-sm text-financial-sm text-on-surface-variant">[ID: 10344]</span></div></div><span class="material-symbols-outlined text-on-surface-variant text-[18px]">unfold_more</span></div><div class="flex items-center bg-surface-container-low rounded-lg p-0.5"><button class="px-space-sm py-1 rounded-md text-on-surface-variant hover:text-on-surface font-body-sm text-body-sm font-medium transition-colors" type="button">Weekly</button><button class="px-space-sm py-1 rounded-md text-on-surface-variant hover:text-on-surface font-body-sm text-body-sm font-medium transition-colors" type="button">Monthly</button><button class="px-space-sm py-1 rounded-md bg-surface-container-lowest text-primary shadow-[0_1px_2px_rgba(0,0,0,0.05)] font-body-sm text-body-sm font-semibold transition-colors" type="button">Nov 2026</button></div></div><div class="flex items-center gap-space-md"><div class="inline-flex items-center gap-space-xs px-space-sm py-1 rounded-full bg-tertiary-fixed text-on-tertiary-fixed"><span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span><span class="font-body-sm text-body-sm font-medium">2 SKUs Missing COGS</span></div><button class="inline-flex items-center gap-space-xs h-[34px] px-space-md rounded-lg bg-[#0F766E] text-on-primary hover:bg-[#115E59] font-body-md text-body-md font-semibold transition-colors" type="button"><span class="material-symbols-outlined text-[18px]">upload_file</span><span>+ Upload Settlement Excel</span></button><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></header><main class="relative pt-16 bg-surface min-h-screen w-full px-gutter-desktop"><div class="flex flex-col w-full pb-16">
+<!-- Breadcrumbs & Screen Meta Header -->
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-space-md py-space-lg mb-space-md">
+<div class="flex flex-col min-w-0">
+<!-- Breadcrumb Bar -->
+<nav aria-label="Breadcrumb" class="flex items-center gap-space-xs font-body-sm text-body-sm text-on-surface-variant mb-space-xs">
+<span class="hover:text-on-surface transition-colors cursor-pointer">Products &amp; Profitability</span>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+<span class="font-financial-sm text-financial-sm px-space-xs py-0.5 rounded bg-surface-container-high text-on-surface font-medium">Kushpedia Stores4 [10344]</span>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+<span class="text-on-surface font-semibold">Product Profitability &amp; Unit Economics</span>
+</nav>
+<div class="flex items-baseline gap-space-sm">
+<h1 class="font-headline-xl text-headline-xl text-on-surface tracking-tight font-bold">Product Profitability Leaderboard &amp; Unit Economics</h1>
+<span class="hidden sm:inline-flex items-center gap-1 font-label-caps text-label-caps px-2 py-0.5 rounded-full bg-primary-container/10 text-primary-container font-semibold uppercase tracking-wider">
+<span class="w-1.5 h-1.5 rounded-full bg-primary-container"></span>
+          bill (55).xlsx Analyzed
+        </span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1 max-w-4xl">
+        Deconstruct unit economics across all auto-discovered products from settlement statement <code class="font-financial-sm text-financial-sm bg-surface-container px-1 py-0.5 rounded font-semibold text-primary">bill (55).xlsx</code>. Identify high-margin hero SKUs, fee-eroded items, and courier package tier overcharges.
+      </p>
+</div>
+<!-- Header Actions -->
+<div class="flex items-center gap-space-sm self-start md:self-auto shrink-0">
+<button class="inline-flex items-center gap-space-xs h-[34px] px-space-md rounded-lg bg-surface-container-lowest text-on-surface hover:bg-surface-container-low transition-colors font-body-md text-body-md font-medium shadow-sm" type="button">
+<span class="material-symbols-outlined text-[18px]">download</span>
+<span>Export Report (Excel/CSV)</span>
+</button>
+<button class="inline-flex items-center gap-space-xs h-[34px] px-space-md rounded-lg bg-secondary text-on-secondary hover:bg-secondary-container transition-colors font-body-md text-body-md font-semibold shadow-sm" onclick="document.getElementById('simulation-banner').scrollIntoView({behavior: 'smooth'})" type="button">
+<span class="material-symbols-outlined text-[18px]">tune</span>
+<span>Simulate Bulk Price (+10%)</span>
+</button>
+</div>
+</div>
+<!-- SECTION 1: 4 UNIT ECONOMICS KPI CARDS -->
+<section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-space-lg mb-space-xl">
+<!-- Card 1: Hero SKU -->
+<div class="bg-surface-container-lowest p-space-lg rounded-xl shadow-sm relative overflow-hidden flex flex-col justify-between">
+<div class="absolute -right-6 -bottom-6 w-24 h-24 rounded-full bg-primary-container/5 pointer-events-none"></div>
+<div>
+<div class="flex items-center justify-between mb-space-sm">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider font-semibold">Highest Margin Hero SKU</span>
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary-container/15 text-primary-container font-label-caps text-label-caps font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-primary-container"></span>
+            36.9% Net Margin
+          </span>
+</div>
+<div class="flex items-baseline gap-space-xs mt-1">
+<span class="font-financial-xl text-financial-xl text-primary-container font-bold">+KES 3,537.90</span>
+<span class="font-financial-sm text-financial-sm text-on-surface-variant">/ unit</span>
+</div>
+</div>
+<div class="mt-space-md pt-space-sm bg-surface-container-low/60 -mx-space-lg -mb-space-lg px-space-lg pb-space-md rounded-b-xl">
+<div class="font-body-sm text-body-sm font-medium text-on-surface flex items-center justify-between">
+<span class="truncate">Canopy 4 Stand Net 5×6</span>
+<span class="font-financial-sm text-financial-sm text-on-surface-variant shrink-0">ID: 10007470517</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant text-[11px] leading-tight mt-0.5">
+          KES 9,574 selling price absorbs fixed DS fees easily with zero cash leakage.
+        </p>
+</div>
+</div>
+<!-- Card 2: Portfolio Avg Net Margin -->
+<div class="bg-surface-container-lowest p-space-lg rounded-xl shadow-sm flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between mb-space-sm">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider font-semibold">Portfolio Avg Net Margin</span>
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-secondary-fixed text-on-secondary-fixed font-label-caps text-label-caps font-semibold">
+            14 / 16 Sold Units
+          </span>
+</div>
+<div class="flex items-baseline gap-space-xs mt-1">
+<span class="font-financial-xl text-financial-xl text-secondary font-bold">29.13%</span>
+<span class="font-financial-sm text-financial-sm text-on-surface-variant">(KES 7,066.78 Net)</span>
+</div>
+</div>
+<div class="mt-space-md pt-space-sm bg-surface-container-low/60 -mx-space-lg -mb-space-lg px-space-lg pb-space-md rounded-b-xl">
+<div class="flex items-center justify-between font-body-sm text-body-sm text-on-surface font-medium">
+<span>Realized Pocket Profit</span>
+<span class="font-financial-sm text-financial-sm text-secondary font-semibold">KES 7,066.78</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant text-[11px] leading-tight mt-0.5">
+          Blended margin across 6 distinct active product lines with verified landed COGS.
+        </p>
+</div>
+</div>
+<!-- Card 3: Thin-Margin / Vulnerable -->
+<div class="bg-surface-container-lowest p-space-lg rounded-xl shadow-sm flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between mb-space-sm">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider font-semibold">Thin-Margin / Vulnerable</span>
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-tertiary-fixed text-on-tertiary-fixed font-label-caps text-label-caps font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span>
+            &lt; 10% Net Margin
+          </span>
+</div>
+<div class="flex items-baseline gap-space-xs mt-1">
+<span class="font-financial-xl text-financial-xl text-tertiary font-bold">3 Products</span>
+<span class="font-financial-sm text-financial-sm text-on-surface-variant font-medium">at operational risk</span>
+</div>
+</div>
+<div class="mt-space-md pt-space-sm bg-surface-container-low/60 -mx-space-lg -mb-space-lg px-space-lg pb-space-md rounded-b-xl">
+<div class="font-body-sm text-body-sm font-medium text-on-surface flex items-center justify-between">
+<span>Melamine Mugs, Pads &amp; Sponges</span>
+<span class="font-financial-sm text-financial-sm text-tertiary font-semibold">7.1% / -6.9%</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant text-[11px] leading-tight mt-0.5">
+          Low selling prices leave zero buffer against DS courier tier bracket escalations.
+        </p>
+</div>
+</div>
+<!-- Card 4: Fixed DS Fee Erosion -->
+<div class="bg-surface-container-lowest p-space-lg rounded-xl shadow-sm flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between mb-space-sm">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider font-semibold">Fixed DS Fee Erosion (&lt;KES 400)</span>
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-error-container text-on-error-container font-label-caps text-label-caps font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-error"></span>
+            Severe Margin Drag
+          </span>
+</div>
+<div class="flex items-baseline gap-space-xs mt-1">
+<span class="font-financial-xl text-financial-xl text-error font-bold">Up to 66.1%</span>
+<span class="font-financial-sm text-financial-sm text-on-surface-variant">of Ticket Size</span>
+</div>
+</div>
+<div class="mt-space-md pt-space-sm bg-surface-container-low/60 -mx-space-lg -mb-space-lg px-space-lg pb-space-md rounded-b-xl">
+<div class="font-body-sm text-body-sm font-medium text-error flex items-center justify-between">
+<span>Single-unit drop-shipping</span>
+<span class="material-symbols-outlined text-[16px]">priority_high</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant text-[11px] leading-tight mt-0.5">
+          Fixed KES 50–250 drop-shipping fees wipe out net margin. Bundling mandatory.
+        </p>
+</div>
+</div>
+</section>
+<!-- SECTION 2: VISUAL ANALYTICS ROW -->
+<section class="grid grid-cols-1 lg:grid-cols-12 gap-space-lg mb-space-xl items-start">
+<!-- Left Card: Stacked Horizontal Bar Chart (7 Cols) -->
+<div class="lg:col-span-7 bg-surface-container-lowest p-space-lg rounded-xl shadow-sm flex flex-col">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-space-xs mb-space-md">
+<div>
+<h2 class="font-headline-md text-headline-md text-on-surface font-semibold tracking-tight">Unit Price Decomposition by SKU</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">Normalized distribution of gross selling price into COGS, Commission, DS Courier Handling, and Net Pocket Profit.</p>
+</div>
+<span class="font-label-caps text-label-caps px-2 py-1 rounded bg-surface-container text-on-surface-variant font-medium shrink-0 self-start sm:self-auto uppercase">
+          Normalized %
+        </span>
+</div>
+<!-- Chart Legend -->
+<div class="flex flex-wrap items-center gap-x-space-md gap-y-space-xs text-body-sm font-body-sm text-on-surface-variant pb-space-sm mb-space-md bg-surface-container-low/40 p-space-sm rounded-lg">
+<div class="flex items-center gap-1.5">
+<span class="w-3 h-3 rounded-sm bg-outline"></span>
+<span>Wholesale COGS</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="w-3 h-3 rounded-sm bg-secondary"></span>
+<span>Commission (9–16%)</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="w-3 h-3 rounded-sm bg-[#8B5CF6]"></span>
+<span>DS Handling (KES 50–250)</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="w-3 h-3 rounded-sm bg-[#059669]"></span>
+<span>Net Profit</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="w-3 h-3 rounded-sm bg-error"></span>
+<span>Net Loss</span>
+</div>
+</div>
+<!-- Stacked Bars Container -->
+<div class="flex flex-col gap-space-md">
+<!-- SKU 1: Canopy Net -->
+<div class="flex flex-col gap-1">
+<div class="flex items-center justify-between text-body-sm font-body-sm">
+<div class="flex items-center gap-space-xs min-w-0">
+<span class="font-financial-sm text-financial-sm font-semibold text-on-surface truncate">Canopy 4 Stand Mosquito Net 5×6</span>
+<span class="font-financial-sm text-financial-sm text-on-surface-variant shrink-0">(KES 9,574.00)</span>
+</div>
+<div class="flex items-center gap-1 font-financial-sm text-financial-sm text-[#059669] font-semibold shrink-0">
+<span class="material-symbols-outlined text-[15px]">trending_up</span>
+<span>+36.9% (+KES 3,537.90)</span>
+</div>
+</div>
+<!-- Stacked Bar Track -->
+<div class="w-full h-6 rounded-md bg-surface-container-high flex overflow-hidden shadow-inner text-[10px] font-financial-sm text-on-primary font-medium tracking-tight leading-6 text-center">
+<div class="bg-outline hover:opacity-90 transition-opacity truncate px-1" style="width: 47.0%;" title="COGS: 47.0% (KES 4,500.00)">47.0% COGS</div>
+<div class="bg-secondary hover:opacity-90 transition-opacity truncate px-1" style="width: 15.0%;" title="Commission: 15.0% (KES 1,436.10)">15% Comm</div>
+<div class="bg-[#8B5CF6] hover:opacity-90 transition-opacity" style="width: 1.1%;" title="DS Fee: 1.0% (KES 100.00)"></div>
+<div class="bg-[#059669] hover:opacity-90 transition-opacity truncate px-1 font-bold" style="width: 36.9%;" title="Net Profit: 36.9% (+KES 3,537.90)">+36.9% NET</div>
+</div>
+</div>
+<!-- SKU 2: LED Digital Clock -->
+<div class="flex flex-col gap-1">
+<div class="flex items-center justify-between text-body-sm font-body-sm">
+<div class="flex items-center gap-space-xs min-w-0">
+<span class="font-financial-sm text-financial-sm font-semibold text-on-surface truncate">LED Digital Clock Wall-mountable</span>
+<span class="font-financial-sm text-financial-sm text-on-surface-variant shrink-0">(KES 2,376.00)</span>
+</div>
+<div class="flex items-center gap-1 font-financial-sm text-financial-sm text-[#059669] font-semibold shrink-0">
+<span>+33.5% (+KES 795.84)</span>
+</div>
+</div>
+<div class="w-full h-6 rounded-md bg-surface-container-high flex overflow-hidden shadow-inner text-[10px] font-financial-sm text-on-primary font-medium tracking-tight leading-6 text-center">
+<div class="bg-outline hover:opacity-90 transition-opacity truncate px-1" style="width: 46.3%;" title="COGS: 46.3% (KES 1,100.00)">46.3% COGS</div>
+<div class="bg-secondary hover:opacity-90 transition-opacity truncate px-1" style="width: 16.0%;" title="Commission: 16.0% (KES 380.16)">16% Comm</div>
+<div class="bg-[#8B5CF6] hover:opacity-90 transition-opacity" style="width: 4.2%;" title="DS Fee: 4.2% (KES 100.00)"></div>
+<div class="bg-[#059669] hover:opacity-90 transition-opacity truncate px-1 font-bold" style="width: 33.5%;" title="Net Profit: 33.5% (+KES 795.84)">+33.5% NET</div>
+</div>
+</div>
+<!-- SKU 3: Wireless Earbuds Pro -->
+<div class="flex flex-col gap-1">
+<div class="flex items-center justify-between text-body-sm font-body-sm">
+<div class="flex items-center gap-space-xs min-w-0">
+<span class="font-financial-sm text-financial-sm font-semibold text-on-surface truncate">Wireless Bluetooth Earbuds Pro</span>
+<span class="font-financial-sm text-financial-sm text-on-surface-variant shrink-0">(KES 2,450.00)</span>
+</div>
+<div class="flex items-center gap-1 font-financial-sm text-financial-sm text-[#059669] font-semibold shrink-0">
+<span>+37.0% (+KES 907.00)</span>
+</div>
+</div>
+<div class="w-full h-6 rounded-md bg-surface-container-high flex overflow-hidden shadow-inner text-[10px] font-financial-sm text-on-primary font-medium tracking-tight leading-6 text-center">
+<div class="bg-outline hover:opacity-90 transition-opacity truncate px-1" style="width: 46.9%;" title="COGS: 46.9% (KES 1,150.00)">46.9% COGS</div>
+<div class="bg-secondary hover:opacity-90 transition-opacity truncate px-1" style="width: 14.0%;" title="Commission: 14.0% (KES 343.00)">14% Comm</div>
+<div class="bg-[#8B5CF6] hover:opacity-90 transition-opacity" style="width: 2.1%;" title="DS Fee: 2.0% (KES 50.00)"></div>
+<div class="bg-[#059669] hover:opacity-90 transition-opacity truncate px-1 font-bold" style="width: 37.0%;" title="Net Profit: 37.0% (+KES 907.00)">+37.0% NET</div>
+</div>
+</div>
+<!-- SKU 4: 9-Layer Shoe Rack -->
+<div class="flex flex-col gap-1">
+<div class="flex items-center justify-between text-body-sm font-body-sm">
+<div class="flex items-center gap-space-xs min-w-0">
+<span class="font-financial-sm text-financial-sm font-semibold text-on-surface truncate">9-Layer Stainless Shoe Rack F9B</span>
+<span class="font-financial-sm text-financial-sm text-on-surface-variant shrink-0">(KES 1,357.00)</span>
+</div>
+<div class="flex items-center gap-1 font-financial-sm text-financial-sm text-[#059669] font-semibold shrink-0">
+<span>+29.7% (+KES 403.45)</span>
+</div>
+</div>
+<div class="w-full h-6 rounded-md bg-surface-container-high flex overflow-hidden shadow-inner text-[10px] font-financial-sm text-on-primary font-medium tracking-tight leading-6 text-center">
+<div class="bg-outline hover:opacity-90 transition-opacity truncate px-1" style="width: 47.9%;" title="COGS: 47.9% (KES 650.00)">47.9% COGS</div>
+<div class="bg-secondary hover:opacity-90 transition-opacity truncate px-1" style="width: 15.0%;" title="Commission: 15.0% (KES 203.55)">15% Comm</div>
+<div class="bg-[#8B5CF6] hover:opacity-90 transition-opacity truncate px-1" style="width: 7.4%;" title="DS Fee: 7.4% (KES 100.00)">7.4% DS</div>
+<div class="bg-[#059669] hover:opacity-90 transition-opacity truncate px-1 font-bold" style="width: 29.7%;" title="Net Profit: 29.7% (+KES 403.45)">+29.7% NET</div>
+</div>
+</div>
+<!-- SKU 5: Melamine Mug (Thin Margin) -->
+<div class="flex flex-col gap-1">
+<div class="flex items-center justify-between text-body-sm font-body-sm">
+<div class="flex items-center gap-space-xs min-w-0">
+<span class="font-financial-sm text-financial-sm font-semibold text-on-surface truncate">Melamine Mug Eco Shatterproof</span>
+<span class="font-financial-sm text-financial-sm text-on-surface-variant shrink-0">(KES 235.00)</span>
+<span class="px-1.5 py-0.2 rounded bg-tertiary-fixed text-on-tertiary-fixed font-label-caps text-[9px] uppercase font-bold">Thin</span>
+</div>
+<div class="flex items-center gap-1 font-financial-sm text-financial-sm text-tertiary font-semibold shrink-0">
+<span>+7.1% (+KES 16.80)</span>
+</div>
+</div>
+<div class="w-full h-6 rounded-md bg-surface-container-high flex overflow-hidden shadow-inner text-[10px] font-financial-sm text-on-primary font-medium tracking-tight leading-6 text-center">
+<div class="bg-outline hover:opacity-90 transition-opacity truncate px-1" style="width: 46.8%;" title="COGS: 46.8% (KES 110.00)">46.8% COGS</div>
+<div class="bg-secondary hover:opacity-90 transition-opacity truncate px-1" style="width: 12.0%;" title="Commission: 12.0% (KES 28.20)">12%</div>
+<div class="bg-[#8B5CF6] hover:opacity-90 transition-opacity truncate px-1 font-bold" style="width: 34.0%;" title="DS Fee: 34.0% (KES 80.00)">34.0% DS Fee!</div>
+<div class="bg-[#059669] hover:opacity-90 transition-opacity truncate px-1 font-bold" style="width: 7.2%;" title="Net Profit: 7.1% (+KES 16.80)">7.1%</div>
+</div>
+</div>
+<!-- SKU 6: Anti-Vibration Pads (Loss-Making Trap) -->
+<div class="flex flex-col gap-1">
+<div class="flex items-center justify-between text-body-sm font-body-sm">
+<div class="flex items-center gap-space-xs min-w-0">
+<span class="font-financial-sm text-financial-sm font-semibold text-error truncate">4Pc Washing Machine Anti-Vibration Pads</span>
+<span class="font-financial-sm text-financial-sm text-on-surface-variant shrink-0">(KES 378.00)</span>
+<span class="px-1.5 py-0.2 rounded bg-error-container text-on-error-container font-label-caps text-[9px] uppercase font-bold">Anomaly Alert</span>
+</div>
+<div class="flex items-center gap-1 font-financial-sm text-financial-sm text-error font-bold shrink-0">
+<span class="material-symbols-outlined text-[15px]">error</span>
+<span>-6.9% (-KES 26.02 NET LOSS)</span>
+</div>
+</div>
+<!-- Bar with Overdraw Hatching for Loss -->
+<div class="relative w-full h-6 rounded-md bg-surface-container-high flex overflow-hidden shadow-inner text-[10px] font-financial-sm text-on-primary font-medium tracking-tight leading-6 text-center">
+<div class="bg-outline hover:opacity-90 transition-opacity truncate px-1" style="width: 31.7%;" title="COGS: 31.7% (KES 120.00 Est.)">31.7% COGS</div>
+<div class="bg-secondary hover:opacity-90 transition-opacity truncate px-0.5" style="width: 9.0%;" title="Commission: 9.0% (KES 34.02)">9%</div>
+<div class="bg-[#8B5CF6] hover:opacity-90 transition-opacity truncate px-1 font-bold" style="width: 59.3%;" title="DS Fee: 66.1% (KES 250.00 Super Large Tier Overcharge!)">66.1% Super Large DS Fee (KES 250)</div>
+</div>
+<div class="flex items-center justify-end gap-1 text-[11px] font-financial-sm text-error font-semibold mt-0.5">
+<span class="material-symbols-outlined text-[14px]">south</span>
+<span>Fee absorbs 106.9% of unit gross revenue. Net cash loss on order KKE003164862049.</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Card: Diagnostic Alert Widget (5 Cols) -->
+<div class="lg:col-span-5 flex flex-col gap-space-md">
+<!-- Diagnostic Container -->
+<div class="bg-surface-container-lowest p-space-lg rounded-xl shadow-sm flex flex-col gap-space-md">
+<div>
+<div class="flex items-center justify-between">
+<h2 class="font-headline-md text-headline-md text-on-surface font-semibold tracking-tight">Package Size &amp; Fee Diagnostics</h2>
+<span class="w-2 h-2 rounded-full bg-tertiary"></span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">Automated bill (55).xlsx ledger audit findings.</p>
+</div>
+<!-- Diagnostic 1: Package Tier Overcharge (Critical) -->
+<div class="p-space-md rounded-xl bg-error-container/20 flex flex-col gap-space-sm relative overflow-hidden">
+<div class="flex items-start justify-between gap-space-sm">
+<div class="flex items-center gap-space-xs text-error font-body-md text-body-md font-semibold">
+<span class="material-symbols-outlined text-[20px]">warning</span>
+<span>Package Tier Overcharge Alert</span>
+</div>
+<span class="px-2 py-0.5 rounded-full bg-error-container text-on-error-container font-label-caps text-label-caps font-bold shrink-0">
+              SUPER LARGE ANOMALY
+            </span>
+</div>
+<div class="font-body-sm text-body-sm text-on-surface">
+<div class="font-medium text-on-surface">Goods ID 10006158974 — 4Pc Anti-Vibration Pads</div>
+<div class="font-financial-sm text-financial-sm text-on-surface-variant mt-0.5">Unit Price: KES 378.00 | Tracking: KKE003164862049</div>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant text-[12px] leading-relaxed">
+            Kilimall billed a <span class="font-semibold text-error">"Super Large" DS Fee of KES 250.00</span> (66.1% of selling price). Normal logistic tier for small rubber pads (weight &lt;300g) is <span class="font-semibold text-on-surface">"Small" (KES 80.00)</span>.
+          </p>
+<div class="p-space-sm rounded-lg bg-surface-container-lowest flex items-center justify-between font-body-sm text-body-sm">
+<div class="flex flex-col">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase">Potential Refund</span>
+<span class="font-financial-md text-financial-md font-bold text-primary-container">+KES 170.00 / order</span>
+</div>
+<div class="text-right flex flex-col items-end">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase">Margin Shift</span>
+<span class="font-financial-md text-financial-md font-bold text-[#059669]">-6.9% → +38.1%</span>
+</div>
+</div>
+<button class="w-full h-[32px] mt-1 inline-flex items-center justify-center gap-space-xs rounded-lg bg-error text-on-error hover:opacity-90 transition-opacity font-body-sm text-body-sm font-semibold shadow-sm" type="button">
+<span class="material-symbols-outlined text-[16px]">gavel</span>
+<span>Submit Dimension Dispute to Kilimall</span>
+</button>
+</div>
+<!-- Diagnostic 2: Bundle Recommendation -->
+<div class="p-space-md rounded-xl bg-primary-container/10 flex flex-col gap-space-sm relative overflow-hidden">
+<div class="flex items-start justify-between gap-space-sm">
+<div class="flex items-center gap-space-xs text-primary-container font-body-md text-body-md font-semibold">
+<span class="material-symbols-outlined text-[20px]">inventory_2</span>
+<span>Multi-Pack Bundle Opportunity</span>
+</div>
+<span class="px-2 py-0.5 rounded-full bg-primary-container/20 text-primary-container font-label-caps text-label-caps font-bold shrink-0">
+              3.4X PROFIT BOOST
+            </span>
+</div>
+<div class="font-body-sm text-body-sm text-on-surface">
+<div class="font-medium text-on-surface">Goods ID 10006935691 — Melamine Mug</div>
+<div class="font-financial-sm text-financial-sm text-on-surface-variant mt-0.5">Single unit pays KES 80.00 DS (34% of price), yielding only KES 16.80.</div>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant text-[12px] leading-relaxed">
+            Create a <span class="font-semibold text-on-surface">"4-Mug Family Set" bundle at KES 890.00</span>. The bundle absorbs a single KES 100 Medium DS fee + KES 106.80 comm. + KES 440 COGS, netting <span class="font-semibold text-[#059669]">+KES 243.20 true profit</span> per customer box.
+          </p>
+<button class="w-full h-[32px] mt-1 inline-flex items-center justify-center gap-space-xs rounded-lg bg-primary-container text-on-primary hover:bg-[#115E59] transition-colors font-body-sm text-body-sm font-semibold shadow-sm" type="button">
+<span class="material-symbols-outlined text-[16px]">add_box</span>
+<span>Create Virtual Bundle SKU</span>
+</button>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION 3: FULL PRODUCT PROFITABILITY LEADERBOARD TABLE -->
+<section class="bg-surface-container-lowest rounded-xl shadow-sm flex flex-col mb-space-xl overflow-hidden">
+<!-- Filter Bar & Search Container -->
+<div class="p-space-lg flex flex-col lg:flex-row lg:items-center justify-between gap-space-md bg-surface-container-low/30">
+<!-- Filter Pills -->
+<div class="flex flex-wrap items-center gap-space-xs" id="table-filter-pills">
+<button class="filter-pill active inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary-container text-on-primary font-body-sm text-body-sm font-semibold transition-colors shadow-sm" type="button">
+<span>All Auto-Discovered Products</span>
+<span class="px-1.5 py-0.2 rounded-full bg-white/20 font-financial-sm text-financial-sm">13</span>
+</button>
+<button class="filter-pill inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface-container text-on-surface hover:bg-surface-container-high font-body-sm text-body-sm font-medium transition-colors" type="button">
+<span>Top Performers &gt;25%</span>
+<span class="px-1.5 py-0.2 rounded-full bg-[#059669]/15 text-[#059669] font-financial-sm text-financial-sm font-bold">4</span>
+</button>
+<button class="filter-pill inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface-container text-on-surface hover:bg-surface-container-high font-body-sm text-body-sm font-medium transition-colors" type="button">
+<span>Thin Margin &lt;10%</span>
+<span class="px-1.5 py-0.2 rounded-full bg-tertiary-fixed text-on-tertiary-fixed font-financial-sm text-financial-sm font-bold">3</span>
+</button>
+<button class="filter-pill inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface-container text-on-surface hover:bg-surface-container-high font-body-sm text-body-sm font-medium transition-colors" type="button">
+<span>Loss-Making &lt;0%</span>
+<span class="px-1.5 py-0.2 rounded-full bg-error-container text-on-error-container font-financial-sm text-financial-sm font-bold">1</span>
+</button>
+<button class="filter-pill inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface-container text-on-surface hover:bg-surface-container-high font-body-sm text-body-sm font-medium transition-colors" type="button">
+<span>Missing COGS</span>
+<span class="px-1.5 py-0.2 rounded-full bg-tertiary/20 text-tertiary font-financial-sm text-financial-sm font-bold">2</span>
+</button>
+</div>
+<!-- Search & Sort Controls -->
+<div class="flex items-center gap-space-sm shrink-0">
+<div class="relative w-full sm:w-64">
+<span class="material-symbols-outlined absolute left-2.5 top-1/2 -translate-y-1/2 text-on-surface-variant text-[18px]">search</span>
+<input class="w-full h-[34px] pl-9 pr-3 rounded-lg bg-surface-container-lowest text-on-surface font-body-sm text-body-sm placeholder:text-outline focus:outline-none focus:ring-2 focus:ring-primary-container shadow-inner" placeholder="Search SKU, Goods ID, title..." type="text"/>
+</div>
+<select class="h-[34px] px-3 rounded-lg bg-surface-container-lowest text-on-surface font-body-sm text-body-sm focus:outline-none focus:ring-2 focus:ring-primary-container shadow-sm cursor-pointer">
+<option>Sort: Highest Net Profit (KES)</option>
+<option>Sort: Highest Net Margin (%)</option>
+<option>Sort: Highest Qty Sold</option>
+<option>Sort: Highest DS Fee Drag</option>
+</select>
+</div>
+</div>
+<!-- Data Table Container -->
+<div class="w-full overflow-x-auto">
+<table class="w-full text-left border-collapse min-w-[1100px]">
+<thead>
+<tr class="bg-surface-container-low/70 text-on-surface-variant font-label-caps text-label-caps uppercase tracking-wider">
+<th class="py-space-sm pl-space-lg pr-space-xs text-center w-12">#</th>
+<th class="py-space-sm px-space-md">Product / Goods ID</th>
+<th class="py-space-sm px-space-sm text-center">Qty</th>
+<th class="py-space-sm px-space-sm text-right">Gross Sales</th>
+<th class="py-space-sm px-space-sm text-right">Kilimall Comm.</th>
+<th class="py-space-sm px-space-sm text-right">Matched DS Fees</th>
+<th class="py-space-sm px-space-sm text-right">Net Payout</th>
+<th class="py-space-sm px-space-sm text-right">Landed COGS</th>
+<th class="py-space-sm px-space-sm text-right font-bold text-on-surface">True Profit</th>
+<th class="py-space-sm px-space-sm text-center">Margin %</th>
+<th class="py-space-sm pr-space-lg pl-space-sm text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-surface-container-low font-body-sm text-body-sm">
+<!-- Row 1: Canopy Net (Rank 1) -->
+<tr class="hover:bg-surface-container-low/40 transition-colors">
+<td class="py-space-sm pl-space-lg pr-space-xs text-center font-financial-md text-financial-md font-bold text-primary-container">
+              #1
+            </td>
+<td class="py-space-sm px-space-md">
+<div class="flex flex-col min-w-[240px]">
+<span class="font-body-md text-body-md font-semibold text-on-surface hover:text-primary transition-colors cursor-pointer">Canopy 4 Stand Mosquito Net 5×6</span>
+<div class="flex items-center gap-space-xs mt-0.5">
+<span class="font-financial-sm text-financial-sm text-on-surface-variant">ID: 10007470517</span>
+<span class="px-1.5 py-0.2 rounded bg-surface-container-high text-on-surface-variant font-label-caps text-[10px]">Bedding</span>
+</div>
+</div>
+</td>
+<td class="py-space-sm px-space-sm text-center font-financial-md text-financial-md font-semibold text-on-surface">
+              1
+            </td>
+<td class="py-space-sm px-space-sm text-right font-financial-md text-financial-md text-on-surface">
+              KES 9,574.00
+            </td>
+<td class="py-space-sm px-space-sm text-right font-financial-md text-financial-md text-secondary">
+              -KES 1,436.10
+              <span class="block text-[10px] text-on-surface-variant font-financial-sm">15%</span>
+</td>
+<td class="py-space-sm px-space-sm text-right font-financial-md text-financial-md text-on-surface-variant">
+              -KES 100.00
+              <span class="block text-[10px] text-outline font-financial-sm">Prior Bill</span>
+</td>
+<td class="py-space-sm px-space-sm text-right font-financial-md text-financial-md font-semibold text-on-surface">
+              KES 8,037.90
+            </td>
+<td class="py-space-sm px-space-sm text-right font-financial-md text-financial-md text-on-surface-variant">
+              KES 4,500.00
+              <span class="block text-[10px] text-primary-container font-financial-sm">Verified</span>
+</td>
+<td class="py-space-sm px-space-sm text-right font-financial-md text-financial-md font-bold text-[#059669]">
+              +KES 3,537.90
+            </td>
+<td class="py-space-sm px-space-sm text-center">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full bg-primary-container/15 text-primary-container font-financial-sm text-financial-sm font-bold">
+                36.9%
+              </span>
+</td>
+<td class="py-space-sm pr-space-lg pl-space-sm text-right">
+<button class="h-7 px-2.5 rounded bg-surface-container text-on-surface hover:bg-surface-container-high transition-colors font-body-sm text-body-sm font-medium" type="button">
+                Simulate Price
+              </button>
+</td>
+</tr>
+<!-- Row 2: LED Digital Clock (Rank 2) -->
+<tr class="hover:bg-surface-container-low/40 transition-colors">
+<td class="py-space-sm pl-space-lg pr-space-xs text-center font-financial-md text-financial-md font-bold text-on-surface">
+              #2
+            </td>
+<td class="py-space-sm px-space-md">
+<div class="flex flex-col min-w-[240px]">
+<span class="font-body-md text-body-md font-semibold text-on-surface hover:text-primary transition-colors cursor-pointer">LED DIGITAL CLOCK Wall-mountable</span>
+<div class="flex items-center gap-space-xs mt-0.5">
+<span class="font-financial-sm text-financial-sm text-on-surface-variant">ID: 10005455494</span>
+<span class="px-1.5 py-0.2 rounded bg-surface-container-high text-on-surface-variant font-label-caps text-[10px]">Home Decor</span>
+</div>
+</div>
+</td>
+<td class="py-space-sm px-space-sm text-center font-financial-md text-financial-md font-semibold text-on-surface">
+              2
+            </td>
+<td class="py-space-sm px-space-sm text-right font-financial-md text-financial-md text-on-surface">
+              KES 4,752.00
+            </td>
+<td class="py-space-sm px-space-sm text-right font-financial-md text-financial-md text-secondary">
+              -KES 760.32
+              <span class="block text-[10px] text-on-surface-variant font-financial-sm">16%</span>
+</td>
+<td class="py-space-sm px-space-sm text-right font-financial-md text-financial-md text-on-surface-variant">
+              -KES 200.00
+              <span class="block text-[10px] text-outline font-financial-sm">Medium (100 ea)</span>
+</td>
+<td class="py-space-sm px-space-sm text-right font-financial-md text-financial-md font-semibold text-on-surface">
+              KES 3,791.68
+            </td>
+<td class="py-space-sm px-space-sm text-right font-financial-md text-financial-md text-on-surface-variant">
+              KES 2,200.00
+              <span class="block text-[10px] text-on-surface-variant font-financial-sm">1,100 ea</span>
+</td>
+<td class="py-space-sm px-space-sm text-right font-financial-md text-financial-md font-bold text-[#059669]">
+              +KES 1,591.68
+            </td>
+<td class="py-space-sm px-space-sm text-center">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full bg-primary-container/15 text-primary-container font-financial-sm text-financial-sm font-bold">
+                33.5%
+              </span>
+</td>
+<td class="py-space-sm pr-space-lg pl-space-sm text-right">
+<button class="h-7 px-2.5 rounded bg-surface-container text-on-surface hover:bg-surface-container-high transition-colors font-body-sm text-body-sm font-medium" type="button">
+                Simulate Price
+              </button>
+</td>
+</tr>
+<!-- Row 3: Wireless Earbuds Pro (Rank 3) -->
+<tr class="hover:bg-surface-container-low/40 transition-colors">
+<td class="py-space-sm pl-space-lg pr-space-xs text-center font-financial-md text-financial-md font-bold text-on-surface">
+              #3
+            </td>
+<td class="py-space-sm px-space-md">
+<div class="flex flex-col min-w-[240px]">
+<span class="font-body-md text-body-md font-semibold text-on-surface hover:text-primary transition-colors cursor-pointer">Wireless Bluetooth Earbuds Pro</span>
+<div class="flex items-center gap-space-xs mt-0.5">
+<span class="font-financial-sm text-financial-sm text-on-surface-variant">ID: 10008392102</span>
+<span class="px-1.5 py-0.2 rounded bg-surface-container-high text-on-surface-variant font-label-caps text-[10px]">Consumer Audio</span>
+</div>
+</div>
+</td>
+<td class="py-space-sm px-space-sm text-center font-financial-md text-financial-md font-semibold text-on-surface">
+              1
+            </td>
+<td class="py-space-sm px-space-sm text-right font-financial-md text-financial-md text-on-surface">
+              KES 2,450.00
+            </td>
+<td class="py-space-sm px-space-sm text-right font-financial-md text-financial-md text-secondary">
+              -KES 343.00
+              <span class="block text-[10px] text-on-surface-variant font-financial-sm">14%</span>
+</td>
+<td class="py-space-sm px-space-sm text-right font-financial-md text-financial-md text-on-surface-variant">
+              -KES 50.00
+              <span class="block text-[10px] text-outline font-financial-sm">Small</span>
+</td>
+<td class="py-space-sm px-space-sm text-right font-financial-md text-financial-md font-semibold text-on-surface">
+              KES 2,057.00
+            </td>
+<td class="py-space-sm px-space-sm text-right font-financial-md text-financial-md text-on-surface-variant">
+              KES 1,150.00
+              <span class="block text-[10px] text-primary-container font-financial-sm">Verified</span>
+</td>
+<td class="py-space-sm px-space-sm text-right font-financial-md text-financial-md font-bold text-[#059669]">
+              +KES 907.00
+            </td>
+<td class="py-space-sm px-space-sm text-center">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full bg-primary-container/15 text-primary-container font-financial-sm text-financial-sm font-bold">
+                37.0%
+              </span>
+</td>
+<td class="py-space-sm pr-space-lg pl-space-sm text-right">
+<button class="h-7 px-2.5 rounded bg-surface-container text-on-surface hover:bg-surface-container-high transition-colors font-body-sm text-body-sm font-medium" type="button">
+                Simulate Price
+              </button>
+</td>
+</tr>
+<!-- Row 4: 9-Layer Shoe Rack (Rank 4) -->
+<tr class="hover:bg-surface-container-low/40 transition-colors">
+<td class="py-space-sm pl-space-lg pr-space-xs text-center font-financial-md text-financial-md font-bold text-on-surface">
+              #4
+            </td>
+<td class="py-space-sm px-space-md">
+<div class="flex flex-col min-w-[240px]">
+<span class="font-body-md text-body-md font-semibold text-on-surface hover:text-primary transition-colors cursor-pointer">9 Layer Stainless Steel Shoe Rack F9B</span>
+<div class="flex items-center gap-space-xs mt-0.5">
+<span class="font-financial-sm text-financial-sm text-on-surface-variant">ID: 10007477797</span>
+<span class="px-1.5 py-0.2 rounded bg-surface-container-high text-on-surface-variant font-label-caps text-[10px]">Storage</span>
+</div>
+</div>
+</td>
+<td class="py-space-sm px-space-sm text-center font-financial-md text-financial-md font-semibold text-on-surface">
+              2
+            </td>
+<td class="py-space-sm px-space-sm text-right font-financial-md text-financial-md text-on-surface">
+              KES 2,714.00
+            </td>
+<td class="py-space-sm px-space-sm text-right font-financial-md text-financial-md text-secondary">
+              -KES 407.10
+              <span class="block text-[10px] text-on-surface-variant font-financial-sm">15%</span>
+</td>
+<td class="py-space-sm px-space-sm text-right font-financial-md text-financial-md text-on-surface-variant">
+              -KES 200.00
+              <span class="block text-[10px] text-outline font-financial-sm">Medium (100 ea)</span>
+</td>
+<td class="py-space-sm px-space-sm text-right font-financial-md text-financial-md font-semibold text-on-surface">
+              KES 2,106.90
+            </td>
+<td class="py-space-sm px-space-sm text-right font-financial-md text-financial-md text-on-surface-variant">
+              KES 1,300.00
+              <span class="block text-[10px] text-on-surface-variant font-financial-sm">650 ea</span>
+</td>
+<td class="py-space-sm px-space-sm text-right font-financial-md text-financial-md font-bold text-[#059669]">
+              +KES 806.90
+            </td>
+<td class="py-space-sm px-space-sm text-center">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full bg-primary-container/15 text-primary-container font-financial-sm text-financial-sm font-bold">
+                29.7%
+              </span>
+</td>
+<td class="py-space-sm pr-space-lg pl-space-sm text-right">
+<button class="h-7 px-2.5 rounded bg-surface-container text-on-surface hover:bg-surface-container-high transition-colors font-body-sm text-body-sm font-medium" type="button">
+                Simulate Price
+              </button>
+</td>
+</tr>
+<!-- Row 5: Melamine Mug (Rank 5 - Thin Margin) -->
+<tr class="hover:bg-surface-container-low/40 transition-colors bg-tertiary-fixed/10">
+<td class="py-space-sm pl-space-lg pr-space-xs text-center font-financial-md text-financial-md font-bold text-tertiary">
+              #5
+            </td>
+<td class="py-space-sm px-space-md">
+<div class="flex flex-col min-w-[240px]">
+<span class="font-body-md text-body-md font-semibold text-on-surface hover:text-primary transition-colors cursor-pointer">Melamine Mug Eco Shatterproof</span>
+<div class="flex items-center gap-space-xs mt-0.5">
+<span class="font-financial-sm text-financial-sm text-on-surface-variant">ID: 10006935691</span>
+<span class="px-1.5 py-0.2 rounded bg-tertiary-fixed text-on-tertiary-fixed font-label-caps text-[10px]">Kitchenware</span>
+</div>
+</div>
+</td>
+<td class="py-space-sm px-space-sm text-center font-financial-md text-financial-md font-semibold text-on-surface">
+              1
+            </td>
+<td class="py-space-sm px-space-sm text-right font-financial-md text-financial-md text-on-surface">
+              KES 235.00
+            </td>
+<td class="py-space-sm px-space-sm text-right font-financial-md text-financial-md text-secondary">
+              -KES 28.20
+              <span class="block text-[10px] text-on-surface-variant font-financial-sm">12%</span>
+</td>
+<td class="py-space-sm px-space-sm text-right font-financial-md text-financial-md text-tertiary font-semibold">
+              -KES 80.00
+              <span class="block text-[10px] text-tertiary font-financial-sm">Small (34% drag)</span>
+</td>
+<td class="py-space-sm px-space-sm text-right font-financial-md text-financial-md font-semibold text-on-surface">
+              KES 126.80
+            </td>
+<td class="py-space-sm px-space-sm text-right font-financial-md text-financial-md text-on-surface-variant">
+              KES 110.00
+              <span class="block text-[10px] text-on-surface-variant font-financial-sm">Landed Cost</span>
+</td>
+<td class="py-space-sm px-space-sm text-right font-financial-md text-financial-md font-bold text-tertiary">
+              +KES 16.80
+            </td>
+<td class="py-space-sm px-space-sm text-center">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full bg-tertiary-fixed text-on-tertiary-fixed font-financial-sm text-financial-sm font-bold">
+                7.1%
+              </span>
+</td>
+<td class="py-space-sm pr-space-lg pl-space-sm text-right">
+<button class="h-7 px-2.5 rounded bg-tertiary text-on-tertiary hover:opacity-90 transition-opacity font-body-sm text-body-sm font-semibold" type="button">
+                Bundle Item
+              </button>
+</td>
+</tr>
+<!-- Row 6: Washing Machine Pads (Alert: Super Large Overcharge Loss) -->
+<tr class="hover:bg-error-container/20 transition-colors bg-error-container/10">
+<td class="py-space-sm pl-space-lg pr-space-xs text-center font-financial-md text-financial-md font-bold text-error">
+              #6
+            </td>
+<td class="py-space-sm px-space-md">
+<div class="flex flex-col min-w-[240px]">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-error text-[16px]">error</span>
+<span class="font-body-md text-body-md font-bold text-error hover:underline cursor-pointer">4Pc Washing Machine Anti Vibration Pads</span>
+</div>
+<div class="flex items-center gap-space-xs mt-0.5">
+<span class="font-financial-sm text-financial-sm text-error/80">ID: 10006158974</span>
+<span class="px-1.5 py-0.2 rounded bg-error-container text-on-error-container font-label-caps text-[10px] font-bold">TIER ANOMALY</span>
+</div>
+</div>
+</td>
+<td class="py-space-sm px-space-sm text-center font-financial-md text-financial-md font-semibold text-on-surface">
+              1
+            </td>
+<td class="py-space-sm px-space-sm text-right font-financial-md text-financial-md text-on-surface">
+              KES 378.00
+            </td>
+<td class="py-space-sm px-space-sm text-right font-financial-md text-financial-md text-secondary">
+              -KES 34.02
+              <span class="block text-[10px] text-on-surface-variant font-financial-sm">9%</span>
+</td>
+<td class="py-space-sm px-space-sm text-right font-financial-md text-financial-md text-error font-bold">
+              -KES 250.00
+              <span class="block text-[10px] text-error font-financial-sm uppercase tracking-tight">Super Large Error!</span>
+</td>
+<td class="py-space-sm px-space-sm text-right font-financial-md text-financial-md font-semibold text-on-surface">
+              KES 93.98
+            </td>
+<td class="py-space-sm px-space-sm text-right font-financial-md text-financial-md text-on-surface-variant">
+              KES 120.00
+              <span class="block text-[10px] text-outline font-financial-sm">Est. Landed</span>
+</td>
+<td class="py-space-sm px-space-sm text-right font-financial-md text-financial-md font-bold text-error">
+              -KES 26.02
+            </td>
+<td class="py-space-sm px-space-sm text-center">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full bg-error text-on-error font-financial-sm text-financial-sm font-bold shadow-sm">
+                -6.9%
+              </span>
+</td>
+<td class="py-space-sm pr-space-lg pl-space-sm text-right">
+<button class="h-7 px-2.5 rounded bg-error text-on-error hover:opacity-90 transition-opacity font-body-sm text-body-sm font-semibold shadow-sm" type="button">
+                Dispute Fee
+              </button>
+</td>
+</tr>
+<!-- Row 7: Cellulose Sponges (Missing COGS) -->
+<tr class="hover:bg-surface-container-low/40 transition-colors">
+<td class="py-space-sm pl-space-lg pr-space-xs text-center font-financial-md text-financial-md font-bold text-on-surface-variant">
+              #7
+            </td>
+<td class="py-space-sm px-space-md">
+<div class="flex flex-col min-w-[240px]">
+<span class="font-body-md text-body-md font-semibold text-on-surface hover:text-primary transition-colors cursor-pointer">Cellulose Sponges (Natural Wood Pulp)</span>
+<div class="flex items-center gap-space-xs mt-0.5">
+<span class="font-financial-sm text-financial-sm text-on-surface-variant">ID: 10006922741</span>
+<span class="px-1.5 py-0.2 rounded bg-tertiary-fixed text-on-tertiary-fixed font-label-caps text-[10px]">Cleaning</span>
+</div>
+</div>
+</td>
+<td class="py-space-sm px-space-sm text-center font-financial-md text-financial-md font-semibold text-on-surface">
+              1
+            </td>
+<td class="py-space-sm px-space-sm text-right font-financial-md text-financial-md text-on-surface">
+              KES 342.00
+            </td>
+<td class="py-space-sm px-space-sm text-right font-financial-md text-financial-md text-secondary">
+              -KES 54.72
+              <span class="block text-[10px] text-on-surface-variant font-financial-sm">16%</span>
+</td>
+<td class="py-space-sm px-space-sm text-right font-financial-md text-financial-md text-on-surface-variant">
+              -KES 80.00
+              <span class="block text-[10px] text-outline font-financial-sm">Small</span>
+</td>
+<td class="py-space-sm px-space-sm text-right font-financial-md text-financial-md font-semibold text-on-surface">
+              KES 207.28
+            </td>
+<td class="py-space-sm px-space-sm text-right font-financial-md text-financial-md">
+<span class="inline-block text-tertiary font-semibold cursor-pointer underline decoration-dashed hover:text-tertiary-container">
+                + Set Unit COGS
+              </span>
+</td>
+<td class="py-space-sm px-space-sm text-right font-financial-md text-financial-md font-medium text-on-surface-variant">
+              Incomplete
+              <span class="block text-[10px] text-on-surface-variant font-financial-sm">+KES 207.28 gross</span>
+</td>
+<td class="py-space-sm px-space-sm text-center">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full bg-surface-container-high text-on-surface-variant font-financial-sm text-financial-sm font-medium">
+                Pending
+              </span>
+</td>
+<td class="py-space-sm pr-space-lg pl-space-sm text-right">
+<button class="h-7 px-2.5 rounded bg-primary-container text-on-primary hover:bg-[#115E59] transition-colors font-body-sm text-body-sm font-semibold" type="button">
+                Enter COGS
+              </button>
+</td>
+</tr>
+</tbody>
+<!-- TABLE SUMMARY FOOTER ROW -->
+<tfoot>
+<tr class="bg-surface-container font-financial-md text-financial-md font-bold text-on-surface">
+<td class="py-space-md pl-space-lg pr-space-xs text-center">∑</td>
+<td class="py-space-md px-space-md">Cycle Verified Portfolio Totals</td>
+<td class="py-space-md px-space-sm text-center">16</td>
+<td class="py-space-md px-space-sm text-right">KES 24,260.00</td>
+<td class="py-space-md px-space-sm text-right text-secondary">-KES 3,673.22</td>
+<td class="py-space-md px-space-sm text-right text-on-surface-variant">-KES 1,650.00</td>
+<td class="py-space-md px-space-sm text-right font-bold">KES 18,936.78</td>
+<td class="py-space-md px-space-sm text-right text-on-surface-variant">-KES 9,420.00</td>
+<td class="py-space-md px-space-sm text-right text-[#059669] font-bold text-[15px]">+KES 7,066.78</td>
+<td class="py-space-md px-space-sm text-center">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full bg-[#059669]/20 text-[#059669] font-financial-sm text-financial-sm font-bold">
+                29.13%
+              </span>
+</td>
+<td class="py-space-md pr-space-lg pl-space-sm text-right font-body-sm text-body-sm font-normal text-on-surface-variant">
+              14/16 Verified
+            </td>
+</tr>
+</tfoot>
+</table>
+</div>
+</section>
+<!-- SECTION 4: INSTANT WHAT-IF MARGIN SENSITIVITY ENGINE BANNER -->
+<section class="bg-surface-container-lowest p-space-lg rounded-xl shadow-sm relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-space-lg" id="simulation-banner">
+<div class="flex items-start gap-space-md max-w-3xl">
+<div class="w-10 h-10 rounded-xl bg-secondary flex items-center justify-center shrink-0 text-on-secondary shadow-sm">
+<span class="material-symbols-outlined text-[24px]">calculate</span>
+</div>
+<div class="flex flex-col">
+<div class="flex items-center gap-space-xs">
+<h3 class="font-headline-md text-headline-md text-on-surface font-semibold tracking-tight">Instant What-If Margin Sensitivity Engine</h3>
+<span class="px-2 py-0.2 rounded bg-secondary-fixed text-on-secondary-fixed font-label-caps text-label-caps font-bold">LIVE SIMULATOR</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1 leading-relaxed">
+          Simulate a <strong class="text-on-surface">+5% to +10% selling price optimization</strong> across your catalog. A modest +5% price adjustment on your top 3 selling SKUs buffers <strong class="text-primary-container">100% of standard KES 80–100 DS courier handling fluctuations</strong> without impacting conversion rates.
+        </p>
+</div>
+</div>
+<div class="flex items-center gap-space-md shrink-0 w-full md:w-auto justify-end">
+<button class="h-[36px] px-space-md rounded-lg bg-surface-container text-on-surface hover:bg-surface-container-high transition-colors font-body-md text-body-md font-semibold" type="button">
+        Model Settlement Impact
+      </button>
+<a class="inline-flex items-center gap-1 font-body-md text-body-md text-secondary hover:text-secondary-container font-semibold transition-colors" href="#">
+<span>Multi-Store Sensitivity Matrix</span>
+<span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</a>
+</div>
+</section>
+</div>
+<script>
+  // Filter Pills Interactive State
+  document.querySelectorAll('#table-filter-pills .filter-pill').forEach(btn => {
+    btn.addEventListener('click', function() {
+      document.querySelectorAll('#table-filter-pills .filter-pill').forEach(el => {
+        el.classList.remove('bg-primary-container', 'text-on-primary', 'shadow-sm');
+        el.classList.add('bg-surface-container', 'text-on-surface');
+      });
+      this.classList.remove('bg-surface-container', 'text-on-surface');
+      this.classList.add('bg-primary-container', 'text-on-primary', 'shadow-sm');
+    });
+  });
+</script></main></div></body></html>

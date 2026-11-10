@@ -1,0 +1,27 @@
+/* Custom Design System Tokens & Utilities per DESIGN.md */
+:root {
+    --bg-canvas: #F8FAFC;
+    --surface-primary: #FFFFFF;
+    --surface-secondary: #F1F5F9;
+    --sidebar-bg: #0F172A;
+    --sidebar-active: #1E293B;
+    --brand-teal: #0F766E;
+    --brand-teal-hover: #115E59;
+    --brand-indigo: #4F46E5;
+    --kilimall-orange: #EA580C;
+    --border-default: #E2E8F0;
+}
+
+.tabular-nums {
+    font-variant-numeric: tabular-nums;
+}
+
+/* HTMX Loading Indicator Behaviour */
+.htmx-indicator {
+    opacity: 0;
+    pointer-events: none;
+}
+.htmx-request .htmx-indicator,
+.htmx-request.htmx-indicator {
+    opacity: 1;
+}

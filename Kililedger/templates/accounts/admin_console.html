@@ -1,0 +1,144 @@
+{% extends "base.html" %}
+
+{% block title %}Platform Administration & Parser Health Console — KiliLedger Pro{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+    <!-- Admin Header Banner -->
+    <div class="flex flex-col justify-between gap-4 rounded-[10px] bg-[#1E1B4B] p-6 text-white sm:flex-row sm:items-center">
+        <div>
+            <span class="rounded bg-indigo-500/30 px-2 py-0.5 font-mono text-xs font-semibold text-indigo-200">
+                KILILEDGER PLATFORM OPS CONSOLE (SCR-16)
+            </span>
+            <h1 class="mt-2 text-2xl font-bold">SaaS Tenant Governance &amp; Workbook Parser Health</h1>
+            <p class="mt-1 text-xs text-indigo-200">
+                Strict Tenant Financial Privacy enforced: Vendor sales, payouts, and COGS figures are cryptographically isolated from platform operators.
+            </p>
+        </div>
+    </div>
+
+    <!-- System Telemetry KPI Cards -->
+    <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        {% include "components/_kpi_card.html" with label="TOTAL VENDOR TENANTS" amount=total_tenants pill_text="Multi-Vendor SaaS" pill_tone="blue" subtext="Isolated Workspaces" %}
+        {% include "components/_kpi_card.html" with label="ACTIVE TENANTS" amount=active_tenants pill_text="Operational" pill_tone="green" subtext="Subscription Active" %}
+        {% include "components/_kpi_card.html" with label="PARSER SCHEMA LOGS" amount=diagnostic_logs|length pill_text="9-Sheet Engine" pill_tone="violet" subtext="Automated Header Mapping" %}
+        {% include "components/_kpi_card.html" with label="UNRESOLVED SCHEMA DRIFT" amount=flagged_logs_count pill_text="Needs Review" pill_tone="amber" subtext="Workbook Exceptions" %}
+    </div>
+
+    <!-- Vendor Tenant Directory Table -->
+    <div class="rounded-[10px] border border-[#E2E8F0] bg-white shadow-sm overflow-hidden">
+        <div class="border-b border-slate-200 px-6 py-4">
+            <h2 class="text-base font-bold text-[#0F172A]">Registered Vendor Tenants &amp; Privacy Status</h2>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-slate-200 text-left text-[13px]">
+                <thead class="bg-[#F1F5F9] text-[11px] font-semibold uppercase tracking-wider text-[#475569]">
+                    <tr>
+                        <th class="px-6 py-3">Business Name</th>
+                        <th class="px-6 py-3">Contact Email &amp; Phone</th>
+                        <th class="px-6 py-3">Users</th>
+                        <th class="px-6 py-3">Aging Rule</th>
+                        <th class="px-6 py-3">Financial Privacy Status</th>
+                        <th class="px-6 py-3">Account Status</th>
+                        <th class="px-6 py-3 text-right">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-200 bg-white">
+                    {% for tenant in tenants %}
+                    <tr class="hover:bg-slate-50">
+                        <td class="px-6 py-3.5 font-semibold text-slate-900">{{ tenant.business_name }}</td>
+                        <td class="px-6 py-3.5 text-slate-600">
+                            <div>{{ tenant.contact_email }}</div>
+                            <div class="font-mono text-xs text-slate-400">{{ tenant.contact_phone }}</div>
+                        </td>
+                        <td class="px-6 py-3.5 font-mono">{{ tenant.user_count }}</td>
+                        <td class="px-6 py-3.5 font-mono text-xs">{{ tenant.pending_aging_threshold_days }} days</td>
+                        <td class="px-6 py-3.5">
+                            {% if tenant.is_support_access_active %}
+                                <span class="inline-flex items-center rounded-full bg-amber-100 px-2.5 py-0.5 font-mono text-xs font-medium text-amber-800">
+                                    Support Access Granted
+                                </span>
+                            {% else %}
+                                <span class="inline-flex items-center rounded-full bg-slate-100 px-2.5 py-0.5 font-mono text-xs font-medium text-slate-700">
+                                    Locked — Private Tenant
+                                </span>
+                            {% endif %}
+                        </td>
+                        <td class="px-6 py-3.5">
+                            {% if tenant.is_active %}
+                                <span class="rounded-full bg-[#DCFCE7] px-2.5 py-0.5 text-xs font-medium text-[#15803D]">Active</span>
+                            {% else %}
+                                <span class="rounded-full bg-[#FEE2E2] px-2.5 py-0.5 text-xs font-medium text-[#B91C1C]">Suspended</span>
+                            {% endif %}
+                        </td>
+                        <td class="px-6 py-3.5 text-right">
+                            <form method="post" action="{% url 'accounts:platform_admin_console' %}" class="inline">
+                                {% csrf_token %}
+                                <input type="hidden" name="tenant_id" value="{{ tenant.id }}">
+                                {% if tenant.is_active %}
+                                    <input type="hidden" name="admin_action" value="suspend">
+                                    <button type="submit" class="text-xs font-semibold text-red-600 hover:underline">Suspend</button>
+                                {% else %}
+                                    <input type="hidden" name="admin_action" value="activate">
+                                    <button type="submit" class="text-xs font-semibold text-teal-700 hover:underline">Activate</button>
+                                {% endif %}
+                            </form>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="px-6 py-8 text-center text-slate-500">No vendor tenants registered yet.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Workbook Parser Schema & Header Alias Inspector -->
+    <div class="rounded-[10px] border border-[#E2E8F0] bg-white shadow-sm overflow-hidden">
+        <div class="border-b border-slate-200 px-6 py-4">
+            <h2 class="text-base font-bold text-[#0F172A]">Kilimall Workbook Parser Schema &amp; Header Alias Inspector</h2>
+            <p class="text-xs text-slate-500">Logs structural column mappings (e.g., 'amout' → 'amount', 'Total Valume' → 'total_volume') without exposing private sales numbers.</p>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-slate-200 text-left text-[13px]">
+                <thead class="bg-[#F1F5F9] text-[11px] font-semibold uppercase tracking-wider text-[#475569]">
+                    <tr>
+                        <th class="px-6 py-3">Timestamp</th>
+                        <th class="px-6 py-3">Store ID</th>
+                        <th class="px-6 py-3">Worksheet</th>
+                        <th class="px-6 py-3">Issue / Rule Type</th>
+                        <th class="px-6 py-3">Structural Diagnostic Detail</th>
+                        <th class="px-6 py-3">Resolution</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-200 bg-white">
+                    {% for log in diagnostic_logs %}
+                    <tr>
+                        <td class="px-6 py-3 font-mono text-xs text-slate-500">{{ log.created_at|date:"Y-m-d H:i" }}</td>
+                        <td class="px-6 py-3 font-mono text-xs">{{ log.kilimall_store_id|default:"—" }}</td>
+                        <td class="px-6 py-3 font-mono text-xs font-semibold">{{ log.sheet_name }}</td>
+                        <td class="px-6 py-3 font-mono text-xs">{{ log.issue_type }}</td>
+                        <td class="px-6 py-3 text-slate-700">{{ log.diagnostic_detail }}</td>
+                        <td class="px-6 py-3">
+                            {% if log.auto_resolved %}
+                            <span class="rounded-full bg-[#DCFCE7] px-2.5 py-0.5 text-xs font-medium text-[#15803D]">Auto-Mapped</span>
+                            {% else %}
+                            <span class="rounded-full bg-[#FEF3C7] px-2.5 py-0.5 text-xs font-medium text-[#B45309]">Needs Rule</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="px-6 py-6 text-center text-slate-500">
+                            No schema exceptions recorded. Built-in Kilimall 9-sheet alias rules active (`Total Valume`, `finnshed_time`, `amout`, leading comma sanitization).
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

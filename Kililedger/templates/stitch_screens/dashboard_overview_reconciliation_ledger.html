@@ -1,0 +1,563 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta content="width=device-width, initial-scale=1.0" name="viewport"><meta content="web_dashboard" name="shell-type"><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"><link href="https://fonts.googleapis.com" rel="preconnect"><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={"darkMode":"class","theme":{"extend":{"colors":{"error-container":"#ffdad6","on-primary":"#ffffff","background":"#faf8ff","inverse-surface":"#283044","surface-container-high":"#e2e7ff","surface-dim":"#d2d9f4","surface":"#faf8ff","secondary-fixed":"#e2dfff","secondary":"#4b41e1","on-surface-variant":"#3e4947","on-background":"#131b2e","on-secondary-container":"#fffbff","surface-bright":"#faf8ff","surface-container":"#eaedff","on-primary-container":"#a3faef","on-primary-fixed-variant":"#00504a","outline-variant":"#bdc9c6","primary-fixed":"#9cf2e8","inverse-on-surface":"#eef0ff","surface-tint":"#006a63","on-tertiary-container":"#ffe5dc","inverse-primary":"#80d5cb","on-secondary-fixed":"#0f0069","on-secondary-fixed-variant":"#3323cc","tertiary-fixed":"#ffdbce","outline":"#6e7977","on-error-container":"#93000a","tertiary-fixed-dim":"#ffb599","primary":"#005c55","primary-fixed-dim":"#80d5cb","tertiary":"#913200","surface-container-lowest":"#ffffff","on-primary-fixed":"#00201d","error":"#ba1a1a","surface-container-low":"#f2f3ff","on-tertiary-fixed-variant":"#7f2b00","on-error":"#ffffff","on-tertiary":"#ffffff","surface-container-highest":"#dae2fd","on-secondary":"#ffffff","tertiary-container":"#b94200","surface-variant":"#dae2fd","on-surface":"#131b2e","on-tertiary-fixed":"#370e00","primary-container":"#0f766e","secondary-container":"#645efb","secondary-fixed-dim":"#c3c0ff"},"borderRadius":{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"},"spacing":{"space-xl":"1.5rem","gutter-desktop":"1.5rem","space-sm":"0.5rem","space-md":"0.75rem","gutter":"1rem","margin-desktop":"2rem","space-lg":"1rem","margin":"1rem","space-xs":"0.25rem"},"fontFamily":{"label-caps":["Inter"],"financial-md":["JetBrains Mono"],"financial-sm":["JetBrains Mono"],"body-lg":["Inter"],"headline-md":["Inter"],"body-sm":["Inter"],"financial-xl":["JetBrains Mono"],"headline-lg":["Inter"],"financial-lg":["JetBrains Mono"],"headline-xl":["Inter"],"body-md":["Inter"]},"fontSize":{"label-caps":["11px",{"lineHeight":"14px","letterSpacing":"0.04em","fontWeight":"600"}],"financial-md":["13px",{"lineHeight":"16px","letterSpacing":"-0.005em","fontWeight":"500"}],"financial-sm":["11px",{"lineHeight":"14px","fontWeight":"500"}],"body-lg":["15px",{"lineHeight":"22px","fontWeight":"400"}],"headline-md":["18px",{"lineHeight":"24px","letterSpacing":"-0.01em","fontWeight":"600"}],"body-sm":["12px",{"lineHeight":"16px","fontWeight":"400"}],"financial-xl":["24px",{"lineHeight":"28px","letterSpacing":"-0.02em","fontWeight":"600"}],"headline-lg":["22px",{"lineHeight":"28px","letterSpacing":"-0.015em","fontWeight":"600"}],"financial-lg":["16px",{"lineHeight":"20px","letterSpacing":"-0.01em","fontWeight":"600"}],"headline-xl":["28px",{"lineHeight":"34px","letterSpacing":"-0.02em","fontWeight":"700"}],"body-md":["13px",{"lineHeight":"18px","fontWeight":"400"}]}}}}</script></head><body class="bg-surface font-body-md text-body-md text-on-surface antialiased"><aside class="fixed left-0 top-0 h-full w-[260px] bg-inverse-surface border-r border-outline-variant/20 z-50 flex flex-col justify-between select-none"><div class="flex flex-col"><div class="h-16 px-space-lg flex items-center justify-between border-b border-outline-variant/15"><div class="flex items-center gap-space-sm"><div class="w-8 h-8 rounded-lg bg-primary-container flex items-center justify-center text-on-primary shadow-sm"><span class="material-symbols-outlined text-[20px]">account_balance</span></div><div class="flex flex-col"><span class="font-headline-md text-headline-md text-inverse-on-surface tracking-tight leading-none">KiliLedger</span><span class="font-financial-sm text-financial-sm text-primary-fixed">PRO ENTERPRISE</span></div></div><span class="px-space-xs py-0.5 rounded-full bg-primary/20 text-primary-fixed font-label-caps text-label-caps uppercase border border-primary/30">Kenya DS</span></div><div class="px-space-md py-space-sm"><div class="px-space-sm py-1.5 font-label-caps text-label-caps uppercase tracking-wider text-outline-variant/80">Financial Ledger</div></div><nav class="flex flex-col space-y-0.5 px-space-sm" data-active-classes="bg-surface-variant/10 text-inverse-on-surface font-semibold border-l-4 border-primary-container"><a aria-current="page" class="group flex items-center gap-space-sm px-space-md py-2.5 rounded transition-colors bg-surface-variant/10 text-inverse-on-surface font-semibold border-l-4 border-primary-container" data-path="dashboard-overview" href="#"><span class="material-symbols-outlined text-[18px] text-outline-variant group-hover:text-primary-fixed">dashboard</span><span class="font-body-md text-body-md truncate">Dashboard</span></a><a class="group flex items-center gap-space-sm px-space-md py-2.5 rounded text-inverse-on-surface/70 hover:bg-surface-variant/5 hover:text-inverse-on-surface transition-colors border-l-4 border-transparent" data-path="stores-statements" href="/stores/"><span class="material-symbols-outlined text-[18px] text-outline-variant group-hover:text-primary-fixed">storefront</span><span class="font-body-md text-body-md truncate">Stores &amp; Statements</span></a><a class="group flex items-center gap-space-sm px-space-md py-2.5 rounded text-inverse-on-surface/70 hover:bg-surface-variant/5 hover:text-inverse-on-surface transition-colors border-l-4 border-transparent" data-path="financial-analytics" href="/dashboard/pnl/"><span class="material-symbols-outlined text-[18px] text-outline-variant group-hover:text-primary-fixed">analytics</span><span class="font-body-md text-body-md truncate">Financial Analytics</span></a><a class="group flex items-center gap-space-sm px-space-md py-2.5 rounded text-inverse-on-surface/70 hover:bg-surface-variant/5 hover:text-inverse-on-surface transition-colors border-l-4 border-transparent" data-path="orders-reconciliation" href="/orders/"><span class="material-symbols-outlined text-[18px] text-outline-variant group-hover:text-primary-fixed">receipt_long</span><span class="font-body-md text-body-md truncate">Orders &amp; Reconciliation</span></a><a class="group flex items-center gap-space-sm px-space-md py-2.5 rounded text-inverse-on-surface/70 hover:bg-space-variant/5 hover:text-inverse-on-surface transition-colors border-l-4 border-transparent" data-path="products-profitability" href="/products/"><span class="material-symbols-outlined text-[18px] text-outline-variant group-hover:text-primary-fixed">inventory_2</span><span class="font-body-md text-body-md truncate">Products &amp; Profitability</span></a><a class="group flex items-center gap-space-sm px-space-md py-2.5 rounded text-inverse-on-surface/70 hover:bg-surface-variant/5 hover:text-inverse-on-surface transition-colors border-l-4 border-transparent" data-path="fees-penalties" href="/orders/fees-penalties/"><span class="material-symbols-outlined text-[18px] text-outline-variant group-hover:text-primary-fixed">gavel</span><span class="font-body-md text-body-md truncate">Fees &amp; Penalties</span></a><a class="group flex items-center gap-space-sm px-space-md py-2.5 rounded text-inverse-on-surface/70 hover:bg-surface-variant/5 hover:text-inverse-on-surface transition-colors border-l-4 border-transparent" data-path="reports-exports" href="/reports/"><span class="material-symbols-outlined text-[18px] text-outline-variant group-hover:text-primary-fixed">description</span><span class="font-body-md text-body-md truncate">Reports &amp; Exports</span></a></nav></div><div class="p-space-md border-t border-outline-variant/15 flex flex-col gap-space-sm bg-inverse-surface"><div class="flex flex-col gap-1"><a class="flex items-center gap-space-sm px-space-sm py-1.5 text-inverse-on-surface/70 hover:text-inverse-on-surface transition-colors font-body-sm text-body-sm" data-path="settings-rules" href="/settings/"><span class="material-symbols-outlined text-[16px]">tune</span><span class="">Settings &amp; Rules</span></a><div class="flex items-center justify-between px-space-sm py-1 text-inverse-on-surface/70 font-body-sm text-body-sm"><span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-primary-fixed animate-pulse"></span>Support Access</span><span class="font-label-caps text-label-caps text-primary-fixed uppercase">Active</span></div></div><div class="px-space-sm py-2 rounded bg-surface-variant/5 border border-outline-variant/10 flex items-center justify-between font-financial-sm text-financial-sm text-inverse-on-surface/80"><span class="">Kilimall API</span><span class="inline-flex items-center gap-1 text-primary-fixed"><span class="w-1.5 h-1.5 rounded-full bg-primary-fixed"></span>Sync Normal</span></div></div></aside><div class="pl-[260px]"><header class="fixed top-0 left-[260px] right-0 h-16 bg-surface-container-lowest border-b border-outline-variant/30 z-40 px-space-lg flex items-center justify-between shadow-[0_1px_2px_rgba(15,23,42,0.03)]"><div class="flex items-center gap-space-md"><div class="flex items-center gap-space-xs px-space-md py-1.5 bg-surface-container-low rounded border border-outline-variant/40 cursor-pointer hover:bg-surface-container transition-colors"><span class="w-2 h-2 rounded-full bg-secondary"></span><div class="flex flex-col"><span class="font-label-caps text-label-caps uppercase text-outline">Active Workspace</span><span class="font-body-sm text-body-sm font-semibold text-on-surface">All My Stores (Consolidated)</span></div><span class="material-symbols-outlined text-[18px] text-outline ml-1">expand_more</span></div><div class="hidden xl:flex items-center bg-surface-container-low p-1 rounded border border-outline-variant/40 font-body-sm text-body-sm"><button class="px-space-sm py-1 rounded bg-surface-container-lowest font-medium text-on-surface shadow-xs" type="button">Weekly (Current)</button><button class="px-space-sm py-1 rounded text-on-surface-variant hover:text-on-surface transition-colors" type="button">Monthly</button><button class="px-space-sm py-1 rounded text-on-surface-variant hover:text-on-surface transition-colors" type="button">Quarterly</button><button class="px-space-sm py-1 rounded text-on-surface-variant hover:text-on-surface transition-colors" type="button">Yearly</button><div class="h-4 w-[1px] bg-outline-variant/40 mx-1"></div><span class="px-space-xs font-financial-sm text-financial-sm text-on-surface-variant flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">date_range</span>Oct 14 - Oct 20, 2024</span></div></div><div class="flex items-center gap-space-md"><div class="hidden md:inline-flex items-center gap-1.5 px-space-sm py-1 bg-tertiary-fixed rounded-full text-on-tertiary-fixed border border-tertiary-fixed-dim/60 font-body-sm text-body-sm"><span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span><span class="font-medium">2 Products Missing COGS</span></div><button class="h-[34px] px-space-md bg-primary-container hover:bg-primary text-on-primary rounded font-body-sm text-body-sm font-medium flex items-center gap-1.5 transition-colors shadow-xs" type="button"><span class="material-symbols-outlined text-[16px]">upload_file</span><span class="">Upload Settlement Excel</span></button><button class="relative p-1.5 rounded hover:bg-surface-container-high text-on-surface-variant transition-colors" type="button"><span class="material-symbols-outlined text-[20px]">notifications</span><span class="absolute top-1 right-1 w-4 h-4 bg-tertiary text-on-tertiary rounded-full font-financial-sm text-[10px] flex items-center justify-center font-bold">3</span></button><div class="flex items-center gap-space-sm pl-space-sm border-l border-outline-variant/30 cursor-pointer"><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div><div class="hidden lg:flex flex-col text-left"><span class="font-body-sm text-body-sm font-semibold text-on-surface leading-tight">Kushpedia Group Ltd</span><span class="font-financial-sm text-financial-sm text-outline leading-tight">Merchant ID: KP-8841</span></div><span class="material-symbols-outlined text-[16px] text-outline">expand_more</span></div></div></header><main class="relative pt-16 bg-surface min-h-screen px-gutter-desktop py-space-xl"><div class="flex flex-col w-full space-y-space-lg text-on-surface">
+<!-- TOP CONTEXT BAR & ACTIONS -->
+<div class="flex flex-col lg:flex-row lg:items-center justify-between gap-space-md pb-space-xs">
+<div class="flex flex-col space-y-1">
+<div class="flex flex-wrap items-center gap-space-sm">
+<h1 class="font-headline-xl text-headline-xl text-on-surface tracking-tight">
+          Financial Overview &amp; Settlement Reconciliation
+        </h1>
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full bg-surface-container-high text-primary font-label-caps text-label-caps uppercase">
+          Cycle: Oct 14 – Oct 20, 2024 (Week 42)
+        </span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-primary-container"></span>
+        Consolidated performance across 2 Kilimall DS stores:
+        <span class="font-semibold text-on-surface">Kushpedia Stores4 (#10344)</span> &amp;
+        <span class="font-semibold text-on-surface">Nairobi Tech Hub (#10892)</span>
+</p>
+</div>
+<!-- Quick Action Toolbar -->
+<div class="flex flex-wrap items-center gap-space-sm self-start lg:self-auto">
+<div class="flex items-center gap-1.5 px-space-sm py-1.5 rounded bg-surface-container-low text-on-surface-variant font-financial-sm text-financial-sm shadow-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-primary-container animate-pulse"></span>
+<span class="">Synced 2 mins ago</span>
+<button class="p-0.5 hover:text-primary transition-colors" title="Sync Statement Data" type="button">
+<span class="material-symbols-outlined text-[15px]">sync</span>
+</button>
+</div>
+<button class="h-[34px] px-space-md bg-surface-container-lowest text-on-surface hover:bg-surface-container-high rounded font-body-sm text-body-sm font-medium flex items-center gap-1.5 shadow-sm transition-all" type="button">
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant">picture_as_pdf</span>
+<span class="">Export P&amp;L Summary</span>
+</button>
+<button class="h-[34px] px-space-md bg-surface-container-lowest text-on-surface hover:bg-surface-container-high rounded font-body-sm text-body-sm font-medium flex items-center gap-1.5 shadow-sm transition-all" type="button">
+<span class="material-symbols-outlined text-[16px] text-primary-container">table_view</span>
+<span class="">Reconciled XLSX</span>
+</button>
+<button class="h-[34px] px-space-md bg-primary-container hover:bg-primary text-on-primary rounded font-body-sm text-body-sm font-medium flex items-center gap-1.5 shadow-sm transition-all" type="button">
+<span class="material-symbols-outlined text-[16px]">account_balance_wallet</span>
+<span class="">Batch Match Payout</span>
+</button>
+</div>
+</div>
+<!-- SECTION 1: EXECUTIVE FINANCIAL KPI METRIC CARDS -->
+<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-space-md">
+<!-- 1. Gross Sales -->
+<div class="bg-surface-container-lowest rounded-xl p-space-lg shadow-sm flex flex-col justify-between relative overflow-hidden group">
+<div class="flex items-start justify-between">
+<div class="flex flex-col">
+<span class="font-label-caps text-label-caps uppercase text-on-surface-variant tracking-wider">Gross Sales (Goods Rev)</span>
+<span class="font-financial-xl text-financial-xl font-bold text-on-surface mt-1">KES 148,650.00</span>
+</div>
+<div class="w-8 h-8 rounded-lg bg-surface-container-low flex items-center justify-center text-primary-container">
+<span class="material-symbols-outlined text-[18px]">payments</span>
+</div>
+</div>
+<div class="mt-4 pt-3 flex items-center justify-between text-body-sm font-body-sm">
+<span class="text-on-surface-variant">86 Completed Orders</span>
+<span class="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full bg-primary-fixed text-on-primary-fixed font-financial-sm text-financial-sm font-semibold">
+<span class="material-symbols-outlined text-[14px]">trending_up</span>
+          +14.2% vs W41
+        </span>
+</div>
+</div>
+<!-- 2. Kilimall Deductions -->
+<div class="bg-surface-container-lowest rounded-xl p-space-lg shadow-sm flex flex-col justify-between relative overflow-hidden group">
+<div class="flex items-start justify-between">
+<div class="flex flex-col">
+<span class="font-label-caps text-label-caps uppercase text-on-surface-variant tracking-wider">Platform Deductions</span>
+<span class="font-financial-xl text-financial-xl font-bold text-tertiary mt-1">-KES 32,840.00</span>
+</div>
+<div class="w-8 h-8 rounded-lg bg-tertiary-fixed flex items-center justify-center text-tertiary">
+<span class="material-symbols-outlined text-[18px]">receipt_long</span>
+</div>
+</div>
+<div class="mt-4 pt-3 flex flex-col gap-1.5 text-body-sm font-body-sm">
+<div class="flex items-center justify-between font-financial-sm text-financial-sm text-on-surface-variant">
+<span class="">Commissions (11.8% avg)</span>
+<span class="text-on-surface font-semibold">-17,540.00</span>
+</div>
+<div class="flex items-center justify-between font-financial-sm text-financial-sm text-on-surface-variant">
+<span class="">DS Handling (74 pkgs)</span>
+<span class="text-on-surface font-semibold">-12,300.00</span>
+</div>
+<div class="flex items-center justify-between font-financial-sm text-financial-sm text-tertiary">
+<span class="">Fines (10 overdue dispatch)</span>
+<span class="font-semibold">-3,000.00</span>
+</div>
+</div>
+</div>
+<!-- 3. Net Kilimall Payout -->
+<div class="bg-surface-container-lowest rounded-xl p-space-lg shadow-sm flex flex-col justify-between relative overflow-hidden group">
+<div class="flex items-start justify-between">
+<div class="flex flex-col">
+<span class="font-label-caps text-label-caps uppercase text-on-surface-variant tracking-wider">Net Settlement Payout</span>
+<span class="font-financial-xl text-financial-xl font-bold text-primary-container mt-1">KES 115,810.00</span>
+</div>
+<div class="w-8 h-8 rounded-lg bg-surface-container-low flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-[18px]">account_balance</span>
+</div>
+</div>
+<div class="mt-4 pt-3 flex flex-col gap-1 font-body-sm text-body-sm">
+<div class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-primary-container"></span>
+<span class="font-medium text-on-surface">Settled Payout Received</span>
+<span class="text-on-surface-variant text-[11px] font-financial-sm">#W42-KM</span>
+</div>
+<span class="text-on-surface-variant text-[11px]">100% matched against KCB &amp; M-Pesa statements</span>
+</div>
+</div>
+<!-- 4. True Net Profit -->
+<div class="bg-surface-container-lowest rounded-xl p-space-lg shadow-sm flex flex-col justify-between relative overflow-hidden group">
+<div class="flex items-start justify-between">
+<div class="flex flex-col">
+<span class="font-label-caps text-label-caps uppercase text-on-surface-variant tracking-wider">True Net Profit (After COGS)</span>
+<span class="font-financial-xl text-financial-xl font-bold text-primary mt-1">KES 41,290.00</span>
+</div>
+<div class="w-8 h-8 rounded-lg bg-surface-container-low flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[18px]">verified</span>
+</div>
+</div>
+<div class="mt-4 pt-3 flex flex-col gap-2 font-body-sm text-body-sm">
+<div class="flex items-center justify-between">
+<span class="text-on-surface-variant">True Net Margin</span>
+<span class="font-financial-sm text-financial-sm font-bold text-primary">27.78%</span>
+</div>
+<div class="inline-flex items-center gap-1.5 px-2 py-1 rounded bg-tertiary-fixed text-on-tertiary-fixed text-[11px] font-medium leading-none">
+<span class="material-symbols-outlined text-[13px] text-tertiary">warning</span>
+<span class="">2 SKUs missing wholesale buying cost</span>
+</div>
+</div>
+</div>
+</div>
+<!-- SECTION 2: PIPELINE STRIP & VISUAL CHARTS GRID -->
+<div class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-space-md">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[20px] text-secondary">alt_route</span>
+<span class="font-headline-md text-headline-md text-on-surface">Order Settlement Pipeline</span>
+</div>
+<div class="flex flex-wrap items-center gap-space-sm font-financial-sm text-financial-sm">
+<div class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-surface-container-low">
+<span class="w-2 h-2 rounded-full bg-primary-container"></span>
+<span class="text-on-surface font-semibold">72 Orders Settled &amp; Paid</span>
+<span class="text-on-surface-variant font-mono">KES 115,810.00</span>
+</div>
+<div class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-tertiary-fixed">
+<span class="w-2 h-2 rounded-full bg-tertiary"></span>
+<span class="text-on-tertiary-fixed font-semibold">14 Pending Settlement</span>
+<span class="text-on-tertiary-fixed-variant text-[10px]">DS fee debited, in-transit</span>
+</div>
+<div class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-error-container text-on-error-container">
+<span class="w-2 h-2 rounded-full bg-error animate-ping"></span>
+<span class="font-semibold">3 Overdue Pending (&gt;14d)</span>
+<button class="underline font-bold text-[10px] ml-1 hover:text-error" onclick="filterOverdue()" type="button">Inspect</button>
+</div>
+</div>
+</div>
+<!-- CHARTS ROW: WATERFALL & EXPENSES BREAKDOWN -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-space-md">
+<!-- Waterfall Visual Representation (8 cols) -->
+<div class="lg:col-span-8 bg-surface-container-lowest rounded-xl p-space-lg shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between mb-4">
+<div>
+<h2 class="font-headline-md text-headline-md text-on-surface">Settlement &amp; COGS P&amp;L Waterfall</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Step-by-step margin reconciliation from Gross Revenue to Cash Profit</p>
+</div>
+<div class="flex items-center gap-2 font-label-caps text-label-caps uppercase text-on-surface-variant">
+<span class="inline-flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-sm bg-primary-container"></span>Positive</span>
+<span class="inline-flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-sm bg-tertiary"></span>Deductions</span>
+<span class="inline-flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-sm bg-secondary"></span>COGS</span>
+</div>
+</div>
+<!-- High-fidelity inline SVG waterfall diagram -->
+<div class="w-full h-56 flex items-end justify-between px-2 pt-4 relative">
+<!-- Baseline rule -->
+<div class="absolute bottom-6 left-0 right-0 h-px bg-surface-container-high"></div>
+<!-- Bar 1: Gross Sales -->
+<div class="flex flex-col items-center flex-1 h-full justify-end group">
+<span class="font-financial-sm text-[10px] text-primary-container font-semibold mb-1 group-hover:scale-110 transition-transform">148.6k</span>
+<div class="w-12 md:w-16 bg-primary-container rounded-t-sm transition-all" style="height: 85%;"></div>
+<span class="font-label-caps text-[10px] text-on-surface-variant mt-2 text-center uppercase truncate w-20">Gross Sales</span>
+</div>
+<!-- Connector -->
+<div class="h-px w-4 bg-outline-variant/50 mb-14 hidden md:block"></div>
+<!-- Bar 2: Commission -->
+<div class="flex flex-col items-center flex-1 h-full justify-end group">
+<span class="font-financial-sm text-[10px] text-tertiary font-semibold mb-1">-17.5k</span>
+<div class="w-12 md:w-16 bg-tertiary-container rounded-sm transition-all" style="height: 22%; margin-bottom: 55px;"></div>
+<span class="font-label-caps text-[10px] text-on-surface-variant mt-2 text-center uppercase truncate w-20">Commission</span>
+</div>
+<!-- Bar 3: DS Fees -->
+<div class="flex flex-col items-center flex-1 h-full justify-end group">
+<span class="font-financial-sm text-[10px] text-tertiary font-semibold mb-1">-12.3k</span>
+<div class="w-12 md:w-16 bg-tertiary rounded-sm transition-all" style="height: 18%; margin-bottom: 40px;"></div>
+<span class="font-label-caps text-[10px] text-on-surface-variant mt-2 text-center uppercase truncate w-20">DS Freight</span>
+</div>
+<!-- Bar 4: Penalties -->
+<div class="flex flex-col items-center flex-1 h-full justify-end group">
+<span class="font-financial-sm text-[10px] text-error font-semibold mb-1">-3.0k</span>
+<div class="w-12 md:w-16 bg-error rounded-sm transition-all" style="height: 6%; margin-bottom: 35px;"></div>
+<span class="font-label-caps text-[10px] text-on-surface-variant mt-2 text-center uppercase truncate w-20">Penalties</span>
+</div>
+<!-- Bar 5: Net Payout Subtotal -->
+<div class="flex flex-col items-center flex-1 h-full justify-end group">
+<span class="font-financial-sm text-[10px] text-primary-fixed-variant font-semibold mb-1">115.8k</span>
+<div class="w-12 md:w-16 bg-surface-container-high rounded-t-sm transition-all" style="height: 66%;"></div>
+<span class="font-label-caps text-[10px] text-on-surface font-semibold mt-2 text-center uppercase truncate w-20">Net Payout</span>
+</div>
+<!-- Bar 6: Landed COGS -->
+<div class="flex flex-col items-center flex-1 h-full justify-end group">
+<span class="font-financial-sm text-[10px] text-secondary font-semibold mb-1">-74.5k</span>
+<div class="w-12 md:w-16 bg-secondary-fixed-dim rounded-sm transition-all" style="height: 42%; margin-bottom: 24px;"></div>
+<span class="font-label-caps text-[10px] text-on-surface-variant mt-2 text-center uppercase truncate w-20">Supplier COGS</span>
+</div>
+<!-- Bar 7: Real True Profit -->
+<div class="flex flex-col items-center flex-1 h-full justify-end group">
+<span class="font-financial-sm text-[10px] text-primary font-bold mb-1">+41.3k</span>
+<div class="w-12 md:w-16 bg-primary rounded-t-sm transition-all" style="height: 24%;"></div>
+<span class="font-label-caps text-[10px] text-primary font-bold mt-2 text-center uppercase truncate w-20">True Net Profit</span>
+</div>
+</div>
+<div class="mt-4 pt-3 flex flex-wrap items-center justify-between text-body-sm font-body-sm bg-surface-container-low p-2.5 rounded-lg">
+<span class="text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px] text-primary">info</span>
+          Formula: True Profit = Gross Goods - (Commission + DS Package Fees + Penalties + Wholesale Landed Cost)
+        </span>
+<span class="font-financial-sm text-financial-sm font-semibold text-on-surface">Efficiency Score: 87.4%</span>
+</div>
+</div>
+<!-- Deductions Donut & Penalty Insights (4 cols) -->
+<div class="lg:col-span-4 bg-surface-container-lowest rounded-xl p-space-lg shadow-sm flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between mb-2">
+<h2 class="font-headline-md text-headline-md text-on-surface">Kilimall Fee Breakdown</h2>
+<span class="font-label-caps text-label-caps uppercase text-on-surface-variant">22.09% gross</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-4">Total platform withholdings: KES 32,840.00</p>
+<!-- Graphic visual breakdown rings/bars -->
+<div class="space-y-3">
+<div>
+<div class="flex justify-between font-body-sm text-body-sm mb-1">
+<span class="text-on-surface flex items-center gap-1.5 font-medium">
+<span class="w-2.5 h-2.5 rounded-full bg-primary-container"></span>
+                Category Commissions
+              </span>
+<span class="font-financial-sm text-financial-sm font-semibold">KES 17,540 (53.4%)</span>
+</div>
+<div class="w-full h-2 bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-primary-container rounded-full" style="width: 53.4%;"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between font-body-sm text-body-sm mb-1">
+<span class="text-on-surface flex items-center gap-1.5 font-medium">
+<span class="w-2.5 h-2.5 rounded-full bg-secondary"></span>
+                Drop-Shipping (DS) Fees
+              </span>
+<span class="font-financial-sm text-financial-sm font-semibold">KES 12,300 (37.5%)</span>
+</div>
+<div class="w-full h-2 bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-secondary rounded-full" style="width: 37.5%;"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between font-body-sm text-body-sm mb-1">
+<span class="text-on-surface flex items-center gap-1.5 font-medium">
+<span class="w-2.5 h-2.5 rounded-full bg-error"></span>
+                Late Dispatch / OOS Penalties
+              </span>
+<span class="font-financial-sm text-financial-sm font-semibold text-error">KES 3,000 (9.1%)</span>
+</div>
+<div class="w-full h-2 bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-error rounded-full" style="width: 9.1%;"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Actionable Audit Banner -->
+<div class="mt-4 p-3 rounded-lg bg-tertiary-fixed text-on-tertiary-fixed flex flex-col gap-1.5">
+<div class="flex items-center gap-1.5 font-semibold text-body-sm font-body-sm">
+<span class="material-symbols-outlined text-[16px] text-tertiary">error_med</span>
+<span class="">Store 10344: Dispatch Bottleneck</span>
+</div>
+<p class="text-[11px] leading-tight text-on-tertiary-fixed-variant">
+          6 out of 10 penalty fines were issued at Eastleigh Hub due to orders scanned past the 24h cutoff. Dispute claim available before Oct 24.
+        </p>
+<button class="self-start text-[11px] font-bold text-tertiary uppercase tracking-wider flex items-center gap-1 hover:underline" type="button">
+          Review 6 Violations →
+        </button>
+</div>
+</div>
+</div>
+<!-- SECTION 3: INTERACTIVE MASTER ORDERS & RECONCILIATION LEDGER TABLE -->
+<div class="bg-surface-container-lowest rounded-xl shadow-sm flex flex-col overflow-hidden">
+<!-- Table Header & Controls -->
+<div class="sticky top-16 z-30 bg-surface-container-lowest/95 backdrop-blur-xs px-space-lg py-3 border-b border-outline-variant/30 flex flex-col gap-3"><div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3"><div class="relative flex-1 max-w-lg"><span class="material-symbols-outlined absolute left-3 top-2.5 text-[18px] text-outline">search</span><input class="w-full pl-9 pr-4 py-2 bg-surface-container-low rounded font-body-sm text-body-sm text-on-surface focus:outline-none focus:ring-1 focus:ring-primary placeholder:text-outline border border-outline-variant/30" id="orderSearch" oninput="handleSearch(this.value)" placeholder="Search Order SN (e.g. 610244462479107), Goods ID, SKU..." type="text"></div><div class="flex flex-wrap items-center gap-space-sm"><div class="flex items-center bg-surface-container-low p-1 rounded font-body-sm text-body-sm"><button class="px-2.5 py-1 rounded bg-surface-container-lowest font-semibold text-on-surface shadow-xs transition-colors" onclick="setTab(this)" type="button">All (89)</button><button class="px-2.5 py-1 rounded text-on-surface-variant hover:text-on-surface transition-colors" onclick="setTab(this)" type="button">Settled (72)</button><button class="px-2.5 py-1 rounded text-on-surface-variant hover:text-on-surface transition-colors" onclick="setTab(this)" type="button">Pending (14)</button><button class="px-2.5 py-1 rounded text-on-surface-variant hover:text-on-surface transition-colors" onclick="setTab(this)" type="button">Penalized (10)</button></div><div class="h-6 w-px bg-surface-container-high hidden sm:block"></div><select class="px-2.5 py-1.5 bg-surface-container-low rounded font-body-sm text-body-sm text-on-surface focus:outline-none border border-outline-variant/30"><option>All Stores</option><option>Kushpedia Stores4 (#10344)</option><option>Nairobi Tech Hub (#10892)</option></select><div class="flex items-center gap-1.5"><button class="px-2.5 py-1.5 bg-surface-container-low hover:bg-surface-container-high text-on-surface rounded font-body-sm text-body-sm flex items-center gap-1 border border-outline-variant/30 transition-colors" title="Export Excel (.xlsx)" type="button"><span class="material-symbols-outlined text-[16px] text-primary-container">table_view</span><span class="hidden md:inline">Export Excel</span></button><button class="px-2.5 py-1.5 bg-surface-container-low hover:bg-surface-container-high text-on-surface rounded font-body-sm text-body-sm flex items-center gap-1 border border-outline-variant/30 transition-colors" title="Export PDF" type="button"><span class="material-symbols-outlined text-[16px] text-tertiary">picture_as_pdf</span><span class="hidden md:inline">Export PDF</span></button><button class="px-2.5 py-1.5 bg-surface-container-low hover:bg-surface-container-high text-on-surface rounded font-body-sm text-body-sm flex items-center gap-1 border border-outline-variant/30 transition-colors" type="button"><span class="material-symbols-outlined text-[16px]">view_column</span><span class="">Cols (8/12)</span></button></div></div></div></div>
+<!-- Data Grid Container (Tabular Scroll) -->
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low text-on-surface-variant text-[11px] uppercase tracking-wider font-semibold border-b border-outline-variant/30 select-none"><th class="py-3 px-4 font-semibold text-left">Order SN &amp; SKU</th><th class="py-3 px-4 font-semibold text-left">Store / Hub</th><th class="py-3 px-4 font-semibold text-right">Gross Price</th><th class="py-3 px-4 font-semibold text-right">Commissions</th><th class="py-3 px-4 font-semibold text-right">DS Freight</th><th class="py-3 px-4 font-semibold text-right">Net Payout</th><th class="py-3 px-4 font-semibold text-right">Landed Cost (COGS)</th><th class="py-3 px-4 font-semibold text-right">True Profit (Margin)</th><th class="py-3 px-4 font-semibold text-center">Status</th><th class="py-3 px-4 font-semibold text-right">Actions</th></tr>
+</thead>
+<tbody class="font-body-md text-body-md divide-y divide-surface-container-low" id="ledgerTableBody">
+<!-- Row 1: Fully Settled & Reconciled with known COGS -->
+<tr class="hover:bg-surface-container-low/50 transition-colors group text-[13px] leading-tight text-on-surface"><td class="py-3 px-4"><div class="flex flex-col"><span class="font-financial-sm text-financial-sm font-semibold text-on-surface flex items-center gap-1 font-mono">610244462479107<button class="text-outline hover:text-primary opacity-0 group-hover:opacity-100 transition-opacity" onclick="copySn('610244462479107')" title="Copy SN" type="button"><span class="material-symbols-outlined text-[13px]">content_copy</span></button></span><span class="max-w-[200px] truncate block text-[13px] font-medium text-on-surface" title="Wireless Bluetooth Earbuds Pro">Wireless Bluetooth Earbuds Pro</span><span class="text-[10px] text-outline font-mono">GID: 10007470517 • Oct 15</span></div></td><td class="py-3 px-4 font-body-sm text-body-sm"><div class="flex flex-col"><span class="text-on-surface font-medium truncate max-w-[130px]">Kushpedia #10344</span><span class="text-on-surface-variant text-[11px]">Eastleigh Hub (Small)</span></div></td><td class="py-3 px-4 text-right font-financial-md text-financial-md font-semibold text-on-surface font-mono">KES 2,450.00</td><td class="py-3 px-4 text-right font-financial-sm text-financial-sm text-tertiary font-mono">-KES 245.00<div class="text-[10px] text-outline font-mono">10.0%</div></td><td class="py-3 px-4 text-right font-financial-sm text-financial-sm text-tertiary font-mono">-KES 100.00<div class="text-[10px] text-outline">Small Package</div></td><td class="py-3 px-4 text-right font-financial-md text-financial-md font-bold text-primary-container font-mono">KES 2,105.00</td><td class="py-3 px-4 text-right"><div class="inline-flex items-center gap-1 font-financial-sm text-financial-sm text-on-surface font-mono"><span class="">KES 1,200.00</span><span class="material-symbols-outlined text-[14px] text-primary" title="COGS Verified">check_circle</span></div></td><td class="py-3 px-4 text-right font-financial-sm text-financial-sm font-mono"><span class="font-bold text-primary">+KES 905.00</span><span class="block text-[10px] text-primary-container font-medium font-mono">36.94%</span></td><td class="py-3 px-4 text-center"><span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-surface-container-high text-primary font-label-caps text-label-caps font-semibold"><span class="w-1.5 h-1.5 rounded-full bg-primary-container"></span>Settled</span></td><td class="py-3 px-4 text-right"><button class="px-2.5 py-1 text-primary-container hover:bg-surface-container-high rounded font-body-sm text-body-sm font-semibold transition-colors" onclick="openDrawer('610244462479107', 'Wireless Bluetooth Earbuds Pro', '2450.00', '-245.00', '-100.00', '0.00', '2105.00', '1200.00', '905.00', '36.94%')" type="button">Audit</button></td></tr>
+<!-- Row 2: Settled but Needs Missing Buying Cost (Inline editable input) -->
+<tr class="hover:bg-surface-container-low/50 transition-colors group text-[13px] leading-tight text-on-surface"><td class="py-3 px-4"><div class="flex flex-col"><span class="font-financial-sm text-financial-sm font-semibold text-on-surface flex items-center gap-1 font-mono">610244589104712<button class="text-outline hover:text-primary opacity-0 group-hover:opacity-100 transition-opacity" onclick="copySn('610244589104712')" title="Copy SN" type="button"><span class="material-symbols-outlined text-[13px]">content_copy</span></button></span><span class="max-w-[200px] truncate block text-[13px] font-medium text-on-surface" title="Fast Qi Wireless Charger 15W">Fast Qi Wireless Charger 15W</span><span class="text-[10px] text-outline font-mono">GID: 10009381220 • Oct 16</span></div></td><td class="py-3 px-4 font-body-sm text-body-sm"><div class="flex flex-col"><span class="text-on-surface font-medium truncate max-w-[130px]">Nairobi Tech #10892</span><span class="text-on-surface-variant text-[11px]">CBD Central Hub (Medium)</span></div></td><td class="py-3 px-4 text-right font-financial-md text-financial-md font-semibold text-on-surface font-mono">KES 1,890.00</td><td class="py-3 px-4 text-right font-financial-sm text-financial-sm text-tertiary font-mono">-KES 189.00<div class="text-[10px] text-outline font-mono">10.0%</div></td><td class="py-3 px-4 text-right font-financial-sm text-financial-sm text-tertiary font-mono">-KES 150.00<div class="text-[10px] text-outline">Medium Package</div></td><td class="py-3 px-4 text-right font-financial-md text-financial-md font-bold text-primary-container font-mono">KES 1,551.00</td><td class="py-3 px-4 text-right"><div class="inline-flex items-center gap-1.5" id="cogsContainer-row2"><input class="w-24 text-right px-2 py-0.5 bg-surface-container-lowest rounded font-financial-sm text-financial-sm text-on-surface font-mono focus:outline-none focus:ring-1 focus:ring-primary shadow-xs border border-outline-variant/30" id="inlineCogs-row2" onblur="saveInlineCogs('row2', this.value, 1551.00, 1890.00)" placeholder="Enter Cost" type="number"><span class="material-symbols-outlined text-[14px] text-tertiary" title="COGS Missing">edit</span></div></td><td class="py-3 px-4 text-right font-financial-sm text-financial-sm font-mono" id="profitCell-row2"><span class="px-2 py-0.5 rounded bg-tertiary-fixed text-on-tertiary-fixed text-[10px] font-medium">Needs COGS</span></td><td class="py-3 px-4 text-center"><span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-surface-container-high text-primary font-label-caps text-label-caps font-semibold"><span class="w-1.5 h-1.5 rounded-full bg-primary-container"></span>Settled</span></td><td class="py-3 px-4 text-right"><button class="px-2.5 py-1 text-primary-container hover:bg-surface-container-high rounded font-body-sm text-body-sm font-semibold transition-colors" onclick="openDrawer('610244589104712', 'Fast Qi Wireless Charger 15W', '1890.00', '-189.00', '-150.00', '0.00', '1551.00', 'Unset', 'Pending', 'N/A')" type="button">Audit</button></td></tr>
+<!-- Row 3: Pending Delivery Settlement (DS fee already debited) -->
+<tr class="hover:bg-surface-container-low/50 transition-colors group text-[13px] leading-tight text-on-surface"><td class="py-3 px-4"><div class="flex flex-col"><span class="font-financial-sm text-financial-sm font-semibold text-on-surface flex items-center gap-1 font-mono">610244890312567<button class="text-outline hover:text-primary opacity-0 group-hover:opacity-100 transition-opacity" onclick="copySn('610244890312567')" title="Copy SN" type="button"><span class="material-symbols-outlined text-[13px]">content_copy</span></button></span><span class="max-w-[200px] truncate block text-[13px] font-medium text-on-surface" title="Smart Fitness Band HR-2">Smart Fitness Band HR-2</span><span class="text-[10px] text-outline font-mono">GID: 10008819201 • Oct 17</span></div></td><td class="py-3 px-4 font-body-sm text-body-sm"><div class="flex flex-col"><span class="text-on-surface font-medium truncate max-w-[130px]">Kushpedia #10344</span><span class="text-on-surface-variant text-[11px]">Eastleigh Hub (Small)</span></div></td><td class="py-3 px-4 text-right font-financial-md text-financial-md font-semibold text-on-surface font-mono">KES 3,200.00</td><td class="py-3 px-4 text-right font-financial-sm text-financial-sm text-on-surface-variant font-mono">-KES 320.00 (Est)</td><td class="py-3 px-4 text-right font-financial-sm text-financial-sm text-tertiary font-mono">-KES 100.00<div class="text-[10px] text-primary">Scanned Oct 17</div></td><td class="py-3 px-4 text-right font-financial-md text-financial-md font-semibold text-on-surface-variant font-mono">KES 2,780.00<div class="text-[10px] text-outline font-normal">Pending Transit</div></td><td class="py-3 px-4 text-right font-financial-sm text-financial-sm text-on-surface font-mono">KES 1,650.00</td><td class="py-3 px-4 text-right font-financial-sm text-financial-sm text-on-surface-variant font-mono">+KES 1,130.00<span class="block text-[10px] text-outline font-mono">35.3% Projected</span></td><td class="py-3 px-4 text-center"><span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-tertiary-fixed text-on-tertiary-fixed font-label-caps text-label-caps font-semibold"><span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span>Pending Deliv</span></td><td class="py-3 px-4 text-right"><button class="px-2.5 py-1 text-primary-container hover:bg-surface-container-high rounded font-body-sm text-body-sm font-semibold transition-colors" onclick="openDrawer('610244890312567', 'Smart Fitness Band HR-2', '3200.00', '-320.00', '-100.00', '0.00', '2780.00', '1650.00', '1130.00', '35.31%')" type="button">Audit</button></td></tr>
+<!-- Row 4: Critical Overdue with Fine Debited -->
+<tr class="hover:bg-error-container/20 transition-colors group bg-error-container/5 text-[13px] leading-tight text-on-surface"><td class="py-3 px-4"><div class="flex flex-col"><span class="font-financial-sm text-financial-sm font-semibold text-on-surface flex items-center gap-1 font-mono">610239841209382<button class="text-outline hover:text-primary opacity-0 group-hover:opacity-100 transition-opacity" onclick="copySn('610239841209382')" title="Copy SN" type="button"><span class="material-symbols-outlined text-[13px]">content_copy</span></button></span><span class="max-w-[200px] truncate block text-[13px] font-medium text-on-surface" title="Heavy Bass Over-Ear DJ Headset">Heavy Bass Over-Ear DJ Headset</span><span class="text-[10px] text-error font-semibold flex items-center gap-1 font-mono"><span class="material-symbols-outlined text-[12px]">schedule</span>Dispatched 16 days ago</span></div></td><td class="py-3 px-4 font-body-sm text-body-sm"><div class="flex flex-col"><span class="text-on-surface font-medium truncate max-w-[130px]">Kushpedia #10344</span><span class="text-on-surface-variant text-[11px]">Eastleigh Hub (Medium)</span></div></td><td class="py-3 px-4 text-right font-financial-md text-financial-md font-semibold text-on-surface font-mono">KES 4,500.00</td><td class="py-3 px-4 text-right font-financial-sm text-financial-sm text-tertiary font-mono">-KES 450.00</td><td class="py-3 px-4 text-right font-financial-sm text-financial-sm text-tertiary font-mono">-KES 150.00<div class="text-[10px] text-error font-semibold font-mono">-KES 300 Fine</div></td><td class="py-3 px-4 text-right font-financial-md text-financial-md font-bold text-error font-mono">KES 3,600.00<div class="text-[10px] text-error font-normal">Escrow Held</div></td><td class="py-3 px-4 text-right font-financial-sm text-financial-sm text-on-surface font-mono">KES 2,400.00</td><td class="py-3 px-4 text-right font-financial-sm text-financial-sm text-error font-semibold font-mono">+KES 1,200.00<span class="block text-[10px] text-error font-mono">Fine Eroded Margin</span></td><td class="py-3 px-4 text-center"><span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-error-container text-on-error-container font-label-caps text-label-caps font-semibold"><span class="w-1.5 h-1.5 rounded-full bg-error"></span>Overdue &gt;16d</span></td><td class="py-3 px-4 text-right"><button class="px-2.5 py-1 text-error hover:bg-error-container/40 rounded font-body-sm text-body-sm font-semibold transition-colors" onclick="openDrawer('610239841209382', 'Heavy Bass Over-Ear DJ Headset', '4500.00', '-450.00', '-150.00', '-300.00', '3600.00', '2400.00', '1200.00', '26.67%')" type="button">Audit</button></td></tr>
+<!-- Row 5: Another Settled Tech Row -->
+<tr class="hover:bg-surface-container-low/50 transition-colors group text-[13px] leading-tight text-on-surface"><td class="py-3 px-4"><div class="flex flex-col"><span class="font-financial-sm text-financial-sm font-semibold text-on-surface flex items-center gap-1 font-mono">610244671829014<button class="text-outline hover:text-primary opacity-0 group-hover:opacity-100 transition-opacity" onclick="copySn('610244671829014')" title="Copy SN" type="button"><span class="material-symbols-outlined text-[13px]">content_copy</span></button></span><span class="max-w-[200px] truncate block text-[13px] font-medium text-on-surface" title="RGB Gaming Mouse Ultra-Light">RGB Gaming Mouse Ultra-Light</span><span class="text-[10px] text-outline font-mono">GID: 10005519213 • Oct 15</span></div></td><td class="py-3 px-4 font-body-sm text-body-sm"><div class="flex flex-col"><span class="text-on-surface font-medium truncate max-w-[130px]">Nairobi Tech #10892</span><span class="text-on-surface-variant text-[11px]">CBD Central Hub (Small)</span></div></td><td class="py-3 px-4 text-right font-financial-md text-financial-md font-semibold text-on-surface font-mono">KES 1,650.00</td><td class="py-3 px-4 text-right font-financial-sm text-financial-sm text-tertiary font-mono">-KES 165.00</td><td class="py-3 px-4 text-right font-financial-sm text-financial-sm text-tertiary font-mono">-KES 100.00</td><td class="py-3 px-4 text-right font-financial-md text-financial-md font-bold text-primary-container font-mono">KES 1,385.00</td><td class="py-3 px-4 text-right font-financial-sm text-financial-sm text-on-surface font-mono">KES 850.00</td><td class="py-3 px-4 text-right font-financial-sm text-financial-sm font-mono"><span class="font-bold text-primary">+KES 535.00</span><span class="block text-[10px] text-primary-container font-medium font-mono">32.42%</span></td><td class="py-3 px-4 text-center"><span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-surface-container-high text-primary font-label-caps text-label-caps font-semibold"><span class="w-1.5 h-1.5 rounded-full bg-primary-container"></span>Settled</span></td><td class="py-3 px-4 text-right"><button class="px-2.5 py-1 text-primary-container hover:bg-surface-container-high rounded font-body-sm text-body-sm font-semibold transition-colors" onclick="openDrawer('610244671829014', 'RGB Gaming Mouse Ultra-Light', '1650.00', '-165.00', '-100.00', '0.00', '1385.00', '850.00', '535.00', '32.42%')" type="button">Audit</button></td></tr>
+</tbody>
+</table>
+</div>
+<!-- Table Footer Pagination & Ledger Aggregate Strip -->
+<div class="p-space-md bg-surface-container-low flex flex-col sm:flex-row sm:items-center justify-between gap-space-sm font-body-sm text-body-sm">
+<div class="flex items-center gap-2 text-on-surface-variant">
+<span class="">Showing <strong>1 to 5</strong> of <strong>89</strong> reconciled order transactions</span>
+</div>
+<div class="flex items-center gap-1 font-financial-sm text-financial-sm">
+<button class="w-8 h-8 rounded bg-surface-container-lowest text-on-surface-variant hover:text-on-surface flex items-center justify-center transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px]">chevron_left</span>
+</button>
+<button class="w-8 h-8 rounded bg-primary-container text-on-primary font-bold flex items-center justify-center" type="button">1</button>
+<button class="w-8 h-8 rounded bg-surface-container-lowest text-on-surface-variant hover:text-on-surface flex items-center justify-center" type="button">2</button>
+<button class="w-8 h-8 rounded bg-surface-container-lowest text-on-surface-variant hover:text-on-surface flex items-center justify-center" type="button">3</button>
+<span class="px-1 text-outline">...</span>
+<button class="w-8 h-8 rounded bg-surface-container-lowest text-on-surface-variant hover:text-on-surface flex items-center justify-center" type="button">18</button>
+<button class="w-8 h-8 rounded bg-surface-container-lowest text-on-surface-variant hover:text-on-surface flex items-center justify-center transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px]">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+<!-- SECTION 4: SLIDE-OVER RECONCILIATION AUDIT DRAWER (Right Overlay) -->
+<div class="fixed inset-0 bg-inverse-surface/40 backdrop-blur-xs z-50 transition-opacity duration-300 opacity-0 pointer-events-none" id="reconciliationDrawerScrim" onclick="closeDrawer()"></div>
+<div class="fixed top-0 right-0 bottom-0 w-full sm:w-[520px] bg-surface-container-lowest shadow-2xl z-50 flex flex-col transform translate-x-full transition-transform duration-300 ease-in-out" id="reconciliationDrawer">
+<!-- Drawer Header -->
+<div class="p-space-lg bg-surface-container-low flex items-start justify-between">
+<div class="flex flex-col gap-1">
+<div class="flex items-center gap-2">
+<span class="font-label-caps text-label-caps uppercase text-primary font-bold">Settlement Audit</span>
+<span class="px-2 py-0.5 rounded bg-surface-container-high text-on-surface font-financial-sm text-financial-sm" id="drawerStoreTag">Kushpedia #10344</span>
+</div>
+<h2 class="font-headline-md text-headline-md text-on-surface font-bold tracking-tight" id="drawerTitle">
+          Order #610244462479107
+        </h2>
+<span class="font-body-sm text-body-sm text-on-surface-variant" id="drawerItemName">Wireless Bluetooth Earbuds Pro</span>
+</div>
+<button class="p-1 rounded text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors" onclick="closeDrawer()" type="button">
+<span class="material-symbols-outlined text-[20px]">close</span>
+</button>
+</div>
+<!-- Drawer Body -->
+<div class="flex-1 overflow-y-auto p-space-lg space-y-space-lg">
+<!-- Lifecycle Timeline -->
+<div class="flex flex-col gap-space-sm">
+<span class="font-label-caps text-label-caps uppercase text-outline tracking-wider">Settlement Lifecycle</span>
+<div class="relative pl-6 space-y-4">
+<div class="absolute left-2 top-1.5 bottom-1.5 w-0.5 bg-surface-container-high"></div>
+<!-- Step 1 -->
+<div class="relative">
+<div class="absolute -left-6 top-1 w-3 h-3 rounded-full bg-primary-container ring-4 ring-surface-container-lowest"></div>
+<div class="flex flex-col">
+<span class="font-body-sm text-body-sm font-semibold text-on-surface">Order Placed by Customer</span>
+<span class="font-financial-sm text-[11px] text-on-surface-variant">Oct 14, 2024 • 14:22:10 (EAT)</span>
+</div>
+</div>
+<!-- Step 2 -->
+<div class="relative">
+<div class="absolute -left-6 top-1 w-3 h-3 rounded-full bg-primary-container ring-4 ring-surface-container-lowest"></div>
+<div class="flex flex-col">
+<span class="font-body-sm text-body-sm font-semibold text-on-surface">Hub Drop-off Scanned (DS Debited)</span>
+<span class="font-financial-sm text-[11px] text-on-surface-variant">Oct 15, 2024 • 10:05:44 • Eastleigh Hub</span>
+<span class="text-[11px] text-tertiary">Drop-shipping handling fee: KES 100.00 debited</span>
+</div>
+</div>
+<!-- Step 3 -->
+<div class="relative">
+<div class="absolute -left-6 top-1 w-3 h-3 rounded-full bg-primary-container ring-4 ring-surface-container-lowest"></div>
+<div class="flex flex-col">
+<span class="font-body-sm text-body-sm font-semibold text-on-surface">Delivered &amp; Receipt Confirmed</span>
+<span class="font-financial-sm text-[11px] text-on-surface-variant">Oct 17, 2024 • 16:40:02</span>
+</div>
+</div>
+<!-- Step 4 -->
+<div class="relative">
+<div class="absolute -left-6 top-1 w-3 h-3 rounded-full bg-secondary ring-4 ring-surface-container-lowest"></div>
+<div class="flex flex-col">
+<span class="font-body-sm text-body-sm font-semibold text-on-surface">Statement Finalized &amp; Cash Credited</span>
+<span class="font-financial-sm text-[11px] text-on-surface-variant">Oct 19, 2024 • Kushpedia_Week42.xlsx (Row 42)</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Financial Reconciliation Waterfall -->
+<div class="flex flex-col gap-space-sm bg-surface-container-low p-space-md rounded-xl">
+<div class="flex items-center justify-between">
+<span class="font-label-caps text-label-caps uppercase text-on-surface font-semibold">Ledger Settlement Breakdown</span>
+<span class="font-financial-sm text-financial-sm text-primary font-bold">100% Audit Passed</span>
+</div>
+<div class="space-y-2 pt-2 divide-y divide-surface-container-high font-financial-sm text-financial-sm">
+<div class="flex justify-between items-center pt-2">
+<span class="text-on-surface-variant">Gross Selling Price (Customer Total)</span>
+<span class="text-on-surface font-semibold" id="drawerGross">KES 2,450.00</span>
+</div>
+<div class="flex justify-between items-center pt-2">
+<div class="flex flex-col">
+<span class="text-on-surface-variant">Kilimall Category Commission</span>
+<span class="text-[10px] text-outline">Category: Electronics • Code: KM-COMM-10</span>
+</div>
+<span class="text-tertiary font-semibold" id="drawerComm">-KES 245.00</span>
+</div>
+<div class="flex justify-between items-center pt-2">
+<div class="flex flex-col">
+<span class="text-on-surface-variant">DS Drop-shipping Processing Fee</span>
+<span class="text-[10px] text-outline">Size Tier: Small Parcel (&lt;1.0kg)</span>
+</div>
+<span class="text-tertiary font-semibold" id="drawerDs">-KES 100.00</span>
+</div>
+<div class="flex justify-between items-center pt-2">
+<div class="flex flex-col">
+<span class="text-on-surface-variant">Late Dispatch / Violation Fine</span>
+<span class="text-[10px] text-outline">Dispatch SLA verified (&lt;24 hours)</span>
+</div>
+<span class="text-on-surface font-semibold" id="drawerFine">KES 0.00</span>
+</div>
+<div class="flex justify-between items-center pt-2 bg-surface-container-lowest p-2 rounded">
+<span class="text-on-surface font-bold">Net Kilimall Remittance (Bank/MPESA)</span>
+<span class="text-primary-container font-bold font-financial-md text-financial-md" id="drawerNetKM">KES 2,105.00</span>
+</div>
+<div class="flex justify-between items-center pt-2">
+<div class="flex flex-col">
+<span class="text-on-surface-variant">Supplier Wholesale Buying Cost (COGS)</span>
+<span class="text-[10px] text-outline">Inventory batch #WH-2024-88</span>
+</div>
+<span class="text-secondary font-semibold" id="drawerCogs">-KES 1,200.00</span>
+</div>
+<div class="flex justify-between items-center pt-3 text-body-md font-body-md bg-surface-container-high/60 p-2.5 rounded-lg">
+<div class="flex flex-col">
+<span class="font-bold text-on-surface">True Net Seller Profit</span>
+<span class="text-[10px] text-primary font-semibold" id="drawerMargin">36.94% Margin</span>
+</div>
+<span class="font-financial-lg text-financial-lg font-bold text-primary" id="drawerTrueProfit">+KES 905.00</span>
+</div>
+</div>
+</div>
+<!-- Bank Match Verification Box -->
+<div class="p-3 bg-surface-container-lowest rounded-xl flex items-center justify-between text-body-sm font-body-sm shadow-xs">
+<div class="flex items-center gap-2">
+<div class="w-7 h-7 rounded-full bg-surface-container-high flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[16px]">account_balance</span>
+</div>
+<div class="flex flex-col">
+<span class="font-semibold text-on-surface">Matched Bank Transaction</span>
+<span class="font-financial-sm text-[11px] text-outline">KCB Bank Transfer Ref #KM991203401</span>
+</div>
+</div>
+<span class="px-2 py-0.5 rounded-full bg-primary-fixed text-on-primary-fixed font-label-caps text-label-caps uppercase font-bold">Verified</span>
+</div>
+</div>
+<!-- Drawer Action Footer -->
+<div class="p-space-lg bg-surface-container-low flex flex-col sm:flex-row items-center justify-between gap-space-sm">
+<button class="w-full sm:w-auto px-3 py-2 bg-surface-container-lowest text-error hover:bg-error-container/40 rounded font-body-sm text-body-sm font-semibold flex items-center justify-center gap-1.5 transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px]">flag</span>
+<span class="">Dispute to BD</span>
+</button>
+<div class="flex items-center gap-2 w-full sm:w-auto">
+<button class="flex-1 sm:flex-none px-3 py-2 bg-surface-container-lowest text-on-surface hover:bg-surface-container-high rounded font-body-sm text-body-sm font-semibold transition-colors" onclick="closeDrawer()" type="button">
+          Close
+        </button>
+<button class="flex-1 sm:flex-none px-4 py-2 bg-primary-container text-on-primary hover:bg-primary rounded font-body-sm text-body-sm font-semibold flex items-center justify-center gap-1.5 shadow-sm transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px]">download</span>
+<span class="">Audit Voucher</span>
+</button>
+</div>
+</div>
+</div>
+<!-- INLINE CLIENT SCRIPT FOR INTERACTIVE DEMO (DRAWER, INLINE COGS, SEARCH) -->
+<script>
+    function openDrawer(sn, item, gross, comm, ds, fine, net, cogs, profit, margin) {
+      document.getElementById('drawerTitle').innerText = 'Order #' + sn;
+      document.getElementById('drawerItemName').innerText = item;
+      document.getElementById('drawerGross').innerText = 'KES ' + gross;
+      document.getElementById('drawerComm').innerText = comm;
+      document.getElementById('drawerDs').innerText = ds;
+      document.getElementById('drawerFine').innerText = fine === '0.00' ? 'KES 0.00' : fine;
+      document.getElementById('drawerNetKM').innerText = 'KES ' + net;
+      document.getElementById('drawerCogs').innerText = cogs === 'Unset' ? 'Pending COGS' : '-KES ' + cogs;
+      document.getElementById('drawerTrueProfit').innerText = profit === 'Pending' ? 'Calculating...' : '+KES ' + profit;
+      document.getElementById('drawerMargin').innerText = margin + ' Margin';
+
+      var scrim = document.getElementById('reconciliationDrawerScrim');
+      var drawer = document.getElementById('reconciliationDrawer');
+
+      scrim.classList.remove('opacity-0', 'pointer-events-none');
+      scrim.classList.add('opacity-100');
+      drawer.classList.remove('translate-x-full');
+      drawer.classList.add('translate-x-0');
+    }
+
+    function closeDrawer() {
+      var scrim = document.getElementById('reconciliationDrawerScrim');
+      var drawer = document.getElementById('reconciliationDrawer');
+
+      scrim.classList.remove('opacity-100');
+      scrim.classList.add('opacity-0', 'pointer-events-none');
+      drawer.classList.remove('translate-x-0');
+      drawer.classList.add('translate-x-full');
+    }
+
+    function copySn(sn) {
+      navigator.clipboard.writeText(sn);
+      alert('Order SN copied to clipboard: ' + sn);
+    }
+
+    function saveInlineCogs(rowId, val, netKm, gross) {
+      var cost = parseFloat(val);
+      if (isNaN(cost) || cost <= 0) return;
+
+      var trueProfit = netKm - cost;
+      var margin = ((trueProfit / gross) * 100).toFixed(2);
+
+      var container = document.getElementById('cogsContainer-' + rowId);
+      var profitCell = document.getElementById('profitCell-' + rowId);
+
+      container.innerHTML = '<span class="font-financial-sm text-financial-sm text-on-surface font-semibold">KES ' + cost.toFixed(2) + '</span><span class="material-symbols-outlined text-[14px] text-primary" title="Updated">check_circle</span>';
+
+      profitCell.innerHTML = '<span class="font-bold text-primary font-financial-sm text-financial-sm">+KES ' + trueProfit.toFixed(2) + '</span><span class="block text-[10px] text-primary-container font-medium">' + margin + '%</span>';
+    }
+
+    function setTab(btn) {
+      var tabs = btn.parentNode.querySelectorAll('button');
+      tabs.forEach(function(t) {
+        t.className = 'px-2.5 py-1 rounded text-on-surface-variant hover:text-on-surface';
+      });
+      btn.className = 'px-2.5 py-1 rounded bg-surface-container-lowest font-semibold text-on-surface shadow-xs';
+    }
+
+    function filterOverdue() {
+      var searchInput = document.getElementById('orderSearch');
+      searchInput.value = '610239841209382';
+      handleSearch('610239841209382');
+    }
+
+    function handleSearch(query) {
+      var rows = document.querySelectorAll('#ledgerTableBody tr');
+      query = query.toLowerCase().trim();
+      rows.forEach(function(row) {
+        if (!query) {
+          row.style.display = '';
+          return;
+        }
+        var text = row.innerText.toLowerCase();
+        row.style.display = text.indexOf(query) !== -1 ? '' : 'none';
+      });
+    }
+  </script>
+</div></main></div>
+
+</body></html>

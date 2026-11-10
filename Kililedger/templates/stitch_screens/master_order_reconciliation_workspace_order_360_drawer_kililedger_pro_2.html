@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={"darkMode":"class","theme":{"extend":{"colors":{"error-container":"#ffdad6","tertiary-container":"#b94200","surface-container-low":"#f2f3ff","on-primary-fixed":"#00201d","inverse-on-surface":"#eef0ff","primary-fixed":"#9cf2e8","on-secondary-fixed-variant":"#3323cc","on-error-container":"#93000a","outline-variant":"#bdc9c6","surface-container-high":"#e2e7ff","primary":"#005c55","on-surface-variant":"#3e4947","background":"#faf8ff","on-secondary-container":"#fffbff","surface":"#faf8ff","inverse-primary":"#80d5cb","on-secondary-fixed":"#0f0069","outline":"#6e7977","on-tertiary-fixed":"#370e00","on-primary-fixed-variant":"#00504a","surface-container-highest":"#dae2fd","secondary-fixed-dim":"#c3c0ff","on-tertiary-container":"#ffe5dc","surface-container":"#eaedff","on-primary-container":"#a3faef","on-primary":"#ffffff","on-secondary":"#ffffff","primary-container":"#0f766e","secondary":"#4b41e1","on-tertiary":"#ffffff","inverse-surface":"#283044","tertiary-fixed-dim":"#ffb599","on-background":"#131b2e","primary-fixed-dim":"#80d5cb","on-surface":"#131b2e","secondary-fixed":"#e2dfff","error":"#ba1a1a","tertiary":"#913200","surface-variant":"#dae2fd","on-tertiary-fixed-variant":"#7f2b00","tertiary-fixed":"#ffdbce","surface-container-lowest":"#ffffff","surface-bright":"#faf8ff","surface-tint":"#006a63","on-error":"#ffffff","surface-dim":"#d2d9f4","secondary-container":"#645efb"},"borderRadius":{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"},"spacing":{"space-sm":"0.5rem","margin-desktop":"2rem","space-md":"0.75rem","space-lg":"1rem","gutter-desktop":"1.5rem","margin":"1rem","gutter":"1rem","space-xl":"1.5rem","space-xs":"0.25rem"},"fontFamily":{"body-md":["Inter"],"body-lg":["Inter"],"financial-xl":["JetBrains Mono"],"headline-md":["Inter"],"headline-lg":["Inter"],"financial-sm":["JetBrains Mono"],"financial-lg":["JetBrains Mono"],"financial-md":["JetBrains Mono"],"label-caps":["Inter"],"body-sm":["Inter"],"headline-xl":["Inter"]},"fontSize":{"body-md":["13px",{"lineHeight":"18px","fontWeight":"400"}],"body-lg":["15px",{"lineHeight":"22px","fontWeight":"400"}],"financial-xl":["24px",{"lineHeight":"28px","letterSpacing":"-0.02em","fontWeight":"600"}],"headline-md":["18px",{"lineHeight":"24px","letterSpacing":"-0.01em","fontWeight":"600"}],"headline-lg":["22px",{"lineHeight":"28px","letterSpacing":"-0.015em","fontWeight":"600"}],"financial-sm":["11px",{"lineHeight":"14px","fontWeight":"500"}],"financial-lg":["16px",{"lineHeight":"20px","letterSpacing":"-0.01em","fontWeight":"600"}],"financial-md":["13px",{"lineHeight":"16px","letterSpacing":"-0.005em","fontWeight":"500"}],"label-caps":["11px",{"lineHeight":"14px","letterSpacing":"0.04em","fontWeight":"600"}],"body-sm":["12px",{"lineHeight":"16px","fontWeight":"400"}],"headline-xl":["28px",{"lineHeight":"34px","letterSpacing":"-0.02em","fontWeight":"700"}]}}}}</script></head><body class="bg-surface font-body-md text-body-md text-on-surface antialiased"><aside class="fixed left-0 top-0 h-screen w-[260px] bg-inverse-surface text-inverse-on-surface z-50 flex flex-col justify-between shadow-[0_1px_8px_rgba(0,0,0,0.04)] select-none"><div class="flex flex-col"><div class="p-space-lg flex flex-col gap-space-xs"><div class="flex items-center gap-space-sm"><div class="w-7 h-7 rounded-lg bg-primary-container flex items-center justify-center text-on-primary font-headline-md text-headline-md">K</div><div><h1 class="font-headline-md text-headline-md font-bold tracking-tight text-surface-container-lowest leading-none">KiliLedger Pro</h1><span class="font-label-caps text-label-caps text-outline tracking-wider uppercase block mt-0.5">SETTLEMENT OS</span></div></div><div class="mt-space-sm inline-flex items-center gap-1.5 px-2 py-1 rounded-full bg-surface-variant/10 text-financial-sm font-financial-sm w-fit"><span class="w-1.5 h-1.5 rounded-full bg-primary-fixed"></span><span class="text-surface-container-high">Kilimall API: Connected</span></div></div><nav class="flex flex-col gap-0.5 px-space-sm mt-space-sm" data-active-classes="bg-primary-container text-on-primary font-medium shadow-[0_1px_4px_rgba(0,0,0,0.12)]"><a class="flex items-center gap-space-sm px-3 py-2 rounded-lg text-surface-container-high hover:bg-surface-variant/10 hover:text-surface-container-lowest transition-colors" data-path="dashboard" href="/dashboard/"><span class="material-symbols-outlined text-[18px]">space_dashboard</span><span class="font-body-sm text-body-sm">Dashboard</span></a><a class="flex items-center gap-space-sm px-3 py-2 rounded-lg text-surface-container-high hover:bg-surface-variant/10 hover:text-surface-container-lowest transition-colors" data-path="stores-and-statements" href="#"><span class="material-symbols-outlined text-[18px]">storefront</span><span class="font-body-sm text-body-sm">Stores &amp; Statements</span></a><a class="flex items-center gap-space-sm px-3 py-2 rounded-lg text-surface-container-high hover:bg-surface-variant/10 hover:text-surface-container-lowest transition-colors" data-path="financial-analytics" href="/dashboard/pnl/"><span class="material-symbols-outlined text-[18px]">monitoring</span><span class="font-body-sm text-body-sm">Financial Analytics</span></a><a aria-current="page" class="flex items-center gap-space-sm px-3 py-2 rounded-lg transition-colors bg-primary-container text-on-primary font-medium shadow-[0_1px_4px_rgba(0,0,0,0.12)]" data-path="orders-and-reconciliation" href="#"><span class="material-symbols-outlined text-[18px]">receipt_long</span><span class="font-body-sm text-body-sm">Orders &amp; Reconciliation</span></a><a class="flex items-center gap-space-sm px-3 py-2 rounded-lg text-surface-container-high hover:bg-surface-variant/10 hover:text-surface-container-lowest transition-colors" data-path="products-and-profitability" href="#"><span class="material-symbols-outlined text-[18px]">inventory_2</span><span class="font-body-sm text-body-sm">Products &amp; Profitability</span></a><a class="flex items-center gap-space-sm px-3 py-2 rounded-lg text-surface-container-high hover:bg-surface-variant/10 hover:text-surface-container-lowest transition-colors" data-path="fees-and-penalties" href="#"><span class="material-symbols-outlined text-[18px]">price_change</span><span class="font-body-sm text-body-sm">Fees &amp; Penalties</span></a><a class="flex items-center gap-space-sm px-3 py-2 rounded-lg text-surface-container-high hover:bg-surface-variant/10 hover:text-surface-container-lowest transition-colors" data-path="reports-and-exports" href="#"><span class="material-symbols-outlined text-[18px]">file_save</span><span class="font-body-sm text-body-sm">Reports &amp; Exports</span></a></nav></div><div class="p-space-sm mb-space-sm"><a class="flex items-center gap-space-sm px-3 py-2.5 rounded-lg text-surface-container-high hover:bg-surface-variant/10 hover:text-surface-container-lowest transition-colors" data-path="settings-and-rules" href="#"><span class="material-symbols-outlined text-[18px]">tune</span><span class="font-body-sm text-body-sm font-medium">Settings &amp; Rules</span></a></div></aside><div class="pl-[260px]"><header class="fixed top-0 left-[260px] right-0 h-16 bg-surface-container-lowest z-40 shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="h-16 w-full px-gutter-desktop flex items-center justify-between gap-space-md"><div class="flex items-center gap-space-lg"><button class="flex items-center gap-space-sm px-2.5 py-1.5 rounded-lg bg-surface hover:bg-surface-container transition-colors text-left" type="button"><span class="material-symbols-outlined text-outline text-[18px]">store</span><div><div class="flex items-center gap-1"><span class="font-body-sm text-body-sm font-semibold text-on-surface">Kushpedia Stores4</span><span class="font-financial-sm text-financial-sm text-on-surface-variant">[ID: 10344]</span></div><span class="font-label-caps text-[10px] text-outline block leading-none">Default Settlement Account</span></div><span class="material-symbols-outlined text-outline text-[16px] ml-1">expand_more</span></button><div class="flex items-center bg-surface-container-low p-1 rounded-lg gap-1"><button class="px-2.5 py-1 rounded-DEFAULT font-label-caps text-label-caps text-on-surface-variant hover:text-on-surface transition-colors" type="button">Weekly</button><button class="px-2.5 py-1 rounded-DEFAULT font-label-caps text-label-caps bg-surface-container-lowest text-primary-container font-semibold shadow-[0_1px_2px_rgba(0,0,0,0.04)]" type="button">Monthly</button><div class="flex items-center gap-1 pl-2 pr-1.5 py-0.5 text-on-surface-variant"><span class="material-symbols-outlined text-[14px]">calendar_today</span><span class="font-financial-sm text-financial-sm font-medium">Nov 2026</span></div></div></div><div class="flex items-center gap-space-md"><div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-tertiary-fixed text-on-tertiary-fixed-variant"><span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span><span class="font-body-sm text-body-sm font-medium">2 SKUs Missing COGS</span></div><button class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary-container text-on-primary hover:bg-primary font-body-sm text-body-sm font-medium transition-colors shadow-[0_1px_2px_rgba(0,0,0,0.05)]" type="button"><span class="material-symbols-outlined text-[18px]">upload_file</span><span>+ Upload Settlement Excel</span></button><button class="relative p-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-colors" type="button"><span class="material-symbols-outlined text-[20px]">notifications</span><span class="absolute top-1 right-1 w-4 h-4 rounded-full bg-error text-on-error font-financial-sm text-[10px] leading-none flex items-center justify-center font-bold">3</span></button><div class="flex items-center gap-space-sm pl-space-xs"><div class="text-right"><div class="font-body-sm text-body-sm font-semibold text-on-surface leading-tight">Kushpedia Admin</div><div class="font-financial-sm text-financial-sm text-outline">KP-10344</div></div><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></div></header><main class="relative pt-16 w-full bg-surface min-h-screen"><div class="flex flex-col w-full">
+<!-- Sub-header Breadcrumb Bar -->
+<div class="px-gutter-desktop py-space-sm bg-surface-container-lowest flex items-center justify-between shadow-sm">
+<div class="flex items-center gap-space-sm">
+<span class="font-body-sm text-body-sm text-outline">Orders &amp; Reconciliation</span>
+<span class="material-symbols-outlined text-outline text-[14px]">chevron_right</span>
+<span class="font-body-sm text-body-sm font-semibold text-primary">Master Order Ledger &amp; 360° Drawer</span>
+<span class="inline-flex items-center gap-1 ml-2 px-2 py-0.5 rounded-full bg-surface-container text-on-surface-variant font-financial-sm text-financial-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-primary-container"></span>
+        Cycle #55 Sync
+      </span>
+</div>
+<div class="flex items-center gap-space-md text-on-surface-variant font-financial-sm text-financial-sm">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[15px] text-outline">database</span>
+<span>Reconciled: <strong class="text-on-surface">37 Orders</strong></span>
+</div>
+<div class="w-1 h-3 rounded bg-surface-container-highest"></div>
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[15px] text-outline">schedule</span>
+<span>Last Run: <strong>Today, 11:42 EAT</strong></span>
+</div>
+</div>
+</div>
+<!-- Main Workstation Dual Split Layout -->
+<div class="flex flex-1 w-full items-start">
+<!-- LEFT SIDE: Master Order Reconciliation Ledger (~68%) -->
+<section class="w-[68%] min-w-0 p-gutter-desktop flex flex-col gap-space-md">
+<!-- Ledger Section Header Card -->
+<div class="bg-surface-container-lowest p-space-lg rounded-xl shadow-sm flex flex-col gap-space-md">
+<div class="flex items-start justify-between gap-space-md">
+<div>
+<div class="flex items-center gap-space-sm">
+<h2 class="font-headline-lg text-headline-lg text-on-surface">Master Order Reconciliation Ledger</h2>
+<span class="px-2 py-0.5 rounded bg-surface-container-high text-primary-container font-label-caps text-label-caps">LIVE LEDGER</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1 max-w-2xl">
+              37 Tracked Orders across Cycle #55 &amp; Pending Pipeline. Complete audit-grade cross-verification between Marketplace Sales, DS Freight Deductions, and Merchant SLA Penalties.
+            </p>
+</div>
+<div class="flex items-center gap-space-sm">
+<button class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface font-body-sm text-body-sm font-medium transition-colors shadow-sm" type="button">
+<span class="material-symbols-outlined text-[18px]">tune</span>
+<span>Column Presets</span>
+</button>
+<button class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary-container text-on-primary hover:bg-primary font-body-sm text-body-sm font-medium transition-colors shadow-sm" type="button">
+<span class="material-symbols-outlined text-[18px]">file_download</span>
+<span>Export Master Audit (.csv)</span>
+</button>
+</div>
+</div>
+<!-- Filter Tabs & Quick Search Tooling -->
+<div class="flex items-center justify-between gap-space-md pt-space-xs">
+<!-- Filter Tabs -->
+<div class="flex items-center bg-surface-container-low p-1 rounded-lg gap-1">
+<button class="px-3 py-1 rounded-DEFAULT font-label-caps text-label-caps bg-surface-container-lowest text-primary-container font-semibold shadow-sm flex items-center gap-1.5" type="button">
+<span>All Orders</span>
+<span class="px-1.5 py-0.2 rounded-full bg-surface-container text-on-surface-variant text-[10px]">37</span>
+</button>
+<button class="px-3 py-1 rounded-DEFAULT font-label-caps text-label-caps text-on-surface-variant hover:text-on-surface transition-colors flex items-center gap-1.5" type="button">
+<span>Settled</span>
+<span class="px-1.5 py-0.2 rounded-full bg-surface text-primary text-[10px]">16</span>
+</button>
+<button class="px-3 py-1 rounded-DEFAULT font-label-caps text-label-caps text-on-surface-variant hover:text-on-surface transition-colors flex items-center gap-1.5" type="button">
+<span>Pending Escrow</span>
+<span class="px-1.5 py-0.2 rounded-full bg-surface text-tertiary text-[10px]">15</span>
+</button>
+<button class="px-3 py-1 rounded-DEFAULT font-label-caps text-label-caps text-on-surface-variant hover:text-on-surface transition-colors flex items-center gap-1.5" type="button">
+<span>Flagged &amp; Disputed</span>
+<span class="px-1.5 py-0.2 rounded-full bg-error-container text-on-error-container text-[10px]">6</span>
+</button>
+</div>
+<!-- Search Input Bar -->
+<div class="relative w-80">
+<span class="material-symbols-outlined text-outline absolute left-3 top-2 text-[18px]">search</span>
+<input class="w-full pl-9 pr-3 py-1.5 rounded-lg bg-surface font-body-sm text-body-sm text-on-surface placeholder:text-outline focus:outline-none focus:bg-surface-container-lowest shadow-sm" placeholder="Search Order SN, Tracking KKE, Goods ID..." type="text" value=""/>
+</div>
+</div>
+</div>
+<!-- Master Order Data Table Card -->
+<div class="bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden flex flex-col">
+<!-- Quick Batch Stats Strip -->
+<div class="px-space-md py-2 bg-surface-container-low flex items-center justify-between text-on-surface-variant font-label-caps text-label-caps">
+<div class="flex items-center gap-space-lg">
+<span>SELECTED: <strong class="text-on-surface font-financial-sm">1 ROW (DRAWER OPEN)</strong></span>
+<span>TOTAL BATCH GMV: <strong class="text-on-surface font-financial-sm">KES 22,678.00</strong></span>
+<span>TOTAL LINKED FREIGHT: <strong class="text-on-surface font-financial-sm">-KES 910.00</strong></span>
+</div>
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-primary-fixed-dim animate-pulse"></span>
+<span class="text-primary font-financial-sm">Continuous Ledger Parity Verified</span>
+</div>
+</div>
+<!-- Ledger Table Grid -->
+<div class="overflow-x-auto">
+<table class="w-full text-left table-fixed">
+<colgroup>
+<col class="w-8"/>
+<col class="w-36"/>
+<col class="w-48"/>
+<col class="w-24"/>
+<col class="w-24"/>
+<col class="w-24"/>
+<col class="w-28"/>
+<col class="w-32"/>
+<col class="w-36"/>
+<col class="w-32"/>
+<col class="w-16"/>
+</colgroup>
+<thead>
+<tr class="bg-surface-container-lowest text-on-surface-variant font-label-caps text-label-caps tracking-wider uppercase">
+<th class="py-2.5 px-2 text-center">
+<input checked="" class="rounded accent-primary-container cursor-pointer" type="checkbox"/>
+</th>
+<th class="py-2.5 px-2">Order SN</th>
+<th class="py-2.5 px-2">Product &amp; SKU Details</th>
+<th class="py-2.5 px-2">Order Date</th>
+<th class="py-2.5 px-2 text-right">Gross GMV</th>
+<th class="py-2.5 px-2 text-right">Kilimall Comm</th>
+<th class="py-2.5 px-2 text-right">DS Courier</th>
+<th class="py-2.5 px-2 text-center">Settlement Status</th>
+<th class="py-2.5 px-2 text-center">Penalty Status</th>
+<th class="py-2.5 px-2 text-right">Net Cash</th>
+<th class="py-2.5 px-2 text-center">360°</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-surface-container font-body-sm text-body-sm text-on-surface">
+<!-- ROW 1: SELECTED & HIGHLIGHTED ACTIVE (Order 610287144669824) -->
+<tr class="bg-surface-container/60 hover:bg-surface-container transition-colors relative shadow-inner">
+<td class="py-3 px-2 text-center">
+<input checked="" class="rounded accent-primary-container" type="checkbox"/>
+</td>
+<td class="py-3 px-2">
+<div class="flex flex-col">
+<span class="font-financial-sm text-financial-sm font-semibold text-primary-container leading-none">610287144669824</span>
+<span class="font-financial-sm text-[10px] text-outline mt-1">KKE083164988241</span>
+</div>
+</td>
+<td class="py-3 px-2">
+<div class="flex flex-col">
+<span class="font-body-sm text-body-sm font-medium text-on-surface truncate">Stainless Kitchen Storage Rack</span>
+<span class="font-financial-sm text-[11px] text-outline">KP-RCK-4TIER • Qty 1</span>
+</div>
+</td>
+<td class="py-3 px-2">
+<span class="font-financial-sm text-financial-sm text-on-surface-variant">Oct 29, 14:15</span>
+</td>
+<td class="py-3 px-2 text-right">
+<span class="font-financial-sm text-financial-sm font-medium text-on-surface">6,100.00</span>
+</td>
+<td class="py-3 px-2 text-right">
+<span class="font-financial-sm text-financial-sm text-error">-884.50</span>
+</td>
+<td class="py-3 px-2 text-right">
+<div class="flex flex-col items-end">
+<span class="font-financial-sm text-financial-sm text-tertiary-container">-200.00</span>
+<span class="font-label-caps text-[9px] text-outline">Large Tier</span>
+</div>
+</td>
+<!-- SEPARATE Settlement Status Column -->
+<td class="py-3 px-2 text-center">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-tertiary-fixed text-on-tertiary-fixed font-label-caps text-[11px] whitespace-nowrap">
+<span class="material-symbols-outlined text-[12px] text-tertiary animate-spin">hourglass_top</span>
+                    Pending Escrow
+                  </span>
+</td>
+<!-- SEPARATE Penalty Status Column -->
+<td class="py-3 px-2 text-center">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-surface-container text-outline font-label-caps text-[10px] whitespace-nowrap">
+<span class="w-1.5 h-1.5 rounded-full bg-outline"></span>
+                    No Penalty
+                  </span>
+</td>
+<td class="py-3 px-2 text-right">
+<div class="flex flex-col items-end">
+<span class="font-financial-sm text-financial-sm font-bold text-primary-container">5,015.50</span>
+<span class="font-label-caps text-[9px] text-tertiary font-semibold uppercase">In Escrow</span>
+</div>
+</td>
+<td class="py-3 px-2 text-center">
+<button class="w-7 h-7 rounded-md bg-primary-container text-on-primary flex items-center justify-center shadow-sm" type="button">
+<span class="material-symbols-outlined text-[16px]">visibility</span>
+</button>
+</td>
+</tr>
+<!-- ROW 2: Order 610272230744554 -->
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="py-3 px-2 text-center">
+<input class="rounded accent-primary-container" type="checkbox"/>
+</td>
+<td class="py-3 px-2">
+<div class="flex flex-col">
+<span class="font-financial-sm text-financial-sm font-semibold text-on-surface leading-none">610272230744554</span>
+<span class="font-financial-sm text-[10px] text-outline mt-1">KKE083164910243</span>
+</div>
+</td>
+<td class="py-3 px-2">
+<div class="flex flex-col">
+<span class="font-body-sm text-body-sm font-medium text-on-surface truncate">4Pc Anti-Vibration Pads</span>
+<span class="font-financial-sm text-[11px] text-outline">KP-PADS-RUB • Qty 2</span>
+</div>
+</td>
+<td class="py-3 px-2">
+<span class="font-financial-sm text-financial-sm text-on-surface-variant">Oct 28, 10:20</span>
+</td>
+<td class="py-3 px-2 text-right">
+<span class="font-financial-sm text-financial-sm font-medium text-on-surface">378.00</span>
+</td>
+<td class="py-3 px-2 text-right">
+<span class="font-financial-sm text-financial-sm text-error">-56.70</span>
+</td>
+<td class="py-3 px-2 text-right">
+<div class="flex flex-col items-end">
+<span class="font-financial-sm text-financial-sm text-error font-bold">-250.00</span>
+<span class="font-label-caps text-[9px] text-error font-bold">Anomaly! (Super)</span>
+</div>
+</td>
+<!-- SEPARATE Settlement Status Column -->
+<td class="py-3 px-2 text-center">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary-fixed text-on-primary-fixed-variant font-label-caps text-[11px] whitespace-nowrap">
+<span class="material-symbols-outlined text-[12px] text-primary">check_circle</span>
+                    Settled
+                  </span>
+</td>
+<!-- SEPARATE Penalty Status Column -->
+<td class="py-3 px-2 text-center">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-surface-container text-outline font-label-caps text-[10px] whitespace-nowrap">
+<span class="w-1.5 h-1.5 rounded-full bg-outline"></span>
+                    No Penalty
+                  </span>
+</td>
+<td class="py-3 px-2 text-right">
+<span class="font-financial-sm text-financial-sm font-semibold text-on-surface">71.30</span>
+</td>
+<td class="py-3 px-2 text-center">
+<button class="w-7 h-7 rounded-md bg-surface hover:bg-surface-container text-on-surface-variant flex items-center justify-center transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px]">visibility</span>
+</button>
+</td>
+</tr>
+<!-- ROW 3: Order 610274489012391 -->
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="py-3 px-2 text-center">
+<input class="rounded accent-primary-container" type="checkbox"/>
+</td>
+<td class="py-3 px-2">
+<div class="flex flex-col">
+<span class="font-financial-sm text-financial-sm font-semibold text-on-surface leading-none">610274489012391</span>
+<span class="font-financial-sm text-[10px] text-outline mt-1">KKE083164899120</span>
+</div>
+</td>
+<td class="py-3 px-2">
+<div class="flex flex-col">
+<span class="font-body-sm text-body-sm font-medium text-on-surface truncate">Digital LED Alarm Clock</span>
+<span class="font-financial-sm text-[11px] text-outline">KP-CLK-DIGI • Qty 1</span>
+</div>
+</td>
+<td class="py-3 px-2">
+<span class="font-financial-sm text-financial-sm text-on-surface-variant">Oct 26, 18:40</span>
+</td>
+<td class="py-3 px-2 text-right">
+<span class="font-financial-sm text-financial-sm font-medium text-on-surface">2,376.00</span>
+</td>
+<td class="py-3 px-2 text-right">
+<span class="font-financial-sm text-financial-sm text-error">-356.40</span>
+</td>
+<td class="py-3 px-2 text-right">
+<div class="flex flex-col items-end">
+<span class="font-financial-sm text-financial-sm text-on-surface-variant">-80.00</span>
+<span class="font-label-caps text-[9px] text-outline">Small</span>
+</div>
+</td>
+<!-- SEPARATE Settlement Status Column -->
+<td class="py-3 px-2 text-center">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary-fixed text-on-primary-fixed-variant font-label-caps text-[11px] whitespace-nowrap">
+<span class="material-symbols-outlined text-[12px] text-primary">check_circle</span>
+                    Settled
+                  </span>
+</td>
+<!-- SEPARATE Penalty Status Column -->
+<td class="py-3 px-2 text-center">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-error-container text-on-error-container font-label-caps text-[10px] whitespace-nowrap font-semibold">
+<span class="material-symbols-outlined text-[11px] text-error">gavel</span>
+                    Dispatch -300
+                  </span>
+</td>
+<td class="py-3 px-2 text-right">
+<span class="font-financial-sm text-financial-sm font-semibold text-on-surface">1,639.60</span>
+</td>
+<td class="py-3 px-2 text-center">
+<button class="w-7 h-7 rounded-md bg-surface hover:bg-surface-container text-on-surface-variant flex items-center justify-center transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px]">visibility</span>
+</button>
+</td>
+</tr>
+<!-- ROW 4: Order 610284902194851 -->
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="py-3 px-2 text-center">
+<input class="rounded accent-primary-container" type="checkbox"/>
+</td>
+<td class="py-3 px-2">
+<div class="flex flex-col">
+<span class="font-financial-sm text-financial-sm font-semibold text-on-surface leading-none">610284902194851</span>
+<span class="font-financial-sm text-[10px] text-outline mt-1">KKE083165001239</span>
+</div>
+</td>
+<td class="py-3 px-2">
+<div class="flex flex-col">
+<span class="font-body-sm text-body-sm font-medium text-on-surface truncate">Canopy Mosquito Net 1.8m</span>
+<span class="font-financial-sm text-[11px] text-outline">KP-NET-CANOPY • Qty 2</span>
+</div>
+</td>
+<td class="py-3 px-2">
+<span class="font-financial-sm text-financial-sm text-on-surface-variant">Oct 29, 16:02</span>
+</td>
+<td class="py-3 px-2 text-right">
+<span class="font-financial-sm text-financial-sm font-medium text-on-surface">9,574.00</span>
+</td>
+<td class="py-3 px-2 text-right">
+<span class="font-financial-sm text-financial-sm text-error">-1,148.88</span>
+</td>
+<td class="py-3 px-2 text-right">
+<div class="flex flex-col items-end">
+<span class="font-financial-sm text-financial-sm text-on-surface-variant">-200.00</span>
+<span class="font-label-caps text-[9px] text-outline">Large</span>
+</div>
+</td>
+<!-- SEPARATE Settlement Status Column -->
+<td class="py-3 px-2 text-center">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-tertiary-fixed text-on-tertiary-fixed font-label-caps text-[11px] whitespace-nowrap">
+<span class="material-symbols-outlined text-[12px] text-tertiary">hourglass_top</span>
+                    Pending Escrow
+                  </span>
+</td>
+<!-- SEPARATE Penalty Status Column -->
+<td class="py-3 px-2 text-center">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-surface-container text-outline font-label-caps text-[10px] whitespace-nowrap">
+<span class="w-1.5 h-1.5 rounded-full bg-outline"></span>
+                    No Penalty
+                  </span>
+</td>
+<td class="py-3 px-2 text-right">
+<div class="flex flex-col items-end">
+<span class="font-financial-sm text-financial-sm font-bold text-on-surface">8,225.12</span>
+<span class="font-label-caps text-[9px] text-tertiary uppercase">In Escrow</span>
+</div>
+</td>
+<td class="py-3 px-2 text-center">
+<button class="w-7 h-7 rounded-md bg-surface hover:bg-surface-container text-on-surface-variant flex items-center justify-center transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px]">visibility</span>
+</button>
+</td>
+</tr>
+<!-- ROW 5: Order 610269844220081 -->
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="py-3 px-2 text-center">
+<input class="rounded accent-primary-container" type="checkbox"/>
+</td>
+<td class="py-3 px-2">
+<div class="flex flex-col">
+<span class="font-financial-sm text-financial-sm font-semibold text-on-surface leading-none">610269844220081</span>
+<span class="font-financial-sm text-[10px] text-outline mt-1">KKE083164771120</span>
+</div>
+</td>
+<td class="py-3 px-2">
+<div class="flex flex-col">
+<span class="font-body-sm text-body-sm font-medium text-on-surface truncate">Wireless Lavalier Mic Type-C</span>
+<span class="font-financial-sm text-[11px] text-outline">KP-MIC-LAV-C • Qty 1</span>
+</div>
+</td>
+<td class="py-3 px-2">
+<span class="font-financial-sm text-financial-sm text-on-surface-variant">Oct 25, 08:14</span>
+</td>
+<td class="py-3 px-2 text-right">
+<span class="font-financial-sm text-financial-sm font-medium text-on-surface">2,150.00</span>
+</td>
+<td class="py-3 px-2 text-right">
+<span class="font-financial-sm text-financial-sm text-error">-322.50</span>
+</td>
+<td class="py-3 px-2 text-right">
+<div class="flex flex-col items-end">
+<span class="font-financial-sm text-financial-sm text-on-surface-variant">-80.00</span>
+<span class="font-label-caps text-[9px] text-outline">Small</span>
+</div>
+</td>
+<!-- SEPARATE Settlement Status Column -->
+<td class="py-3 px-2 text-center">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary-fixed text-on-primary-fixed-variant font-label-caps text-[11px] whitespace-nowrap">
+<span class="material-symbols-outlined text-[12px] text-primary">check_circle</span>
+                    Settled
+                  </span>
+</td>
+<!-- SEPARATE Penalty Status Column -->
+<td class="py-3 px-2 text-center">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-surface-container text-outline font-label-caps text-[10px] whitespace-nowrap">
+<span class="w-1.5 h-1.5 rounded-full bg-outline"></span>
+                    No Penalty
+                  </span>
+</td>
+<td class="py-3 px-2 text-right">
+<span class="font-financial-sm text-financial-sm font-semibold text-on-surface">1,747.50</span>
+</td>
+<td class="py-3 px-2 text-center">
+<button class="w-7 h-7 rounded-md bg-surface hover:bg-surface-container text-on-surface-variant flex items-center justify-center transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px]">visibility</span>
+</button>
+</td>
+</tr>
+<!-- ROW 6: Order 610261189402918 -->
+<tr class="hover:bg-surface-container-low transition-colors bg-error-container/10">
+<td class="py-3 px-2 text-center">
+<input class="rounded accent-primary-container" type="checkbox"/>
+</td>
+<td class="py-3 px-2">
+<div class="flex flex-col">
+<span class="font-financial-sm text-financial-sm font-semibold text-on-surface leading-none">610261189402918</span>
+<span class="font-financial-sm text-[10px] text-outline mt-1">KKE083164109482</span>
+</div>
+</td>
+<td class="py-3 px-2">
+<div class="flex flex-col">
+<span class="font-body-sm text-body-sm font-medium text-on-surface truncate">Foldable Mosquito Net Pop-Up</span>
+<span class="font-financial-sm text-[11px] text-outline">KP-NET-FOLD • Qty 1</span>
+</div>
+</td>
+<td class="py-3 px-2">
+<span class="font-financial-sm text-financial-sm text-on-surface-variant">Oct 12, 11:05</span>
+</td>
+<td class="py-3 px-2 text-right">
+<span class="font-financial-sm text-financial-sm font-medium text-on-surface">2,100.00</span>
+</td>
+<td class="py-3 px-2 text-right">
+<span class="font-financial-sm text-financial-sm text-error">-252.00</span>
+</td>
+<td class="py-3 px-2 text-right">
+<div class="flex flex-col items-end">
+<span class="font-financial-sm text-financial-sm text-on-surface-variant">-100.00</span>
+<span class="font-label-caps text-[9px] text-outline">Med Tier</span>
+</div>
+</td>
+<!-- SEPARATE Settlement Status Column -->
+<td class="py-3 px-2 text-center">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-error-container text-on-error-container font-label-caps text-[11px] whitespace-nowrap font-semibold">
+<span class="material-symbols-outlined text-[12px] text-error">warning</span>
+                    Overdue Pending
+                  </span>
+</td>
+<!-- SEPARATE Penalty Status Column -->
+<td class="py-3 px-2 text-center">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-error-container text-on-error-container font-label-caps text-[10px] whitespace-nowrap font-bold">
+<span class="material-symbols-outlined text-[11px] text-error">cancel</span>
+                    OOS Cancel -300
+                  </span>
+</td>
+<td class="py-3 px-2 text-right">
+<div class="flex flex-col items-end">
+<span class="font-financial-sm text-financial-sm font-bold text-error">1,448.00</span>
+<span class="font-label-caps text-[9px] text-error font-bold uppercase tracking-wider">Escrow Hold</span>
+</div>
+</td>
+<td class="py-3 px-2 text-center">
+<button class="w-7 h-7 rounded-md bg-surface hover:bg-surface-container text-on-surface-variant flex items-center justify-center transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px]">visibility</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Ledger Footer Pagination & Quick Stats -->
+<div class="px-space-md py-space-sm bg-surface-container-lowest flex items-center justify-between font-body-sm text-body-sm text-on-surface-variant">
+<div class="flex items-center gap-space-sm">
+<span>Showing <strong class="text-on-surface">1 - 6</strong> of 37 Orders</span>
+<div class="h-3 w-px bg-surface-container-highest"></div>
+<span class="font-label-caps text-[10px] uppercase text-outline">All calculations verified against KiliCommission Schedule 2026</span>
+</div>
+<div class="flex items-center gap-1">
+<button class="px-2 py-1 rounded bg-surface hover:bg-surface-container text-on-surface-variant text-[12px] transition-colors" type="button">Previous</button>
+<button class="px-2.5 py-1 rounded bg-primary-container text-on-primary font-medium text-[12px]" type="button">1</button>
+<button class="px-2.5 py-1 rounded bg-surface hover:bg-surface-container text-on-surface text-[12px] transition-colors" type="button">2</button>
+<button class="px-2.5 py-1 rounded bg-surface hover:bg-surface-container text-on-surface text-[12px] transition-colors" type="button">3</button>
+<button class="px-2 py-1 rounded bg-surface hover:bg-surface-container text-on-surface-variant text-[12px] transition-colors" type="button">Next</button>
+</div>
+</div>
+</div>
+<!-- Anomaly Alert Banner -->
+<div class="p-space-md rounded-xl bg-surface-container-low flex items-start gap-space-md">
+<div class="w-8 h-8 rounded-lg bg-tertiary-fixed flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-tertiary text-[20px]">lightbulb</span>
+</div>
+<div class="flex-1">
+<div class="flex items-center gap-2">
+<h4 class="font-body-md text-body-md font-semibold text-on-surface">Dimensional Weight Audit Tip (DS Courier Overcharge Detection)</h4>
+<span class="px-1.5 py-0.2 rounded bg-tertiary-container text-on-tertiary-container font-label-caps text-[10px] uppercase">Active Heuristic</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">
+            Order <code class="font-financial-sm text-[11px] text-primary font-bold">610272230744554</code> (Rubber Washing Machine Pads) was billed KES 250.00 as "Super Large Tier" despite standard weight under 0.8 kg. A dispute claim draft is ready for one-click submission.
+          </p>
+</div>
+<button class="px-3 py-1.5 rounded-lg bg-surface-container-lowest hover:bg-surface-container text-primary-container font-body-sm text-body-sm font-semibold transition-colors shadow-sm whitespace-nowrap" type="button">
+          File Weight Dispute
+        </button>
+</div>
+</section>
+<!-- RIGHT SIDE: Persistent Order 360° Lifecycle Drawer (~32%) -->
+<aside class="w-[32%] bg-surface-container-lowest shadow-xl flex flex-col sticky top-16 h-[calc(100vh-4rem)] overflow-y-auto">
+<!-- Drawer Header Bar -->
+<div class="p-space-lg bg-surface-container-lowest sticky top-0 z-10 flex flex-col gap-space-xs shadow-sm">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="w-2.5 h-2.5 rounded-full bg-primary-container"></span>
+<span class="font-label-caps text-label-caps tracking-wider uppercase text-on-surface-variant">Order 360° Cross-Week Audit</span>
+</div>
+<div class="flex items-center gap-1">
+<button class="p-1 rounded hover:bg-surface-container text-outline hover:text-on-surface transition-colors" title="Minimize drawer" type="button">
+<span class="material-symbols-outlined text-[18px]">dock_to_right</span>
+</button>
+<button class="p-1 rounded hover:bg-surface-container text-outline hover:text-on-surface transition-colors" title="Close drawer" type="button">
+<span class="material-symbols-outlined text-[18px]">close</span>
+</button>
+</div>
+</div>
+<!-- Order Identifier & Quick Copy -->
+<div class="flex items-center justify-between mt-1">
+<div class="flex items-center gap-2">
+<h3 class="font-financial-lg text-financial-lg font-bold text-on-surface">Order #610287144669824</h3>
+<button class="text-outline hover:text-primary transition-colors" title="Copy Order Number" type="button">
+<span class="material-symbols-outlined text-[16px]">content_copy</span>
+</button>
+</div>
+<span class="px-2 py-0.5 rounded-full bg-tertiary-fixed text-on-tertiary-fixed font-label-caps text-[11px] font-semibold flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span>
+            Pending Settlement
+          </span>
+</div>
+<!-- Badges Metadata Strip -->
+<div class="flex flex-wrap items-center gap-1.5 mt-1">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-financial-sm text-[11px]">
+<span class="material-symbols-outlined text-[13px] text-outline">local_shipping</span>
+            KKE083164988241
+          </span>
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-primary-fixed/40 text-on-primary-fixed-variant font-financial-sm text-[11px]">
+<span class="material-symbols-outlined text-[13px] text-primary">receipt</span>
+            bill (55).xlsx
+          </span>
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-surface-container-high text-on-surface font-label-caps text-[10px]">
+            G4S KENYA
+          </span>
+</div>
+</div>
+<!-- Drawer Content Scroll Area -->
+<div class="p-space-lg flex flex-col gap-space-lg">
+<!-- Product Summary Section Card -->
+<div class="bg-surface p-space-md rounded-xl flex flex-col gap-space-sm shadow-sm">
+<div class="flex items-start gap-space-md">
+<div class="w-16 h-16 rounded-lg bg-surface-container-highest overflow-hidden flex-shrink-0 flex items-center justify-center relative shadow-inner">
+<span class="material-symbols-outlined text-outline text-[28px]">shelves</span>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center gap-1">
+<span class="font-label-caps text-[10px] text-primary font-bold uppercase">Goods ID: 10008451029</span>
+<span class="text-outline text-[10px]">•</span>
+<span class="font-financial-sm text-[10px] text-outline">Kitchen Storage</span>
+</div>
+<h4 class="font-body-md text-body-md font-semibold text-on-surface leading-snug line-clamp-2 mt-0.5">
+                Multi-Tier Stainless Kitchen Storage Rack (Heavy-Duty Organiser)
+              </h4>
+<div class="flex items-center gap-2 mt-1">
+<span class="font-financial-sm text-[11px] px-1.5 py-0.2 rounded bg-surface-container-highest text-on-surface-variant font-medium">
+                  SKU: KP-RCK-4TIER
+                </span>
+<span class="font-body-sm text-[11px] text-on-surface-variant">Qty: 1 Unit</span>
+</div>
+</div>
+</div>
+<!-- Retail vs Wholesale Landed Margin Mini Strip -->
+<div class="pt-space-xs grid grid-cols-2 gap-2 text-left">
+<div class="bg-surface-container-lowest p-2 rounded-lg">
+<span class="font-label-caps text-[10px] text-outline uppercase block">Buyer Price (GMV)</span>
+<span class="font-financial-md text-financial-md font-bold text-on-surface">KES 6,100.00</span>
+</div>
+<div class="bg-surface-container-lowest p-2 rounded-lg">
+<span class="font-label-caps text-[10px] text-outline uppercase block">Landed Wholesale COGS</span>
+<span class="font-financial-md text-financial-md font-bold text-on-surface-variant">KES 3,200.00</span>
+</div>
+</div>
+</div>
+<!-- The Two-Stage Financial Ledger Breakdown Waterfall -->
+<div class="flex flex-col gap-space-xs">
+<div class="flex items-center justify-between">
+<h4 class="font-label-caps text-label-caps uppercase tracking-wider text-outline font-bold">
+              Two-Stage Settlement Equation
+            </h4>
+<span class="font-financial-sm text-[11px] text-primary font-medium">Automated Match</span>
+</div>
+<div class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm flex flex-col gap-2.5">
+<!-- Stage 1 Breakdown -->
+<div class="flex items-center justify-between py-1">
+<div class="flex items-center gap-2">
+<span class="w-5 h-5 rounded-full bg-primary-fixed/40 text-primary font-financial-sm text-[11px] flex items-center justify-center font-bold">+</span>
+<span class="font-body-sm text-body-sm text-on-surface">Gross Sales (GMV)</span>
+</div>
+<span class="font-financial-sm text-financial-sm font-semibold text-on-surface">KES 6,100.00</span>
+</div>
+<div class="flex items-center justify-between py-1">
+<div class="flex items-center gap-2">
+<span class="w-5 h-5 rounded-full bg-error-container text-error font-financial-sm text-[11px] flex items-center justify-center font-bold">-</span>
+<div class="flex flex-col">
+<span class="font-body-sm text-body-sm text-on-surface">Kilimall Commission</span>
+<span class="font-financial-sm text-[10px] text-outline">Category Tier: 14.5%</span>
+</div>
+</div>
+<span class="font-financial-sm text-financial-sm font-semibold text-error">-KES 884.50</span>
+</div>
+<!-- Stage 1 Net -->
+<div class="px-2.5 py-1.5 rounded-lg bg-surface-container-low flex items-center justify-between">
+<span class="font-label-caps text-[11px] text-on-surface-variant uppercase font-semibold">Stage 1: Net Item Payable</span>
+<span class="font-financial-sm text-financial-sm font-bold text-primary">KES 5,215.50</span>
+</div>
+<!-- Stage 2 Deductions -->
+<div class="flex items-center justify-between py-1">
+<div class="flex items-center gap-2">
+<span class="w-5 h-5 rounded-full bg-tertiary-fixed text-tertiary font-financial-sm text-[11px] flex items-center justify-center font-bold">-</span>
+<div class="flex flex-col">
+<span class="font-body-sm text-body-sm text-on-surface">Upfront DS Courier Freight</span>
+<span class="font-financial-sm text-[10px] text-outline">Billed in bill (55).xlsx • Large Tier</span>
+</div>
+</div>
+<span class="font-financial-sm text-financial-sm font-semibold text-tertiary">-KES 200.00</span>
+</div>
+<div class="flex items-center justify-between py-1">
+<div class="flex items-center gap-2">
+<span class="w-5 h-5 rounded-full bg-surface-container text-outline font-financial-sm text-[11px] flex items-center justify-center font-bold">✓</span>
+<div class="flex flex-col">
+<span class="font-body-sm text-body-sm text-on-surface">SLA Penalties &amp; Fines</span>
+<span class="font-financial-sm text-[10px] text-outline">Dispatch SLA on-time (&lt;24h)</span>
+</div>
+</div>
+<span class="font-financial-sm text-financial-sm font-semibold text-outline">KES 0.00</span>
+</div>
+<!-- Stage 2 Current Realized Cash -->
+<div class="p-3 rounded-xl bg-surface-container flex flex-col gap-1 shadow-sm">
+<div class="flex items-center justify-between">
+<span class="font-label-caps text-label-caps uppercase font-bold text-on-surface">Stage 2: Net Realized Cash</span>
+<span class="font-financial-xl text-financial-lg font-bold text-primary-container">KES 5,015.50</span>
+</div>
+<div class="flex items-center justify-between text-[11px] pt-1">
+<span class="font-body-sm text-[11px] text-on-surface-variant">Landed Pocket Profit (after COGS):</span>
+<span class="font-financial-sm text-financial-sm font-bold text-primary">+KES 1,815.50 (+29.8% Margin)</span>
+</div>
+<div class="mt-1 flex items-center gap-1.5 text-[10px] text-tertiary font-medium">
+<span class="material-symbols-outlined text-[13px]">info</span>
+<span>Funds unlocking in upcoming Cycle #56 upon delivery verification.</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Cross-Week Audit Timeline Section -->
+<div class="flex flex-col gap-space-xs">
+<div class="flex items-center justify-between">
+<h4 class="font-label-caps text-label-caps uppercase tracking-wider text-outline font-bold">
+              Cross-Week Lifecycle Timeline
+            </h4>
+<span class="font-financial-sm text-[10px] text-outline">5 of 5 Checkpoints</span>
+</div>
+<div class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm">
+<ol class="relative ml-2 space-y-4">
+<!-- Timeline Step 1 -->
+<li class="relative pl-6">
+<span class="absolute -left-1.5 top-0.5 w-4 h-4 rounded-full bg-primary flex items-center justify-center text-on-primary text-[10px]">
+<span class="material-symbols-outlined text-[10px]">done</span>
+</span>
+<div class="flex flex-col">
+<div class="flex items-center justify-between">
+<span class="font-body-sm text-body-sm font-semibold text-on-surface">Order Placed by Buyer</span>
+<span class="font-financial-sm text-[10px] text-outline">Oct 28, 14:15 EAT</span>
+</div>
+<p class="font-body-sm text-[11px] text-on-surface-variant">Buyer located in Nairobi Kilimani. Paid via M-Pesa Express.</p>
+</div>
+</li>
+<!-- Timeline Step 2 -->
+<li class="relative pl-6">
+<span class="absolute -left-1.5 top-0.5 w-4 h-4 rounded-full bg-primary flex items-center justify-center text-on-primary text-[10px]">
+<span class="material-symbols-outlined text-[10px]">done</span>
+</span>
+<div class="flex flex-col">
+<div class="flex items-center justify-between">
+<span class="font-body-sm text-body-sm font-semibold text-on-surface">Dispatched to Sortation Hub</span>
+<span class="font-financial-sm text-[10px] text-outline">Oct 29, 09:30 EAT</span>
+</div>
+<p class="font-body-sm text-[11px] text-on-surface-variant">Package received at Kilimall Nairobi Main Sortation Center (Mombasa Rd).</p>
+</div>
+</li>
+<!-- Timeline Step 3 -->
+<li class="relative pl-6">
+<span class="absolute -left-1.5 top-0.5 w-4 h-4 rounded-full bg-primary flex items-center justify-center text-on-primary text-[10px]">
+<span class="material-symbols-outlined text-[10px]">done</span>
+</span>
+<div class="flex flex-col">
+<div class="flex items-center justify-between">
+<span class="font-body-sm text-body-sm font-semibold text-on-surface">Upfront Freight Debited (-200 KES)</span>
+<span class="font-financial-sm text-[10px] text-outline">Oct 29, 11:45 EAT</span>
+</div>
+<p class="font-body-sm text-[11px] text-on-surface-variant">Billed immediately in statement <strong class="text-on-surface">bill (55).xlsx</strong> under waybill KKE083164988241.</p>
+</div>
+</li>
+<!-- Timeline Step 4: Active Pulse -->
+<li class="relative pl-6">
+<span class="absolute -left-1.5 top-0.5 w-4 h-4 rounded-full bg-tertiary flex items-center justify-center text-on-tertiary text-[10px] animate-pulse">
+<span class="w-1.5 h-1.5 rounded-full bg-surface-container-lowest"></span>
+</span>
+<div class="flex flex-col">
+<div class="flex items-center justify-between">
+<span class="font-body-sm text-body-sm font-bold text-tertiary">Out for Last-Mile Courier Delivery</span>
+<span class="font-financial-sm text-[10px] text-tertiary font-semibold">Oct 31, 16:00 EAT</span>
+</div>
+<p class="font-body-sm text-[11px] text-on-surface-variant">Assigned to G4S Courier Nairobi Rider #441 (In Transit).</p>
+</div>
+</li>
+<!-- Timeline Step 5: Upcoming -->
+<li class="relative pl-6">
+<span class="absolute -left-1.5 top-0.5 w-4 h-4 rounded-full bg-surface-container-highest flex items-center justify-center text-outline text-[10px]">
+<span class="w-1.5 h-1.5 rounded-full bg-outline"></span>
+</span>
+<div class="flex flex-col">
+<div class="flex items-center justify-between">
+<span class="font-body-sm text-body-sm font-medium text-outline">Buyer Sign-Off &amp; Settlement Lock</span>
+<span class="font-financial-sm text-[10px] text-outline">Est. Nov 03</span>
+</div>
+<p class="font-body-sm text-[11px] text-outline">Will finalize &amp; release Stage 1 GMV in upcoming <strong class="text-on-surface-variant">bill (56).xlsx</strong>.</p>
+</div>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<!-- Persistent Drawer Action Footer -->
+<div class="p-space-lg bg-surface-container-lowest sticky bottom-0 mt-auto flex flex-col gap-2 shadow-lg">
+<button class="w-full py-2.5 px-3 rounded-lg bg-primary-container hover:bg-primary text-on-primary font-body-sm text-body-sm font-semibold flex items-center justify-center gap-2 transition-colors shadow-sm" type="button">
+<span class="material-symbols-outlined text-[18px]">picture_as_pdf</span>
+<span>Download Certified Audit Slip (PDF)</span>
+</button>
+<div class="grid grid-cols-2 gap-2">
+<button class="py-2 px-3 rounded-lg bg-surface hover:bg-surface-container text-on-surface font-body-sm text-body-sm font-medium flex items-center justify-center gap-1.5 transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px] text-outline">sync</span>
+<span>Re-Check Logistics API</span>
+</button>
+<button class="py-2 px-3 rounded-lg bg-error-container/20 hover:bg-error-container/40 text-error font-body-sm text-body-sm font-medium flex items-center justify-center gap-1.5 transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px]">flag</span>
+<span>Flag Anomaly</span>
+</button>
+</div>
+</div>
+</aside>
+</div>
+</div></main></div></body></html>

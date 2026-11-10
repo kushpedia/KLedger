@@ -1,0 +1,48 @@
+{% comment %}
+Global Store Context Switcher Component (Section 5.1 of DESIGN.md).
+Allows seamless toggling between "All My Stores (Consolidated)" and any individual store (e.g., Kushpedia Stores4 [10344]).
+{% endcomment %}
+<div class="flex items-center gap-2">
+    <form method="get" action="{{ request.path }}" class="flex items-center gap-2">
+        <label for="global-store-select" class="sr-only">Select Store Context</label>
+        <div class="relative flex items-center">
+            {% if active_store %}
+                <span class="mr-2 hidden sm:inline-flex items-center rounded bg-orange-100 px-2 py-0.5 font-mono text-xs font-semibold text-[#EA580C]">
+                    ID: {{ active_store.kilimall_store_id }}
+                </span>
+            {% else %}
+                <span class="mr-2 hidden sm:inline-flex items-center rounded bg-indigo-100 px-2 py-0.5 font-mono text-xs font-semibold text-[#4F46E5]">
+                    CONSOLIDATED
+                </span>
+            {% endif %}
+
+            <select id="global-store-select"
+                    name="store"
+                    onchange="this.form.submit()"
+                    class="rounded-md border border-[#CBD5E1] bg-[#F8FAFC] py-1.5 pl-3 pr-8 text-xs sm:text-sm font-semibold text-slate-900 shadow-sm focus:border-[#0F766E] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#0F766E]/20">
+                <option value="all" {% if active_store_scope == 'all' %}selected{% endif %}>
+                    All My Stores ({{ vendor_stores|length|default:"1" }} Active — Consolidated)
+                </option>
+                {% for store in vendor_stores %}
+                <option value="{{ store.kilimall_store_id }}" {% if active_store_scope == store.kilimall_store_id %}selected{% endif %}>
+                    {{ store.store_name }} [ID: {{ store.kilimall_store_id }}]
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+    </form>
+
+    <!-- Accounting Mode Indicator Pill -->
+    <div class="hidden xl:flex items-center rounded-md border border-slate-200 bg-slate-50 p-0.5 text-xs">
+        <a href="?basis=CASH_FLOW"
+           class="rounded px-2.5 py-1 font-medium transition {% if active_accounting_basis == 'CASH_FLOW' %}bg-[#0F766E] text-white shadow-sm{% else %}text-slate-600 hover:text-slate-900{% endif %}"
+           title="Matches exact cash deposited by Kilimall per statement cycle">
+            Cash-Flow Basis
+        </a>
+        <a href="?basis=ORDER_ACCRUAL"
+           class="rounded px-2.5 py-1 font-medium transition {% if active_accounting_basis == 'ORDER_ACCRUAL' %}bg-[#0F766E] text-white shadow-sm{% else %}text-slate-600 hover:text-slate-900{% endif %}"
+           title="Matches DS fees and COGS directly to settled orders">
+            Order-Accrual Basis
+        </a>
+    </div>
+</div>

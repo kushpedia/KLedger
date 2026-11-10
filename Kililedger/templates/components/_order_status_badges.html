@@ -1,0 +1,43 @@
+{% comment %}
+Orthogonal Status Badge Taxonomy Component (Section 5.4 of DESIGN.md).
+Strictly separates Settlement Lifecycle Status from Fulfillment/Penalty Status and COGS Coverage.
+Usage: {% include "components/_order_status_badges.html" with settlement_status=order.settlement_status penalty_status=order.penalty_status %}
+{% endcomment %}
+{% if badge_mode == 'penalty' %}
+    {% if penalty_status == 'OVERDUE_DISPATCH' %}
+        <span class="inline-flex items-center gap-1 rounded-full border border-[#FCA5A5] bg-[#FEE2E2] px-2.5 py-0.5 font-mono text-[11px] font-medium text-[#B91C1C]">
+            Overdue Dispatch (-300 KES)
+        </span>
+    {% elif penalty_status == 'OUT_OF_STOCK' %}
+        <span class="inline-flex items-center gap-1 rounded-full border border-red-400 bg-red-100 px-2.5 py-0.5 font-mono text-[11px] font-semibold text-red-900">
+            Out-of-Stock Cancelled (-300 KES)
+        </span>
+    {% else %}
+        <span class="font-mono text-xs text-slate-400">—</span>
+    {% endif %}
+{% else %}
+    {% if settlement_status == 'SETTLED' %}
+        <span class="inline-flex items-center gap-1.5 rounded-full border border-[#86EFAC] bg-[#DCFCE7] px-2.5 py-0.5 text-xs font-medium text-[#15803D]">
+            <span class="h-1.5 w-1.5 rounded-full bg-[#15803D]"></span>
+            Settled
+        </span>
+    {% elif settlement_status == 'PENDING_SETTLEMENT' %}
+        <span class="inline-flex items-center gap-1.5 rounded-full border border-[#FDE68A] bg-[#FEF3C7] px-2.5 py-0.5 text-xs font-medium text-[#B45309]">
+            <span class="h-1.5 w-1.5 rounded-full bg-[#B45309]"></span>
+            Pending Settlement
+        </span>
+    {% elif settlement_status == 'OVERDUE_PENDING' %}
+        <span class="inline-flex items-center gap-1.5 rounded-full border border-[#FCA5A5] bg-[#FEE2E2] px-2.5 py-0.5 text-xs font-semibold text-[#B91C1C]">
+            <span class="h-1.5 w-1.5 rounded-full bg-[#B91C1C]"></span>
+            Overdue Pending
+        </span>
+    {% elif settlement_status == 'RETURNED_UNSETTLED' %}
+        <span class="inline-flex items-center gap-1.5 rounded-full border border-slate-300 bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-700">
+            Returned to Seller
+        </span>
+    {% else %}
+        <span class="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-600">
+            Penalty Only / Unsettled
+        </span>
+    {% endif %}
+{% endif %}

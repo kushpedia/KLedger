@@ -1,0 +1,313 @@
+{% extends "base_auth.html" %}
+
+{% block title %}Authentication &amp; Vendor Registration — KiliLedger Pro{% endblock %}
+
+{% block content %}
+<style>
+    .font-mono-num {
+        font-family: 'JetBrains Mono', monospace;
+        font-variant-numeric: tabular-nums;
+    }
+    .grid-bg {
+        background-image: radial-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px),
+                          radial-gradient(rgba(15, 118, 110, 0.15) 1px, transparent 1px);
+        background-size: 28px 28px, 56px 56px;
+        background-position: 0 0, 14px 14px;
+    }
+    .glass-card {
+        background: rgba(30, 41, 59, 0.72);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.45);
+    }
+    .glass-inner {
+        background: rgba(15, 23, 42, 0.6);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+</style>
+
+<!-- Desktop Split Screen Container (Exact Google Stitch SCR-01 Design) -->
+<div class="min-h-screen w-full flex flex-col lg:flex-row">
+
+    <!-- LEFT HALF (50% Width, #FFFFFF Clean White Canvas): Authentication Form -->
+    <div class="w-full lg:w-1/2 bg-white flex flex-col justify-between px-6 sm:px-12 xl:px-20 py-8 lg:py-12 z-10 border-r border-slate-200">
+        <!-- Top Bar: Logo & Trust Indicator -->
+        <div class="flex items-center justify-between">
+            <a href="{% url 'accounts:login' %}" class="flex items-center gap-3 group">
+                <div class="w-10 h-10 rounded-lg bg-[#0F766E] flex items-center justify-center text-white shadow-sm shadow-teal-900/20 group-hover:bg-[#115E59] transition-colors">
+                    <svg class="w-5 h-5 text-emerald-100" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M3 14h18m-9-4v8m-7 4h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                </div>
+                <div class="flex flex-col">
+                    <div class="flex items-center gap-1.5">
+                        <span class="text-xl font-bold tracking-tight text-slate-900">KiliLedger</span>
+                        <span class="px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider bg-teal-50 text-[#0F766E] border border-teal-200/80 rounded">Pro</span>
+                    </div>
+                    <span class="text-[11px] font-medium text-slate-500 tracking-tight">Kilimall Seller Reconciliation SaaS</span>
+                </div>
+            </a>
+
+            <div class="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-100 border border-slate-200 text-[11px] font-medium text-slate-600">
+                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span>KE Multi-Store Gateway</span>
+            </div>
+        </div>
+
+        <!-- Centered Authentication Form Container (max-w-[440px]) -->
+        <div class="w-full max-w-[440px] mx-auto my-8">
+            <div class="mb-6">
+                <h1 class="text-2xl sm:text-[28px] font-bold text-slate-900 tracking-tight leading-tight">
+                    Stop losing money on Kilimall deductions
+                </h1>
+                <p class="mt-2 text-sm text-slate-600 leading-relaxed">
+                    Reconcile settlement statements, track pending drop-shipping fees, and reveal your true product profit.
+                </p>
+            </div>
+
+            <!-- Segmented Tab Switcher -->
+            <div class="p-1 bg-slate-100 rounded-lg flex items-center border border-slate-200 mb-6">
+                <a href="{% url 'accounts:login' %}?tab=login"
+                   class="w-1/2 py-2 text-center text-xs font-semibold rounded-md transition-colors {% if active_tab != 'register' %}bg-white text-slate-900 shadow-sm border border-slate-200/80{% else %}text-slate-600 hover:text-slate-900{% endif %}">
+                    Sign In to Workspace
+                </a>
+                <a href="{% url 'accounts:login' %}?tab=register"
+                   class="w-1/2 py-2 text-center text-xs font-semibold rounded-md transition-colors {% if active_tab == 'register' %}bg-white text-slate-900 shadow-sm border border-slate-200/80{% else %}text-slate-600 hover:text-slate-900{% endif %}">
+                    Create Vendor Account
+                </a>
+            </div>
+
+            {% if login_form.non_field_errors or register_form.errors %}
+            <div class="mb-4 rounded-lg border border-rose-300 bg-rose-50 p-3.5 text-xs font-medium text-rose-800">
+                {% for err in login_form.non_field_errors %}<p>{{ err }}</p>{% endfor %}
+                {% for field, errs in register_form.errors.items %}
+                    {% for err in errs %}<p>{{ err }}</p>{% endfor %}
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            {% if active_tab == 'register' %}
+            <!-- Vendor Registration Form (Exact Stitch Markup + Django CSRF & Fields) -->
+            <form method="post" action="{% url 'accounts:login' %}" class="space-y-4">
+                {% csrf_token %}
+                <input type="hidden" name="auth_action" value="register">
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
+                        Business / Vendor Name
+                    </label>
+                    {{ register_form.business_name }}
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
+                        Work Email
+                    </label>
+                    {{ register_form.email }}
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
+                        M-Pesa / Phone Number (Kenya +254)
+                    </label>
+                    {{ register_form.phone_number }}
+                    <p class="mt-1 text-[11px] text-slate-500">Used for statement reconciliation alerts and account verification.</p>
+                </div>
+
+                <div>
+                    <div class="flex items-center justify-between mb-1.5">
+                        <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider">Password</label>
+                        <span class="text-[11px] font-semibold text-emerald-600">Minimum 8 chars</span>
+                    </div>
+                    {{ register_form.password }}
+                </div>
+
+                <div class="pt-1.5">
+                    <label class="flex items-start gap-2.5 cursor-pointer select-none">
+                        {{ register_form.accept_terms }}
+                        <span class="text-xs text-slate-600 leading-snug">
+                            I agree to <span class="font-medium text-slate-900 underline underline-offset-2">Tenant Data Isolation</span> &amp; <span class="font-medium text-slate-900 underline underline-offset-2">Terms of Service</span>. My store sales statements will remain private to my workspace.
+                        </span>
+                    </label>
+                </div>
+
+                <div class="pt-3">
+                    <button type="submit"
+                            class="w-full flex items-center justify-center gap-2 py-3 px-4 bg-[#0F766E] hover:bg-[#115E59] active:bg-[#0d4f4a] text-white text-sm font-semibold rounded-lg shadow-sm hover:shadow transition-all group">
+                        <span>Create Vendor Workspace</span>
+                        <svg class="w-4 h-4 transform group-hover:translate-x-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                        </svg>
+                    </button>
+                </div>
+            </form>
+            {% else %}
+            <!-- Sign In Form -->
+            <form method="post" action="{% url 'accounts:login' %}" class="space-y-4">
+                {% csrf_token %}
+                <input type="hidden" name="auth_action" value="login">
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Work Email</label>
+                    {{ login_form.email }}
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Password</label>
+                    {{ login_form.password }}
+                </div>
+
+                <div class="pt-3">
+                    <button type="submit"
+                            class="w-full flex items-center justify-center gap-2 py-3 px-4 bg-[#0F766E] hover:bg-[#115E59] active:bg-[#0d4f4a] text-white text-sm font-semibold rounded-lg shadow-sm hover:shadow transition-all group">
+                        <span>Sign In to Workspace</span>
+                        <svg class="w-4 h-4 transform group-hover:translate-x-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                        </svg>
+                    </button>
+                </div>
+            </form>
+            {% endif %}
+
+            <!-- Security Pill Badges -->
+            <div class="mt-8 pt-6 border-t border-slate-100 flex items-center justify-center gap-4 text-[11px] text-slate-500 font-medium">
+                <span class="flex items-center gap-1.5">
+                    <svg class="w-3.5 h-3.5 text-teal-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                    </svg>
+                    Multi-Tenant Isolated DB
+                </span>
+                <span class="text-slate-300">•</span>
+                <span class="flex items-center gap-1.5">
+                    <svg class="w-3.5 h-3.5 text-teal-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10" />
+                    </svg>
+                    Excel .xlsx Auto-Parser
+                </span>
+            </div>
+        </div>
+
+        <!-- Footer Copyright & Support -->
+        <div class="pt-6 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between text-[11px] text-slate-500 gap-2">
+            <p>&copy; 2026 KiliLedger Pro. Built for Kilimall Kenya DS Merchants.</p>
+            <div class="flex items-center gap-4">
+                <span>Privacy Policy</span>
+                <span>Reconciliation Rules</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- RIGHT HALF (50% Width, #0F172A Dark Slate Executive Surface — Exact Stitch Glassmorphic Card) -->
+    <div class="w-full lg:w-1/2 bg-[#0F172A] relative flex flex-col justify-between p-8 sm:p-12 xl:p-16 overflow-hidden text-slate-200">
+        <div class="absolute inset-0 grid-bg pointer-events-none opacity-80"></div>
+        <div class="absolute -top-32 -right-32 w-96 h-96 bg-teal-600/20 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute bottom-10 left-10 w-80 h-80 bg-indigo-600/15 rounded-full blur-3xl pointer-events-none"></div>
+
+        <div class="relative z-10 flex items-center justify-between">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-800/80 border border-slate-700/80 text-xs font-medium text-emerald-400">
+                <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+                <span>Live Kilimall Settlement Engine</span>
+            </div>
+            <div class="text-right">
+                <span class="text-[11px] text-slate-400 font-mono-num">Statement Cycle #W44-2026</span>
+            </div>
+        </div>
+
+        <!-- Executive Product Showcase Card -->
+        <div class="relative z-10 my-auto py-8 max-w-lg mx-auto w-full">
+            <div class="mb-4">
+                <span class="text-xs font-semibold uppercase tracking-wider text-teal-400">Automated Financial Transparency</span>
+                <h2 class="text-xl sm:text-2xl font-bold text-white tracking-tight mt-1">
+                    Turn messy weekly Excel sheets into audit-proof profit ledgers.
+                </h2>
+            </div>
+
+            <div class="glass-card rounded-2xl p-6 sm:p-7 relative border border-slate-700/80 transition-all shadow-2xl">
+                <div class="flex items-start justify-between gap-4 pb-4 border-b border-slate-700/60">
+                    <div>
+                        <span class="text-[11px] font-semibold uppercase tracking-wider text-slate-400">Reconciliation Preview</span>
+                        <h3 class="text-base sm:text-lg font-bold text-white flex items-center gap-2 mt-0.5">
+                            <span>Verified Kilimall Settlement</span>
+                            <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+                        </h3>
+                    </div>
+                    <div class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md bg-slate-800 border border-orange-500/30 text-xs">
+                        <span class="w-2 h-2 rounded-full bg-orange-500"></span>
+                        <span class="font-medium text-slate-200">Kushpedia Stores4</span>
+                        <span class="font-mono-num text-[11px] text-orange-400 bg-orange-500/10 px-1 py-0.5 rounded">ID: 10344</span>
+                    </div>
+                </div>
+
+                <div class="py-5 space-y-4">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="glass-inner rounded-xl p-3.5">
+                            <div class="flex items-center justify-between text-[11px] text-slate-400 font-medium">
+                                <span>GROSS SALES</span>
+                                <span class="text-slate-400 font-mono-num">16 Orders</span>
+                            </div>
+                            <div class="mt-1 text-xl sm:text-2xl font-bold text-white font-mono-num">KES 24,260.00</div>
+                            <div class="mt-1 text-[11px] text-slate-400 flex items-center gap-1">
+                                <span class="text-teal-400 font-medium font-mono-num">100.0%</span>
+                                <span>customer revenue</span>
+                            </div>
+                        </div>
+
+                        <div class="glass-inner rounded-xl p-3.5 border-teal-500/30 bg-teal-950/20">
+                            <div class="flex items-center justify-between text-[11px] text-slate-300 font-medium">
+                                <span>NET PAYOUT</span>
+                                <span class="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-semibold text-[10px]">Verified</span>
+                            </div>
+                            <div class="mt-1 text-xl sm:text-2xl font-bold text-emerald-400 font-mono-num">KES 16,486.78</div>
+                            <div class="mt-1 text-[11px] text-emerald-300/80 font-mono-num font-medium">67.96% Retention (Matches Bank)</div>
+                        </div>
+                    </div>
+
+                    <div class="glass-inner rounded-xl p-3.5 space-y-2.5">
+                        <div class="text-[11px] font-semibold uppercase tracking-wider text-slate-400 flex items-center justify-between">
+                            <span>Platform Deductions Audited</span>
+                            <span class="text-rose-400 font-mono-num font-bold">-KES 7,773.22 (32.04%)</span>
+                        </div>
+                        <div class="grid grid-cols-3 gap-2 pt-1 border-t border-slate-700/50 text-xs">
+                            <div class="space-y-0.5">
+                                <span class="text-[10px] text-slate-400 block">Commissions</span>
+                                <span class="font-mono-num font-semibold text-blue-300 block">-KES 3,673.22</span>
+                                <span class="text-[10px] text-slate-500 font-mono-num">15.14% rate</span>
+                            </div>
+                            <div class="space-y-0.5">
+                                <span class="text-[10px] text-slate-400 block">DS Freight Fees</span>
+                                <span class="font-mono-num font-semibold text-purple-300 block">-KES 2,300.00</span>
+                                <span class="text-[10px] text-slate-500 font-mono-num">22 packages</span>
+                            </div>
+                            <div class="space-y-0.5">
+                                <span class="text-[10px] text-slate-400 block">Fines &amp; Penalties</span>
+                                <span class="font-mono-num font-semibold text-rose-300 block">-KES 1,800.00</span>
+                                <span class="text-[10px] text-rose-400/80 font-mono-num">6 SLA fines</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="rounded-xl p-3 bg-amber-500/10 border border-amber-500/25 flex items-start gap-3">
+                        <div class="text-xs">
+                            <div class="font-semibold text-amber-300">Cross-Week Order Reconciliation Pipeline</div>
+                            <p class="text-slate-300 mt-0.5 leading-relaxed text-[11px]">
+                                <strong class="text-white font-mono-num">15 DS-Charged Packages</strong> actively tracked in pending settlement pipeline. When Kilimall releases sales funds in Week 45, statuses automatically flip to <span class="text-emerald-400 font-semibold">Settled</span>.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pt-3 border-t border-slate-700/60 flex items-center justify-between text-[11px] text-slate-400">
+                    <span class="font-mono-num">SN 610244462479107</span>
+                    <span class="font-mono-num text-slate-300">Canopy Mosquito Net &bull; <span class="text-emerald-400 font-semibold">+KES 3,537.90 True Profit</span></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="relative z-10 pt-4 border-t border-slate-800/80 flex items-center justify-between text-[11px] text-slate-400">
+            <span>Kilimall Seller Center API &bull; Sync Normal</span>
+            <span class="font-mono-num text-slate-500">v2.4.0-prod &bull; East Africa Time (EAT)</span>
+        </div>
+    </div>
+</div>
+{% endblock %}

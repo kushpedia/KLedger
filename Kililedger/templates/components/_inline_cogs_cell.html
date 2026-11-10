@@ -1,0 +1,131 @@
+{% load humanize %}
+{% comment %}
+Reusable HTMX Inline Product Row & Buying Price (COGS) Editor Component (`templates/components/_inline_cogs_cell.html`).
+Swaps the entire `<tr id="product-row-{{ product.id }}">` cleanly on `hx-post` so the Buying Price input,
+Verified Unit Profit, Net Margin %, and Saved badge update immediately without reloading the page.
+{% endcomment %}
+<tr id="product-row-{{ product.id }}"
+    class="transition-colors {% if saved_just_now %}bg-emerald-50/70{% elif not product.is_cogs_verified %}bg-amber-50/35 border-l-4 border-l-amber-500{% else %}hover:bg-slate-50{% endif %}">
+    <!-- 1. Goods ID & Store -->
+    <td class="px-4 py-3.5">
+        <div class="font-mono font-bold text-[#0F766E]">{{ product.goods_id }}</div>
+        <div class="text-[11px] text-slate-500">{{ product.store.store_name }} [{{ product.store.kilimall_store_id }}]</div>
+    </td>
+
+    <!-- 2. Product Name -->
+    <td class="px-4 py-3.5">
+        <div class="max-w-[260px] truncate font-semibold text-slate-900" title="{{ product.goods_name }}">
+            {{ product.headline_name }}
+        </div>
+        <div class="mt-0.5 flex items-center gap-2 font-mono text-[11px] text-slate-500">
+            <span>{{ product.units_sold }} unit(s) sold</span>
+            {% if product.ds_fee_to_price_ratio_pct >= 35 %}
+            <span class="rounded bg-red-100 px-1.5 py-0.2 text-[10px] font-bold text-[#B91C1C]">
+                DS Fee {{ product.ds_fee_to_price_ratio_pct }}% of Price!
+            </span>
+            {% endif %}
+        </div>
+    </td>
+
+    <!-- 3. Unit Selling Price -->
+    <td class="px-4 py-3.5 text-right font-mono font-semibold text-slate-900">
+        KES {{ product.latest_selling_price|floatformat:2|intcomma }}
+    </td>
+
+    <!-- 4. Commission Rate & Amount -->
+    <td class="px-4 py-3.5 text-right font-mono text-xs text-[#1D4ED8]">
+        <div>-KES {{ product.unit_commission_amount|floatformat:2 }}</div>
+        <div class="text-[10px] text-slate-400">{{ product.commission_rate_pct }}% tier</div>
+    </td>
+
+    <!-- 5. Typical DS Fee -->
+    <td class="px-4 py-3.5 text-right font-mono text-xs text-[#6D28D9]">
+        <div>-KES {{ product.typical_ds_fee|floatformat:2 }}</div>
+        <div class="text-[10px] text-slate-400">{{ product.typical_package_size }}</div>
+    </td>
+
+    <!-- 6. Net Payout / Unit (Before COGS) -->
+    <td class="px-4 py-3.5 text-right font-mono font-semibold text-slate-800">
+        KES {{ product.unit_net_payout_after_ds|floatformat:2|intcomma }}
+    </td>
+
+    <!-- 7. Interactive HTMX Buying Price (COGS) Input Cell -->
+    <td class="px-4 py-3.5">
+        {% if request.user.can_upload_statements_and_edit_cogs %}
+        <form hx-post="{% url 'products:update_cogs' product.pk %}"
+              hx-target="#product-row-{{ product.id }}"
+              hx-swap="outerHTML"
+              class="flex items-center gap-1.5">
+            {% csrf_token %}
+            <div class="relative">
+                <input type="number"
+                       name="buying_price"
+                       step="0.01"
+                       min="0.01"
+                       value="{{ product.current_buying_price|default_if_none:'' }}"
+                       placeholder="Enter KES..."
+                       required
+                       class="w-28 rounded-md border px-2.5 py-1.5 font-mono text-xs font-semibold focus:outline-none focus:ring-2
+                           {% if saved_just_now %}border-[#15803D] bg-white text-[#15803D] focus:ring-emerald-500/20
+                           {% elif not product.is_cogs_verified %}border-amber-400 bg-amber-50/60 text-slate-900 placeholder:text-amber-700 focus:border-[#0F766E] focus:bg-white
+                           {% else %}border-slate-300 bg-white text-slate-900 focus:border-[#0F766E]{% endif %}">
+            </div>
+            <button type="submit"
+                    class="rounded-md px-2.5 py-1.5 text-xs font-bold transition
+                        {% if saved_just_now %}bg-[#15803D] text-white{% else %}bg-[#0F766E] text-white hover:bg-[#115E59]{% endif %}">
+                {% if saved_just_now %}✓ Saved{% else %}Save{% endif %}
+            </button>
+        </form>
+        {% if error_msg %}
+        <div class="mt-1 text-[10px] font-semibold text-[#B91C1C]">{{ error_msg }}</div>
+        {% endif %}
+        {% else %}
+        <span class="font-mono text-xs text-slate-500">
+            {% if product.current_buying_price %}KES {{ product.current_buying_price|floatformat:2 }}{% else %}Missing COGS{% endif %}
+        </span>
+        {% endif %}
+    </td>
+
+    <!-- 8. Verified Unit Profit -->
+    <td class="px-4 py-3.5 text-right font-mono font-bold">
+        {% if product.unit_net_profit is not None %}
+            <span class="{% if product.unit_net_profit >= 0 %}text-[#15803D]{% else %}text-[#B91C1C]{% endif %}">
+                {% if product.unit_net_profit >= 0 %}+{% endif %}KES {{ product.unit_net_profit|floatformat:2|intcomma }}
+            </span>
+            <div class="text-[10px] font-normal text-slate-400">
+                Total: KES {{ product.total_true_profit|floatformat:2|intcomma }}
+            </div>
+        {% else %}
+            <span class="inline-flex items-center gap-1 rounded-full border border-[#FDE68A] bg-[#FEF3C7] px-2.5 py-0.5 font-sans text-[11px] font-semibold text-[#B45309]">
+                Needs COGS
+            </span>
+        {% endif %}
+    </td>
+
+    <!-- 9. Net Margin % -->
+    <td class="px-4 py-3.5 text-right font-mono">
+        {% if product.unit_net_margin_pct is not None %}
+            <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-bold
+                {% if product.margin_status_tier == 'HIGH_MARGIN' %}bg-[#DCFCE7] text-[#15803D]
+                {% elif product.margin_status_tier == 'HEALTHY' %}bg-teal-50 text-[#0F766E]
+                {% elif product.margin_status_tier == 'MARGIN_TRAP' %}bg-[#FEF3C7] text-[#B45309]
+                {% else %}bg-[#FEE2E2] text-[#B91C1C]{% endif %}">
+                {{ product.unit_net_margin_pct }}%
+            </span>
+        {% else %}
+            <span class="text-slate-400">—</span>
+        {% endif %}
+    </td>
+
+    <!-- 10. Cost History Slide-Over Drawer Trigger -->
+    <td class="px-4 py-3.5 text-right">
+        <button type="button"
+                hx-get="{% url 'products:cost_history_drawer' product.pk %}"
+                hx-target="#drawer-container"
+                hx-swap="innerHTML"
+                class="inline-flex items-center gap-1 rounded border border-slate-200 bg-white px-2.5 py-1 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-[#0F766E]">
+            <span class="material-symbols-outlined text-[15px]">history</span>
+            <span>History</span>
+        </button>
+    </td>
+</tr>

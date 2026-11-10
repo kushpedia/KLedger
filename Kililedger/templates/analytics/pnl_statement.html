@@ -1,0 +1,233 @@
+{% extends "base.html" %}
+{% load humanize %}
+
+{% block title %}Financial Analytics &amp; Multi-Store P&amp;L Workspace — KiliLedger Pro{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+    <!-- Top Header & Dual-Basis Accounting Mode Toggle (Exact Stitch SCR-08 Design) -->
+    <div class="flex flex-col xl:flex-row xl:items-center justify-between gap-4 bg-white p-6 rounded-[10px] border border-[#E2E8F0] shadow-sm">
+        <div class="max-w-3xl">
+            <div class="flex items-center gap-2 text-xs text-slate-500 mb-1">
+                <span>Financial Analytics</span>
+                <span>›</span>
+                <span class="font-mono font-bold text-[#0F766E]">Dual-Basis P&amp;L &amp; Multi-Store Matrix (SCR-08)</span>
+            </div>
+            <h1 class="text-2xl font-bold text-[#0F172A] tracking-tight">
+                Financial Analytics &amp; Multi-Store P&amp;L Workspace
+            </h1>
+            <p class="mt-1 text-xs leading-relaxed text-[#475569]">
+                Compare <strong>Settlement Cash-Flow Basis</strong> (matching your bank deposit) against <strong>Order-Matched Accrual Basis</strong> (matching DS fees directly to settled orders and isolating store-level penalties below product contribution margin so deductions are never double-counted).
+            </p>
+        </div>
+
+        <!-- Accounting Basis Mode Toggle Pill -->
+        <div class="flex flex-wrap items-center gap-3 shrink-0">
+            <div class="inline-flex rounded-xl border border-slate-200 bg-slate-100 p-1 text-xs font-semibold">
+                <a href="?basis=CASH_FLOW&tab={{ active_tab }}"
+                   class="rounded-lg px-3.5 py-2 transition {% if accounting_basis == 'CASH_FLOW' %}bg-[#0F766E] text-white shadow-xs{% else %}text-slate-600 hover:text-slate-900{% endif %}">
+                    Settlement Cash-Flow Basis
+                </a>
+                <a href="?basis=ORDER_ACCRUAL&tab={{ active_tab }}"
+                   class="rounded-lg px-3.5 py-2 transition {% if accounting_basis == 'ORDER_ACCRUAL' %}bg-[#0F766E] text-white shadow-xs{% else %}text-slate-600 hover:text-slate-900{% endif %}">
+                    Order-Matched Accrual Basis
+                </a>
+            </div>
+            <a href="{% url 'reports:report_center' %}"
+               class="inline-flex items-center gap-1.5 rounded-lg bg-slate-900 px-4 py-2.5 text-xs font-bold text-white hover:bg-slate-800">
+                <span class="material-symbols-outlined text-[16px]">download</span>
+                <span>Download P&amp;L (PDF / Excel)</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Top Visual Row (7 Cols Structured P&L Statement + 5 Cols Commission Tier Distribution) -->
+    <div class="grid grid-cols-1 gap-6 lg:grid-cols-12">
+        <!-- Left (7 Cols): Structured Accounting Profit & Loss (P&L) Statement Table -->
+        <div class="lg:col-span-7 rounded-[10px] border border-[#E2E8F0] bg-white shadow-sm overflow-hidden">
+            <div class="flex items-center justify-between border-b border-slate-200 bg-[#F1F5F9] px-6 py-4">
+                <div>
+                    <h2 class="text-base font-bold text-[#0F172A]">Statement of Profit or Loss &amp; Cash Realization</h2>
+                    <p class="text-xs text-slate-500">Side-by-side comparison of Order-Accrual vs. Statement Cash-Flow Basis.</p>
+                </div>
+                {% if is_profit_incomplete %}
+                <span class="rounded-full bg-[#FEF3C7] border border-[#FDE68A] px-2.5 py-0.5 font-mono text-[11px] font-bold text-[#B45309]">
+                    COGS: {{ priced_units_count }}/{{ settled_units_count }} Units Priced
+                </span>
+                {% endif %}
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-slate-200 text-left text-[13px] tabular-nums">
+                    <thead class="bg-slate-50 text-[11px] font-bold uppercase tracking-wider text-[#475569]">
+                        <tr>
+                            <th class="px-5 py-3">P&amp;L Line Item</th>
+                            <th class="px-5 py-3 text-right">Cash-Flow Basis (KES)</th>
+                            <th class="px-5 py-3 text-right">Order-Accrual Basis (KES)</th>
+                            <th class="px-5 py-3 text-right">% of GMV</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-200 bg-white font-mono">
+                        <tr class="bg-slate-50/70 font-bold text-slate-900">
+                            <td class="px-5 py-3 font-sans">(+) Gross Merchandise Value (Completed Sales)</td>
+                            <td class="px-5 py-3 text-right">{{ gross_sales|floatformat:2|intcomma }}</td>
+                            <td class="px-5 py-3 text-right">{{ gross_sales|floatformat:2|intcomma }}</td>
+                            <td class="px-5 py-3 text-right">100.00%</td>
+                        </tr>
+                        <tr>
+                            <td class="px-5 py-3 font-sans text-slate-700">(–) Kilimall Category Commissions (9%–16%)</td>
+                            <td class="px-5 py-3 text-right text-[#1D4ED8]">{{ total_commission|floatformat:2|intcomma }}</td>
+                            <td class="px-5 py-3 text-right text-[#1D4ED8]">{{ total_commission|floatformat:2|intcomma }}</td>
+                            <td class="px-5 py-3 text-right text-slate-500">{{ commission_pct_of_gross }}%</td>
+                        </tr>
+                        <tr class="bg-blue-50/30 font-semibold text-slate-900">
+                            <td class="px-5 py-3 font-sans">(=) Settlement Payable 1 (Trading Margin)</td>
+                            <td class="px-5 py-3 text-right">{{ payable_1|floatformat:2|intcomma }}</td>
+                            <td class="px-5 py-3 text-right">{{ payable_1|floatformat:2|intcomma }}</td>
+                            <td class="px-5 py-3 text-right">{{ payable_1_pct_of_gross }}%</td>
+                        </tr>
+                        <tr>
+                            <td class="px-5 py-3 font-sans text-slate-700">
+                                (–) Drop-Shipping (DS) Processing Fees
+                                <div class="text-[11px] text-slate-400">Cash: All 22 billed pkgs | Accrual: Matched to 16 sold orders</div>
+                            </td>
+                            <td class="px-5 py-3 text-right text-[#6D28D9]">{{ statement_ds_fees|floatformat:2|intcomma }}</td>
+                            <td class="px-5 py-3 text-right text-[#6D28D9]">{{ accrual_matched_ds_fees|floatformat:2|intcomma }}</td>
+                            <td class="px-5 py-3 text-right text-slate-500">{{ ds_fees_pct_of_gross }}%</td>
+                        </tr>
+                        <tr>
+                            <td class="px-5 py-3 font-sans text-slate-700">
+                                (–) Cost of Goods Sold (Verified Landed COGS)
+                            </td>
+                            <td class="px-5 py-3 text-right text-slate-800">-{{ total_cogs|floatformat:2|intcomma }}</td>
+                            <td class="px-5 py-3 text-right text-slate-800">-{{ total_cogs|floatformat:2|intcomma }}</td>
+                            <td class="px-5 py-3 text-right text-slate-500">{{ cogs_pct_of_gross }}%</td>
+                        </tr>
+                        <tr class="bg-teal-50/40 font-bold text-[#0F766E]">
+                            <td class="px-5 py-3 font-sans">(=) GROSS ORDER CONTRIBUTION PROFIT (Before Store Fines)</td>
+                            <td class="px-5 py-3 text-right">—</td>
+                            <td class="px-5 py-3 text-right">{{ order_contribution_profit|floatformat:2|intcomma }}</td>
+                            <td class="px-5 py-3 text-right">{{ order_contribution_margin_pct }}%</td>
+                        </tr>
+                        <tr>
+                            <td class="px-5 py-3 font-sans text-slate-700">
+                                (–) Unlinked Store-Level SLA Penalties &amp; Fines
+                                <div class="text-[11px] text-slate-400">5 Overdue Dispatch + 1 Out-of-Stock (Isolated from SKU margins)</div>
+                            </td>
+                            <td class="px-5 py-3 text-right text-[#B91C1C]">{{ statement_fines|floatformat:2|intcomma }}</td>
+                            <td class="px-5 py-3 text-right text-[#B91C1C]">{{ statement_fines|floatformat:2|intcomma }}</td>
+                            <td class="px-5 py-3 text-right text-[#B91C1C]">{{ fines_pct_of_gross }}%</td>
+                        </tr>
+                        <tr class="border-t-2 border-slate-300 bg-emerald-50/50 text-sm font-bold text-[#15803D]">
+                            <td class="px-5 py-3.5 font-sans">(=) ESTIMATED OPERATING NET PROFIT</td>
+                            <td class="px-5 py-3.5 text-right">KES {{ cash_basis_profit|floatformat:2|intcomma }}</td>
+                            <td class="px-5 py-3.5 text-right">KES {{ accrual_operating_profit|floatformat:2|intcomma }}</td>
+                            <td class="px-5 py-3.5 text-right">{{ displayed_margin_pct }}%</td>
+                        </tr>
+                        <tr class="bg-amber-50/40 text-xs text-[#B45309]">
+                            <td class="px-5 py-2.5 font-sans font-semibold">[Memo] DS Fees Locked in Pending Settlement ({{ pending_orders_count }} Pkgs)</td>
+                            <td colspan="3" class="px-5 py-2.5 text-right font-bold">
+                                KES {{ pending_ds_fees_locked|floatformat:2|intcomma }} (Awaiting next week's sale settlement)
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Right (5 Cols): Commission Rate Tier Breakdown Card -->
+        <div class="lg:col-span-5 rounded-[10px] border border-[#E2E8F0] bg-white p-5 shadow-sm flex flex-col justify-between">
+            <div>
+                <div class="border-b border-slate-100 pb-3.5">
+                    <h2 class="text-base font-bold text-[#0F172A]">Category Commission Tier Audit (9% – 16%)</h2>
+                    <p class="text-xs text-slate-500">Breakdown of gross sales volume taxed at each Kilimall category rate.</p>
+                </div>
+
+                <div class="mt-4 space-y-3">
+                    {% for tier in commission_tiers %}
+                    <div class="rounded-lg border border-slate-200 bg-slate-50/70 p-3.5">
+                        <div class="flex items-center justify-between text-xs">
+                            <span class="rounded bg-[#DBEAFE] px-2 py-0.5 font-mono font-bold text-[#1D4ED8]">
+                                {{ tier.rate_pct }}% Commission Tier
+                            </span>
+                            <span class="font-mono text-slate-600">{{ tier.order_count }} Order(s) • {{ tier.share_of_gmv_pct }}% of GMV</span>
+                        </div>
+                        <div class="mt-2 flex items-center justify-between font-mono text-xs">
+                            <span class="text-slate-700">Gross Volume: <strong>KES {{ tier.sales_sum|floatformat:2|intcomma }}</strong></span>
+                            <span class="font-bold text-[#1D4ED8]">Comm: KES {{ tier.comm_sum|floatformat:2|intcomma }}</span>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="py-8 text-center text-xs text-slate-400">
+                        Upload a statement to view commission tier breakdown.
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="mt-4 rounded-lg border border-teal-200 bg-teal-50/50 p-3.5 text-xs text-slate-700">
+                <div class="font-bold text-[#0F766E]">Zero Double-Counting Guarantee:</div>
+                <p class="mt-0.5 text-[11px] leading-relaxed">
+                    Store penalties (<span class="font-mono">KES {{ statement_fines|floatformat:2 }}</span>) are deducted strictly at the store operating level and never artificially divided across individual SKU profit margins.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Multi-Store Comparative Performance Matrix -->
+    <div class="rounded-[10px] border border-[#E2E8F0] bg-white shadow-sm overflow-hidden">
+        <div class="border-b border-slate-200 px-6 py-4">
+            <h2 class="text-base font-bold text-[#0F172A]">Multi-Store Portfolio Benchmark Matrix</h2>
+            <p class="text-xs text-slate-500">Side-by-side comparison across all registered Kilimall stores under your vendor account.</p>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-slate-200 text-left text-[13px] tabular-nums">
+                <thead class="bg-[#F1F5F9] text-[11px] font-bold uppercase tracking-wider text-[#475569]">
+                    <tr>
+                        <th class="px-5 py-3">Store Name &amp; ID</th>
+                        <th class="px-5 py-3 text-right">Statements</th>
+                        <th class="px-5 py-3 text-right">Gross Volume</th>
+                        <th class="px-5 py-3 text-right">Commission</th>
+                        <th class="px-5 py-3 text-right">DS Fees</th>
+                        <th class="px-5 py-3 text-right">SLA Fines</th>
+                        <th class="px-5 py-3 text-right">Net Payout</th>
+                        <th class="px-5 py-3 text-right">Verified COGS</th>
+                        <th class="px-5 py-3 text-right">Net Pocket Profit</th>
+                        <th class="px-5 py-3 text-right">Pending Pkgs</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-200 bg-white font-mono">
+                    {% for row in store_benchmarks %}
+                    <tr class="hover:bg-slate-50">
+                        <td class="px-5 py-3.5 font-sans">
+                            <a href="?store={{ row.store.kilimall_store_id }}" class="font-bold text-[#0F766E] hover:underline">
+                                {{ row.store.store_name }}
+                            </a>
+                            <span class="ml-1 rounded bg-orange-100 px-1.5 py-0.5 font-mono text-[10px] font-bold text-[#EA580C]">
+                                ID: {{ row.store.kilimall_store_id }}
+                            </span>
+                        </td>
+                        <td class="px-5 py-3.5 text-right">{{ row.statements_count }}</td>
+                        <td class="px-5 py-3.5 text-right font-semibold text-slate-900">KES {{ row.gross_sales|floatformat:2|intcomma }}</td>
+                        <td class="px-5 py-3.5 text-right text-[#1D4ED8]">{{ row.commission|floatformat:2|intcomma }}</td>
+                        <td class="px-5 py-3.5 text-right text-[#6D28D9]">{{ row.ds_fees|floatformat:2|intcomma }}</td>
+                        <td class="px-5 py-3.5 text-right text-[#B91C1C]">{{ row.fines|floatformat:2|intcomma }}</td>
+                        <td class="px-5 py-3.5 text-right font-bold text-[#15803D]">
+                            KES {{ row.net_payout|floatformat:2|intcomma }}
+                            <div class="text-[10px] font-normal text-slate-400">{{ row.retention_pct }}% retained</div>
+                        </td>
+                        <td class="px-5 py-3.5 text-right">-KES {{ row.cogs|floatformat:2|intcomma }}</td>
+                        <td class="px-5 py-3.5 text-right font-bold {% if row.net_profit >= 0 %}text-[#15803D]{% else %}text-[#B91C1C]{% endif %}">
+                            KES {{ row.net_profit|floatformat:2|intcomma }} ({{ row.margin_pct }}%)
+                        </td>
+                        <td class="px-5 py-3.5 text-right">
+                            <span class="rounded-full bg-[#FEF3C7] px-2.5 py-0.5 text-xs font-bold text-[#B45309]">{{ row.pending_count }}</span>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

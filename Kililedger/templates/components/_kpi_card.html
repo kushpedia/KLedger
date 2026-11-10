@@ -1,0 +1,40 @@
+{% comment %}
+Reusable Financial KPI Card Component (Section 5.2 of DESIGN.md).
+Parameters:
+- label: Uppercase card title (e.g., "TOTAL GROSS SALES")
+- amount: Formatted monetary string (e.g., "KES 24,260.00")
+- pill_text: Semantic badge text (e.g., "15.14% of Gross")
+- pill_tone: 'green' | 'amber' | 'red' | 'blue' | 'violet' | 'slate'
+- subtext: Footnote text (e.g., "16 Completed Units")
+- href: Optional drilldown URL
+{% endcomment %}
+<div class="rounded-[10px] border border-[#E2E8F0] bg-white p-5 shadow-sm transition hover:border-[#CBD5E1] hover:shadow-md">
+    <div class="flex items-center justify-between">
+        <span class="text-[11px] font-semibold uppercase tracking-wider text-[#475569]">{{ label }}</span>
+        {% if href %}
+        <a href="{{ href }}" class="text-xs font-medium text-[#0F766E] hover:underline">Drill down →</a>
+        {% endif %}
+    </div>
+
+    <div class="mt-2 font-mono text-[26px] font-bold leading-tight tracking-tight tabular-nums {% if pill_tone == 'red' %}text-[#B91C1C]{% elif pill_tone == 'green' %}text-[#15803D]{% else %}text-[#0F172A]{% endif %}">
+        {{ amount }}
+    </div>
+
+    <div class="mt-3 flex flex-wrap items-center justify-between gap-2">
+        {% if pill_text %}
+        <span class="inline-flex items-center rounded-full border px-2.5 py-0.5 font-mono text-[11px] font-medium
+            {% if pill_tone == 'green' %}border-[#86EFAC] bg-[#DCFCE7] text-[#15803D]
+            {% elif pill_tone == 'amber' %}border-[#FDE68A] bg-[#FEF3C7] text-[#B45309]
+            {% elif pill_tone == 'red' %}border-[#FCA5A5] bg-[#FEE2E2] text-[#B91C1C]
+            {% elif pill_tone == 'violet' %}border-[#C4B5FD] bg-[#EDE9FE] text-[#6D28D9]
+            {% elif pill_tone == 'blue' %}border-[#93C5FD] bg-[#DBEAFE] text-[#1D4ED8]
+            {% else %}border-slate-200 bg-slate-100 text-slate-700{% endif %}">
+            {{ pill_text }}
+        </span>
+        {% endif %}
+
+        {% if subtext %}
+        <span class="text-xs text-[#64748B]">{{ subtext }}</span>
+        {% endif %}
+    </div>
+</div>

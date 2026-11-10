@@ -1,0 +1,262 @@
+{% extends "base.html" %}
+{% load humanize %}
+
+{% block title %}Master Order Reconciliation Workspace — KiliLedger Pro{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+    <!-- Top Viewport Context Header (Exact Stitch SCR-09 Design) -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-5 rounded-[10px] border border-[#E2E8F0] shadow-sm">
+        <div>
+            <div class="flex items-center gap-2 mb-1">
+                <span class="font-label-caps text-[11px] text-[#0F766E] font-bold uppercase tracking-wider">Settlement &amp; Audit Engine</span>
+                <span class="text-slate-300 text-[12px] font-mono">/</span>
+                <span class="font-mono text-slate-500 text-[11px]">
+                    {% if active_store %}{{ active_store.store_name }} [ID: {{ active_store.kilimall_store_id }}]{% else %}All My Stores (Consolidated){% endif %}
+                </span>
+            </div>
+            <h1 class="text-2xl font-bold text-[#0F172A] tracking-tight">Master Order Reconciliation Workspace</h1>
+            <p class="text-xs text-[#64748B] mt-0.5">
+                Cross-statement order matching across <span class="font-mono">bill details</span>, <span class="font-mono">ds processing fee</span>, and <span class="font-mono">fine</span> tabs. Separate columns track Settlement Status vs. Penalty Status.
+            </p>
+        </div>
+        <div class="flex flex-wrap items-center gap-2.5">
+            <a href="{% url 'orders:pending_tracker' %}"
+               class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-amber-50 border border-amber-300 text-amber-800 hover:bg-amber-100 text-xs font-semibold transition-colors">
+                <span class="material-symbols-outlined text-[16px]">schedule</span>
+                <span>Pending Escrow Queue ({{ pipeline.pending_count }})</span>
+            </a>
+            <a href="{% url 'reports:report_center' %}"
+               class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#0F766E] text-white hover:bg-[#115E59] text-xs font-semibold shadow-xs transition-colors">
+                <span class="material-symbols-outlined text-[16px]">download</span>
+                <span>Export Reconciled Ledger</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- 5-Card Reconciliation Pipeline Filter Strip (SCR-09) -->
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
+        <a href="?status=all"
+           class="rounded-[10px] border p-4 transition {% if status_filter == 'all' %}border-2 border-[#0F766E] bg-white shadow-sm{% else %}border-[#E2E8F0] bg-white hover:border-slate-300{% endif %}">
+            <div class="text-[11px] font-bold uppercase tracking-wider text-slate-500">1. All Tracked Orders</div>
+            <div class="mt-1.5 font-mono text-2xl font-bold text-slate-900">{{ pipeline.all_count }}</div>
+            <div class="mt-1 text-[11px] text-slate-500">Unique Order SNs in DB</div>
+        </a>
+
+        <a href="?status=settled"
+           class="rounded-[10px] border p-4 transition {% if status_filter == 'settled' %}border-2 border-[#15803D] bg-emerald-50/30 shadow-sm{% else %}border-[#E2E8F0] bg-white hover:border-slate-300{% endif %}">
+            <div class="text-[11px] font-bold uppercase tracking-wider text-[#15803D]">2. Settled Orders</div>
+            <div class="mt-1.5 font-mono text-2xl font-bold text-[#15803D]">{{ pipeline.settled_count }}</div>
+            <div class="mt-1 font-mono text-[11px] text-slate-600">
+                {{ pipeline.same_bill_settled_count }} same-bill • {{ pipeline.prior_ds_settled_count }} prior DS
+            </div>
+        </a>
+
+        <a href="?status=pending"
+           class="rounded-[10px] border p-4 transition {% if status_filter == 'pending' %}border-2 border-[#B45309] bg-amber-50/40 shadow-sm{% else %}border-[#E2E8F0] bg-white hover:border-slate-300{% endif %}">
+            <div class="text-[11px] font-bold uppercase tracking-wider text-[#B45309]">3. Pending Settlement</div>
+            <div class="mt-1.5 font-mono text-2xl font-bold text-[#B45309]">{{ pipeline.pending_count }}</div>
+            <div class="mt-1 font-mono text-[11px] text-amber-800">KES {{ pipeline.pending_ds_sum|floatformat:2|intcomma }} DS Fees</div>
+        </a>
+
+        <a href="?status=overdue"
+           class="rounded-[10px] border p-4 transition {% if status_filter == 'overdue' %}border-2 border-[#B91C1C] bg-red-50/40 shadow-sm{% else %}border-[#E2E8F0] bg-white hover:border-slate-300{% endif %}">
+            <div class="text-[11px] font-bold uppercase tracking-wider text-[#B91C1C]">4. Overdue Pending (&gt;{{ current_tenant.pending_aging_threshold_days|default:"14" }}d)</div>
+            <div class="mt-1.5 font-mono text-2xl font-bold text-[#B91C1C]">{{ pipeline.overdue_count }}</div>
+            <div class="mt-1 text-[11px] text-slate-500">Investigate courier returns</div>
+        </a>
+
+        <a href="?status=penalized"
+           class="rounded-[10px] border p-4 transition {% if status_filter == 'penalized' %}border-2 border-rose-600 bg-rose-50/40 shadow-sm{% else %}border-[#E2E8F0] bg-white hover:border-slate-300{% endif %}">
+            <div class="text-[11px] font-bold uppercase tracking-wider text-rose-700">5. Penalized Orders</div>
+            <div class="mt-1.5 font-mono text-2xl font-bold text-rose-700">{{ pipeline.penalized_count }}</div>
+            <div class="mt-1 font-mono text-[11px] text-rose-700">-KES {{ pipeline.fines_sum|floatformat:2|intcomma }} Fines</div>
+        </a>
+    </div>
+
+    <!-- Main Workstation Dual Split Layout (Exact Stitch 68% Table + 32% Live 360° Inspector Panel) -->
+    <div class="grid grid-cols-1 gap-6 xl:grid-cols-12 items-start">
+        <!-- LEFT SIDE (8 Cols): Master Reconciled Order Ledger Table -->
+        <div class="xl:col-span-8 rounded-[10px] border border-[#E2E8F0] bg-white shadow-sm overflow-hidden">
+            <!-- Search & Filter Bar -->
+            <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 bg-[#F1F5F9] px-5 py-3.5">
+                <form method="get" class="flex flex-1 items-center gap-2">
+                    <input type="hidden" name="status" value="{{ status_filter }}">
+                    <div class="relative flex-1 max-w-sm">
+                        <input type="text" name="q" value="{{ search_q }}"
+                               placeholder="Search Order SN (e.g. 610287144669824), KKE shipment, SKU..."
+                               class="w-full rounded-md border border-slate-300 bg-white px-3 py-1.5 text-xs focus:border-[#0F766E] focus:outline-none">
+                    </div>
+                    <button type="submit" class="rounded-md bg-slate-900 px-3.5 py-1.5 text-xs font-semibold text-white">Search</button>
+                    {% if search_q or status_filter != 'all' %}
+                    <a href="{% url 'orders:reconciliation_grid' %}" class="text-xs font-medium text-slate-600 hover:underline">Reset</a>
+                    {% endif %}
+                </form>
+                <span class="font-mono text-xs text-slate-500">Showing {{ orders|length }} orders</span>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-slate-200 text-left text-[12.5px] tabular-nums">
+                    <thead class="bg-slate-50 text-[10.5px] font-bold uppercase tracking-wider text-[#475569]">
+                        <tr>
+                            <th class="px-4 py-3">Order SN &amp; Store</th>
+                            <th class="px-4 py-3">Product / Shipment</th>
+                            <th class="px-4 py-3">Settlement Status</th>
+                            <th class="px-4 py-3">Penalty Status</th>
+                            <th class="px-4 py-3 text-right">Gross (KES)</th>
+                            <th class="px-4 py-3 text-right">Comm</th>
+                            <th class="px-4 py-3 text-right">DS Fee</th>
+                            <th class="px-4 py-3 text-right">Net / Profit</th>
+                            <th class="px-4 py-3 text-right">360°</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-200 bg-white">
+                        {% for order in orders %}
+                        <tr class="hover:bg-teal-50/30 transition-colors {% if selected_order and selected_order.order_sn == order.order_sn %}bg-teal-50/60{% endif %}">
+                            <td class="px-4 py-3">
+                                <button type="button"
+                                        hx-get="{% url 'orders:order_360_drawer' order.order_sn %}"
+                                        hx-target="#drawer-container"
+                                        hx-swap="innerHTML"
+                                        class="font-mono font-bold text-[#0F766E] hover:underline text-left">
+                                    {{ order.order_sn }}
+                                </button>
+                                <div class="text-[11px] text-slate-500">
+                                    {{ order.store.store_name }}
+                                    {% if order.workbook_store_alias and order.workbook_store_alias != order.store.store_name %}
+                                        <span class="font-mono text-orange-700">({{ order.workbook_store_alias }})</span>
+                                    {% endif %}
+                                </div>
+                            </td>
+                            <td class="px-4 py-3">
+                                {% if order.headline_name %}
+                                    <div class="max-w-[200px] truncate font-medium text-slate-900" title="{{ order.goods_name }}">{{ order.headline_name }}</div>
+                                {% endif %}
+                                {% if order.linked_shipment_no %}
+                                    <div class="font-mono text-[11px] text-[#6D28D9]">{{ order.linked_shipment_no }} [{{ order.linked_package_size }}]</div>
+                                {% elif order.goods_id %}
+                                    <div class="font-mono text-[10px] text-slate-400">SKU: {{ order.goods_id }}</div>
+                                {% endif %}
+                            </td>
+                            <td class="px-4 py-3">
+                                {% include "components/_order_status_badges.html" with settlement_status=order.settlement_status %}
+                            </td>
+                            <td class="px-4 py-3">
+                                {% include "components/_order_status_badges.html" with badge_mode="penalty" penalty_status=order.penalty_status %}
+                            </td>
+                            <td class="px-4 py-3 text-right font-mono font-semibold text-slate-900">
+                                {% if order.goods_price is not None %}{{ order.goods_price|floatformat:2|intcomma }}{% else %}<span class="text-slate-400">Pending</span>{% endif %}
+                            </td>
+                            <td class="px-4 py-3 text-right font-mono text-[#1D4ED8]">
+                                {% if order.commission_amount is not None %}{{ order.commission_amount|floatformat:2 }}{% else %}—{% endif %}
+                            </td>
+                            <td class="px-4 py-3 text-right font-mono text-[#6D28D9]">
+                                {% if order.linked_ds_fee > 0 %}-{{ order.linked_ds_fee|floatformat:2 }}{% else %}<span class="text-[10px] text-slate-400">Prior Bill</span>{% endif %}
+                            </td>
+                            <td class="px-4 py-3 text-right font-mono font-bold">
+                                {% if order.net_order_profit is not None %}
+                                    <span class="{% if order.net_order_profit >= 0 %}text-[#15803D]{% else %}text-[#B91C1C]{% endif %}">
+                                        {{ order.net_order_profit|floatformat:2|intcomma }}
+                                    </span>
+                                {% elif order.cash_contribution_after_ds is not None %}
+                                    <span class="text-emerald-700">{{ order.cash_contribution_after_ds|floatformat:2|intcomma }}</span>
+                                    <div class="text-[9.5px] font-normal text-amber-700">Pre-COGS</div>
+                                {% elif order.linked_fine_amount > 0 %}
+                                    <span class="text-[#B91C1C]">-{{ order.linked_fine_amount|floatformat:2 }}</span>
+                                {% else %}
+                                    <span class="text-amber-700">In Escrow</span>
+                                {% endif %}
+                            </td>
+                            <td class="px-4 py-3 text-right">
+                                <a href="?status={{ status_filter }}&inspect={{ order.order_sn }}"
+                                   class="inline-flex items-center rounded border border-slate-200 bg-slate-50 px-2 py-1 text-[11px] font-semibold text-slate-700 hover:bg-teal-50 hover:text-[#0F766E]">
+                                    360°
+                                </a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="9" class="px-6 py-12 text-center text-slate-500">
+                                No reconciled orders match this filter. Upload a Kilimall settlement statement (.xlsx) to populate the master order ledger.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- RIGHT SIDE (4 Cols): Docked Order 360° Reconciliation Inspector Card (Exact Stitch Dual Split) -->
+        <div class="xl:col-span-4 rounded-[10px] border border-[#E2E8F0] bg-white shadow-sm overflow-hidden sticky top-20">
+            {% if selected_order %}
+            <div class="border-b border-slate-200 bg-[#0F172A] px-5 py-4 text-white">
+                <div class="flex items-center justify-between">
+                    <span class="font-mono text-[10px] uppercase tracking-wider text-teal-300 font-bold">Order 360° Inspector</span>
+                    <button type="button"
+                            hx-get="{% url 'orders:order_360_drawer' selected_order.order_sn %}"
+                            hx-target="#drawer-container"
+                            hx-swap="innerHTML"
+                            class="text-[11px] font-semibold text-teal-300 hover:underline">
+                        Expand Full Drawer ↗
+                    </button>
+                </div>
+                <div class="mt-1 font-mono text-base font-bold">Order #{{ selected_order.order_sn }}</div>
+                <div class="mt-2 flex flex-wrap gap-1.5">
+                    {% include "components/_order_status_badges.html" with settlement_status=selected_order.settlement_status %}
+                    {% include "components/_order_status_badges.html" with badge_mode="penalty" penalty_status=selected_order.penalty_status %}
+                </div>
+            </div>
+
+            <div class="p-5 space-y-5">
+                <div>
+                    <div class="text-xs font-bold text-slate-900">{{ selected_order.headline_name|default:"Drop-Shipping Shipment Record" }}</div>
+                    <div class="mt-1 flex flex-wrap gap-2 font-mono text-[11px] text-slate-500">
+                        {% if selected_order.goods_id %}<span>SKU: {{ selected_order.goods_id }}</span>{% endif %}
+                        {% if selected_order.linked_shipment_no %}<span>• Shipment: {{ selected_order.linked_shipment_no }} ({{ selected_order.linked_package_size }})</span>{% endif %}
+                    </div>
+                </div>
+
+                <!-- Vertical Audit Timeline -->
+                <div class="space-y-3 border-l-2 border-slate-200 pl-4">
+                    {% for ev in selected_timeline %}
+                    <div>
+                        <div class="font-mono text-[10px] font-bold uppercase text-slate-400">{{ ev.step_label }} • {{ ev.timestamp|date:"M d, H:i" }}</div>
+                        <div class="text-xs font-bold text-slate-900">{{ ev.title }}</div>
+                        <p class="text-[11px] text-slate-600 leading-relaxed">{{ ev.description }}</p>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Unit Economics Summary Box -->
+                {% if request.user.can_view_financials %}
+                <div class="rounded-lg border border-slate-200 bg-slate-50 p-3.5 space-y-1.5 font-mono text-xs">
+                    <div class="flex justify-between">
+                        <span class="font-sans text-slate-600">Gross Sale:</span>
+                        <span class="font-bold text-slate-900">{% if selected_order.goods_price %}KES {{ selected_order.goods_price|floatformat:2 }}{% else %}Pending{% endif %}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="font-sans text-slate-600">Commission:</span>
+                        <span class="text-[#1D4ED8]">{% if selected_order.commission_amount %}KES {{ selected_order.commission_amount|floatformat:2 }}{% else %}—{% endif %}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="font-sans text-slate-600">Linked DS Fee:</span>
+                        <span class="text-[#6D28D9]">-KES {{ selected_order.linked_ds_fee|floatformat:2 }}</span>
+                    </div>
+                    <div class="flex justify-between border-t border-slate-200 pt-1.5 font-bold">
+                        <span class="font-sans text-slate-900">Net Contribution:</span>
+                        <span class="text-[#15803D]">
+                            {% if selected_order.cash_contribution_after_ds is not None %}KES {{ selected_order.cash_contribution_after_ds|floatformat:2 }}{% else %}In Escrow{% endif %}
+                        </span>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+            {% else %}
+            <div class="p-8 text-center text-xs text-slate-500">
+                Select any Order SN from the table to inspect its cross-week reconciliation timeline.
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

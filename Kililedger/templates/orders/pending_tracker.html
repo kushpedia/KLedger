@@ -1,0 +1,182 @@
+{% extends "base.html" %}
+{% load humanize %}
+
+{% block title %}Pending Settlement &amp; DS Transit Escrow Tracker — KiliLedger Pro{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+    <!-- Top Page Header (Exact Stitch SCR-10 Design) -->
+    <div class="flex flex-col xl:flex-row xl:items-center justify-between gap-4 bg-white p-6 rounded-[10px] border border-[#E2E8F0] shadow-sm">
+        <div class="max-w-3xl">
+            <div class="flex flex-wrap items-center gap-2 mb-1.5">
+                <span class="font-label-caps text-[11px] uppercase tracking-wider text-[#0F766E] font-bold">Orders &amp; Reconciliation</span>
+                <span class="text-slate-300">•</span>
+                <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-800 font-mono text-xs font-bold">
+                    <span class="w-1.5 h-1.5 rounded-full bg-amber-600 animate-pulse"></span>
+                    {{ total_pending_count }} Unsettled DS Packages (KES {{ total_pending_ds_fees|floatformat:2|intcomma }} DS Fees Deducted)
+                </span>
+            </div>
+            <h1 class="text-2xl font-bold text-[#0F172A] tracking-tight">Pending Settlement &amp; DS Transit Escrow Tracker</h1>
+            <p class="mt-1 text-xs leading-relaxed text-[#475569]">
+                Orders where Kilimall has already deducted a Drop-Shipping Processing Fee (<span class="font-mono font-semibold">KES 50–250</span>), but the completed sale payout has not yet appeared in <span class="font-mono">bill details</span>. When you upload next week's statement, matched orders automatically flip to <span class="font-semibold text-[#15803D]">Settled</span>.
+            </p>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2.5 shrink-0">
+            <a href="{% url 'statements:upload_wizard' %}"
+               class="inline-flex items-center gap-1.5 rounded-lg bg-[#0F766E] px-4 py-2.5 text-xs font-bold text-white shadow-sm hover:bg-[#115E59]">
+                <span class="material-symbols-outlined text-[17px]">upload_file</span>
+                <span>+ Upload Latest Statement to Auto-Reconcile</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Recently Auto-Settled Celebration Strip (Exact Stitch Green Milestone Banner) -->
+    {% if auto_settled_count > 0 %}
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 rounded-[10px] border border-[#86EFAC] bg-[#DCFCE7]/60 px-6 py-4">
+        <div class="flex items-start gap-3">
+            <span class="material-symbols-outlined text-[24px] text-[#15803D] mt-0.5">verified</span>
+            <div>
+                <h2 class="text-sm font-bold text-[#15803D]">
+                    Automatic Reconciliation Milestone: {{ auto_settled_count }} Prior-Cycle DS Orders Matched &amp; Settled!
+                </h2>
+                <p class="mt-0.5 text-xs text-emerald-900">
+                    Orders whose DS fees were billed in an earlier cycle have been verified in completed sales (unlocking <span class="font-mono font-bold">KES {{ auto_settled_gross|floatformat:2|intcomma }}</span> in gross revenue).
+                </p>
+            </div>
+        </div>
+        <a href="{% url 'orders:reconciliation_grid' %}?status=settled"
+           class="shrink-0 rounded-md bg-[#15803D] px-3.5 py-2 text-xs font-bold text-white hover:bg-emerald-800">
+            View Settled Orders →
+        </a>
+    </div>
+    {% endif %}
+
+    <!-- 4 Aging Bucket Filter Cards (SCR-10) -->
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <a href="?bucket=all"
+           class="rounded-[10px] border p-5 transition {% if bucket_filter == 'all' %}border-2 border-[#0F766E] bg-white shadow-sm{% else %}border-[#E2E8F0] bg-white hover:border-slate-300{% endif %}">
+            <div class="text-[11px] font-bold uppercase tracking-wider text-slate-500">All Pending Packages</div>
+            <div class="mt-2 font-mono text-2xl font-bold text-slate-900">{{ total_pending_count }} Shipments</div>
+            <div class="mt-1 font-mono text-xs font-semibold text-[#6D28D9]">-KES {{ total_pending_ds_fees|floatformat:2|intcomma }} DS Fees Paid</div>
+        </a>
+
+        <a href="?bucket=0_7d"
+           class="rounded-[10px] border p-5 transition {% if bucket_filter == '0_7d' %}border-2 border-blue-600 bg-blue-50/30 shadow-sm{% else %}border-[#E2E8F0] bg-white hover:border-slate-300{% endif %}">
+            <div class="text-[11px] font-bold uppercase tracking-wider text-[#1D4ED8]">Fresh Transit (0–7 Days)</div>
+            <div class="mt-2 font-mono text-2xl font-bold text-[#1D4ED8]">{{ bucket_0_7_count }} Shipments</div>
+            <div class="mt-1 text-xs text-slate-500">Normal Kilimall delivery window</div>
+        </a>
+
+        <a href="?bucket=8_14d"
+           class="rounded-[10px] border p-5 transition {% if bucket_filter == '8_14d' %}border-2 border-[#B45309] bg-amber-50/30 shadow-sm{% else %}border-[#E2E8F0] bg-white hover:border-slate-300{% endif %}">
+            <div class="text-[11px] font-bold uppercase tracking-wider text-[#B45309]">Extended Transit (8–{{ aging_threshold_days }} Days)</div>
+            <div class="mt-2 font-mono text-2xl font-bold text-[#B45309]">{{ bucket_8_14_count }} Shipments</div>
+            <div class="mt-1 text-xs text-amber-800">Monitor for next statement payout</div>
+        </a>
+
+        <a href="?bucket=overdue"
+           class="rounded-[10px] border p-5 transition {% if bucket_filter == 'overdue' %}border-2 border-[#B91C1C] bg-red-50/40 shadow-sm{% else %}border-[#E2E8F0] bg-white hover:border-slate-300{% endif %}">
+            <div class="text-[11px] font-bold uppercase tracking-wider text-[#B91C1C]">Overdue Pending (&gt;{{ aging_threshold_days }} Days)</div>
+            <div class="mt-2 font-mono text-2xl font-bold text-[#B91C1C]">{{ bucket_overdue_count }} Shipments</div>
+            <div class="mt-1 text-xs text-rose-700">Threshold: {{ aging_threshold_days }}d (Check Courier Returns)</div>
+        </a>
+    </div>
+
+    <!-- Pending Shipments Action Table -->
+    <div class="rounded-[10px] border border-[#E2E8F0] bg-white shadow-sm overflow-hidden">
+        <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 bg-[#F1F5F9] px-6 py-3.5">
+            <form method="get" class="flex flex-wrap items-center gap-2">
+                <input type="hidden" name="bucket" value="{{ bucket_filter }}">
+                <input type="text" name="q" value="{{ search_q }}" placeholder="Search Order SN or KKE tracking number..."
+                       class="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-xs focus:border-[#0F766E] focus:outline-none w-64">
+                <select name="package_size" onchange="this.form.submit()"
+                        class="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-xs font-medium">
+                    <option value="all" {% if pkg_filter == 'all' %}selected{% endif %}>All Package Tiers</option>
+                    <option value="Super Small" {% if pkg_filter == 'Super Small' %}selected{% endif %}>Super Small (KES 50)</option>
+                    <option value="Small" {% if pkg_filter == 'Small' %}selected{% endif %}>Small (KES 80)</option>
+                    <option value="Medium" {% if pkg_filter == 'Medium' %}selected{% endif %}>Medium (KES 100)</option>
+                    <option value="Large" {% if pkg_filter == 'Large' %}selected{% endif %}>Large (KES 200)</option>
+                    <option value="Super Large" {% if pkg_filter == 'Super Large' %}selected{% endif %}>Super Large (KES 250)</option>
+                </select>
+                <button type="submit" class="rounded-md bg-slate-900 px-3 py-1.5 text-xs font-semibold text-white">Filter</button>
+            </form>
+            <span class="font-mono text-xs text-slate-600">{{ pending_orders|length }} Pending Packages Listed</span>
+        </div>
+
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-slate-200 text-left text-[13px] tabular-nums">
+                <thead class="bg-slate-50 text-[11px] font-semibold uppercase tracking-wider text-[#475569]">
+                    <tr>
+                        <th class="px-5 py-3">Order SN</th>
+                        <th class="px-5 py-3">Shipment Tracking No</th>
+                        <th class="px-5 py-3">Store</th>
+                        <th class="px-5 py-3">DS Hub Scan Date</th>
+                        <th class="px-5 py-3">Transit Age</th>
+                        <th class="px-5 py-3">Package Tier</th>
+                        <th class="px-5 py-3 text-right">DS Fee Paid Upfront</th>
+                        <th class="px-5 py-3">Source Statement</th>
+                        <th class="px-5 py-3">Status</th>
+                        <th class="px-5 py-3 text-right">Courier Return Action</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-200 bg-white">
+                    {% for order in pending_orders %}
+                    <tr class="hover:bg-slate-50">
+                        <td class="px-5 py-3.5">
+                            <button type="button"
+                                    hx-get="{% url 'orders:order_360_drawer' order.order_sn %}"
+                                    hx-target="#drawer-container"
+                                    hx-swap="innerHTML"
+                                    class="font-mono font-bold text-[#0F766E] hover:underline">
+                                {{ order.order_sn }}
+                            </button>
+                        </td>
+                        <td class="px-5 py-3.5 font-mono text-xs font-semibold text-slate-800">{{ order.linked_shipment_no }}</td>
+                        <td class="px-5 py-3.5 text-xs font-medium text-slate-700">{{ order.store.store_name }} [{{ order.store.kilimall_store_id }}]</td>
+                        <td class="px-5 py-3.5 font-mono text-xs text-slate-600">{{ order.ds_fee_scan_date|date:"Y-m-d H:i" }}</td>
+                        <td class="px-5 py-3.5">
+                            <span class="inline-flex items-center rounded-full px-2.5 py-0.5 font-mono text-xs font-bold
+                                {% if order.aging_bucket == 'OVERDUE' %}bg-[#FEE2E2] text-[#B91C1C]
+                                {% elif order.aging_bucket == 'EXTENDED_8_14D' %}bg-[#FEF3C7] text-[#B45309]
+                                {% else %}bg-[#DBEAFE] text-[#1D4ED8]{% endif %}">
+                                {{ order.transit_days_elapsed }} Days
+                            </span>
+                        </td>
+                        <td class="px-5 py-3.5">
+                            <span class="rounded bg-[#EDE9FE] px-2.5 py-0.5 font-mono text-xs font-semibold text-[#6D28D9]">
+                                {{ order.linked_package_size }}
+                            </span>
+                        </td>
+                        <td class="px-5 py-3.5 text-right font-mono font-bold text-[#6D28D9]">-KES {{ order.linked_ds_fee|floatformat:2 }}</td>
+                        <td class="px-5 py-3.5 font-mono text-xs text-slate-500">
+                            {% if order.first_seen_statement %}{{ order.first_seen_statement.filename }}{% else %}—{% endif %}
+                        </td>
+                        <td class="px-5 py-3.5">
+                            {% include "components/_order_status_badges.html" with settlement_status=order.settlement_status %}
+                        </td>
+                        <td class="px-5 py-3.5 text-right">
+                            <form method="post" action="{% url 'orders:pending_tracker' %}" class="inline"
+                                  onsubmit="return confirm('Mark Order {{ order.order_sn }} (Shipment {{ order.linked_shipment_no }}) as physically returned by courier?');">
+                                {% csrf_token %}
+                                <input type="hidden" name="order_sn" value="{{ order.order_sn }}">
+                                <input type="hidden" name="resolution_action" value="mark_returned">
+                                <button type="submit" class="rounded border border-slate-300 bg-white px-2.5 py-1 text-[11px] font-semibold text-slate-700 hover:bg-rose-50 hover:text-rose-700 hover:border-rose-300">
+                                    Mark Returned
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="10" class="px-6 py-12 text-center text-slate-500">
+                            No unsettled DS packages match the current filter.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

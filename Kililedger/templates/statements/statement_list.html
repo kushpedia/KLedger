@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+{% load humanize %}
+
+{% block title %}Settlement Statements Ledger & Upload History — KiliLedger Pro{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+    <!-- Page Header -->
+    <div class="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
+        <div>
+            <h1 class="text-2xl font-bold tracking-tight text-[#0F172A]">Settlement Statements Ledger &amp; Upload History</h1>
+            <p class="mt-1 text-sm text-[#475569]">
+                Chronological audit log of all uploaded Kilimall weekly settlement workbooks across {% if active_store %}{{ active_store.store_name }} [ID: {{ active_store.kilimall_store_id }}]{% else %}All My Stores{% endif %}.
+            </p>
+        </div>
+        <a href="{% url 'statements:upload_wizard' %}"
+           class="inline-flex items-center gap-2 rounded-md bg-[#0F766E] px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-[#115E59]">
+            <span>+ Upload New Statement (.xlsx)</span>
+        </a>
+    </div>
+
+    <!-- Summary KPI Strip (SCR-06) -->
+    <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        {% include "components/_kpi_card.html" with label="STATEMENTS IMPORTED" amount=statements|length pill_text="100% Math Verified" pill_tone="green" subtext="Audit Trail Active" %}
+        {% include "components/_kpi_card.html" with label="CUMULATIVE GROSS SALES" amount=totals.gross_sum|default:"0.00"|floatformat:2|intcomma pill_text="KES Gross Volume" pill_tone="blue" subtext="Across Imported Bills" %}
+        {% include "components/_kpi_card.html" with label="CUMULATIVE NET PAYOUT" amount=totals.payout_sum|default:"0.00"|floatformat:2|intcomma pill_text="KES Bank Payout" pill_tone="green" subtext="Final Settlement Amount" %}
+        {% include "components/_kpi_card.html" with label="PENDING DS SHIPMENTS" amount=totals.pending_sum|default:"0" pill_text="Awaiting Completion" pill_tone="amber" subtext="Tracked Across Cycles" %}
+    </div>
+
+    <!-- Statements Ledger Table -->
+    <div class="rounded-[10px] border border-[#E2E8F0] bg-white shadow-sm overflow-hidden">
+        <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 px-6 py-4">
+            <h2 class="text-base font-bold text-[#0F172A]">Imported Settlement Workbooks</h2>
+            <form method="get" class="flex items-center gap-2">
+                <input type="text" name="q" value="{{ search_q }}" placeholder="Search filename or store..."
+                       class="rounded-md border border-slate-300 px-3 py-1.5 text-xs focus:border-[#0F766E] focus:outline-none">
+                <button type="submit" class="rounded-md bg-slate-900 px-3 py-1.5 text-xs font-semibold text-white">Filter</button>
+            </form>
+        </div>
+
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-slate-200 text-left text-[13px]">
+                <thead class="bg-[#F1F5F9] text-[11px] font-semibold uppercase tracking-wider text-[#475569]">
+                    <tr>
+                        <th class="px-6 py-3">Statement File &amp; Cycle</th>
+                        <th class="px-6 py-3">Store</th>
+                        <th class="px-6 py-3 text-right">Gross Sales (KES)</th>
+                        <th class="px-6 py-3 text-right">Commission</th>
+                        <th class="px-6 py-3 text-right">DS Fees</th>
+                        <th class="px-6 py-3 text-right">Fines</th>
+                        <th class="px-6 py-3 text-right">Final Payout (KES)</th>
+                        <th class="px-6 py-3">DS Package Reconciliation</th>
+                        <th class="px-6 py-3 text-right">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-200 bg-white tabular-nums">
+                    {% for stmt in statements %}
+                    <tr class="hover:bg-slate-50">
+                        <td class="px-6 py-3.5">
+                            <a href="{% url 'statements:statement_detail' stmt.pk %}" class="font-mono font-bold text-[#0F766E] hover:underline">
+                                {{ stmt.filename }}
+                            </a>
+                            <div class="font-mono text-[11px] text-slate-500">
+                                {{ stmt.period_start|date:"M d, Y" }} – {{ stmt.period_end|date:"M d, Y" }}
+                            </div>
+                        </td>
+                        <td class="px-6 py-3.5">
+                            <div class="font-semibold text-slate-900">{{ stmt.store.store_name }}</div>
+                            <span class="rounded bg-orange-100 px-1.5 py-0.5 font-mono text-[10px] font-bold text-[#EA580C]">
+                                ID: {{ stmt.store.kilimall_store_id }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-3.5 text-right font-mono font-semibold text-slate-900">
+                            {{ stmt.total_volume|floatformat:2|intcomma }}
+                            <div class="text-[11px] font-normal text-slate-400">{{ stmt.completed_orders_count }} units</div>
+                        </td>
+                        <td class="px-6 py-3.5 text-right font-mono text-[#1D4ED8]">
+                            {{ stmt.total_commission|floatformat:2|intcomma }}
+                            <div class="text-[11px] text-slate-400">{{ stmt.effective_commission_pct }}%</div>
+                        </td>
+                        <td class="px-6 py-3.5 text-right font-mono text-[#6D28D9]">
+                            {{ stmt.ds_processing_fee|floatformat:2|intcomma }}
+                            <div class="text-[11px] text-slate-400">{{ stmt.ds_packages_count }} pkgs</div>
+                        </td>
+                        <td class="px-6 py-3.5 text-right font-mono text-[#B91C1C]">
+                            {{ stmt.fines|floatformat:2|intcomma }}
+                            <div class="text-[11px] text-slate-400">{{ stmt.fines_count }} fines</div>
+                        </td>
+                        <td class="px-6 py-3.5 text-right font-mono font-bold text-[#15803D]">
+                            {{ stmt.final_settlement_amount|floatformat:2|intcomma }}
+                            <div class="text-[11px] font-normal text-emerald-700">{{ stmt.payout_retention_pct }}% retained</div>
+                        </td>
+                        <td class="px-6 py-3.5">
+                            <div class="flex items-center justify-between text-xs font-mono">
+                                <span class="text-emerald-700 font-semibold">{{ stmt.same_bill_settled_count }}/{{ stmt.ds_packages_count }} Settled</span>
+                                <span class="text-amber-700">{{ stmt.new_pending_settlement_count }} Pending</span>
+                            </div>
+                            <div class="mt-1 h-1.5 w-full rounded-full bg-slate-200 overflow-hidden">
+                                <div class="h-full bg-[#0F766E]" style="width: {{ stmt.ds_settled_progress_pct }}%"></div>
+                            </div>
+                        </td>
+                        <td class="px-6 py-3.5 text-right space-x-2">
+                            <a href="{% url 'statements:statement_detail' stmt.pk %}"
+                               class="inline-flex items-center rounded border border-slate-300 bg-white px-2.5 py-1 text-xs font-semibold text-slate-700 hover:bg-slate-50">
+                                Inspect Audit
+                            </a>
+                            {% if request.user.can_manage_stores_and_rollback %}
+                            <form method="post" action="{% url 'statements:statement_list' %}" class="inline"
+                                  onsubmit="return confirm('Rollback and remove statement {{ stmt.filename }}?');">
+                                {% csrf_token %}
+                                <input type="hidden" name="statement_id" value="{{ stmt.pk }}">
+                                <button type="submit" class="text-xs font-semibold text-red-600 hover:underline">Rollback</button>
+                            </form>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="9" class="px-6 py-12 text-center">
+                            <div class="text-sm font-bold text-slate-800">No settlement statements uploaded yet</div>
+                            <p class="mt-1 text-xs text-slate-500">Upload your first Kilimall weekly Excel bill (.xlsx) to populate your ledger and reconcile orders.</p>
+                            <a href="{% url 'statements:upload_wizard' %}" class="mt-4 inline-flex items-center rounded-md bg-[#0F766E] px-4 py-2 text-xs font-semibold text-white">
+                                + Upload First Statement (.xlsx)
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
