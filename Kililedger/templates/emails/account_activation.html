@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Verify your KiliLedger Pro account</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background-color: #F8FAFC;
+      color: #0F172A;
+      margin: 0;
+      padding: 32px 16px;
+      -webkit-font-smoothing: antialiased;
+    }
+    .wrapper {
+      max-width: 560px;
+      margin: 0 auto;
+      background: #FFFFFF;
+      border: 1px solid #E2E8F0;
+      border-radius: 12px;
+      padding: 36px 32px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    }
+    .brand-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 24px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid #F1F5F9;
+    }
+    .brand-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      background-color: #0F766E;
+      display: inline-block;
+      text-align: center;
+      line-height: 36px;
+      color: #ffffff;
+      font-weight: bold;
+      font-size: 18px;
+    }
+    .brand-name {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: #0F172A;
+    }
+    .brand-pro {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      background: #CCFBF1;
+      color: #0F766E;
+      padding: 2px 6px;
+      border-radius: 4px;
+      margin-left: 4px;
+      border: 1px solid #99F6E4;
+    }
+    h1 {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      color: #0F172A;
+      margin-top: 0;
+      margin-bottom: 16px;
+    }
+    p {
+      font-size: 14px;
+      line-height: 1.6;
+      color: #334155;
+      margin: 0 0 16px 0;
+    }
+    .highlight-box {
+      background-color: #F8FAFC;
+      border: 1px solid #E2E8F0;
+      border-radius: 8px;
+      padding: 14px 18px;
+      margin: 20px 0;
+    }
+    .btn-container {
+      text-align: center;
+      margin: 28px 0;
+    }
+    .btn {
+      display: inline-block;
+      background-color: #0F766E;
+      color: #FFFFFF !important;
+      font-size: 14px;
+      font-weight: 600;
+      text-decoration: none;
+      padding: 13px 28px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(15, 118, 110, 0.2);
+    }
+    .fallback-url {
+      font-size: 11px;
+      color: #64748B;
+      word-break: break-all;
+      background: #F1F5F9;
+      padding: 8px 12px;
+      border-radius: 6px;
+      margin-top: 8px;
+      font-family: monospace;
+    }
+    .footer {
+      margin-top: 32px;
+      padding-top: 20px;
+      border-top: 1px solid #F1F5F9;
+      font-size: 12px;
+      color: #64748B;
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <div class="brand-header">
+      <span class="brand-icon">KL</span>
+      <span class="brand-name">KiliLedger<span class="brand-pro">PRO</span></span>
+    </div>
+
+    <h1>Verify your email to activate your workspace</h1>
+
+    <p>Hi {{ user.first_name|default:"there" }},</p>
+
+    <p>
+      Thank you for registering <strong>{{ business_name }}</strong> on KiliLedger Pro.
+      To protect your financial ledgers and prevent unauthorized access, please confirm that you own this email address before logging in.
+    </p>
+
+    <div class="highlight-box">
+      <div style="font-size: 12px; font-weight: 600; text-transform: uppercase; color: #64748B; margin-bottom: 4px;">Registered Account</div>
+      <div style="font-size: 14px; font-weight: 600; color: #0F172A;">{{ user.email }}</div>
+      <div style="font-size: 12px; color: #0F766E; margin-top: 2px;">Workspace: {{ business_name }}</div>
+    </div>
+
+    <div class="btn-container">
+      <a href="{{ activation_url }}" class="btn" target="_blank">Verify Email &amp; Activate Workspace &rarr;</a>
+    </div>
+
+    <p style="font-size: 12px; color: #64748B;">
+      This activation link will expire in <strong>{{ expires_hours }} hours</strong>.
+      If the button above does not work, copy and paste this URL into your browser:
+    </p>
+    <div class="fallback-url">{{ activation_url }}</div>
+
+    <div class="footer">
+      <p style="margin: 0;">&copy; 2026 KiliLedger Pro. Built for Kilimall Kenya DS Merchants.</p>
+      <p style="margin: 4px 0 0 0; font-size: 11px;">If you did not create this account, no action is needed and this email can be safely ignored.</p>
+    </div>
+  </div>
+</body>
+</html>

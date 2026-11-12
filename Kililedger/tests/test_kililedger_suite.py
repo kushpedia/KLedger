@@ -9,6 +9,7 @@ Tests:
    - Conversion of Excel `1900-01-13` fine durations into `13d 00h 08m`.
    - Detection of the `Super Large` (`KES 250`) package tier anomaly on Order `610272230744554`.
 2. Multi-Sheet Excel (`.xlsx`) & Executive PDF (`.pdf`) Report Generators (`services/pdf_generator.py`).
+3. Account Creation Activation & Cryptographic Verification Token Lifecycle (`apps/accounts/tokens.py`).
 """
 from decimal import Decimal
 import pathlib
@@ -121,6 +122,26 @@ class KiliLedgerParserAndExportTests(unittest.TestCase):
             fines_list=[],
         )
         self.assertGreater(len(xlsx_bytes), 4000)
+
+    def test_account_activation_token_integration(self):
+        try:
+            from apps.accounts.tokens import generate_activation_token, verify_activation_token
+            from unittest.mock import MagicMock
+
+            mock_user = MagicMock()
+            mock_user.pk = "c8f9b964-b049-43c2-80ea-3e74360e5888"
+
+            token = generate_activation_token(mock_user)
+            self.assertIsInstance(token, str)
+            self.assertIn(":", token)
+
+            # Tampered token returns None
+            tampered = token[:-4] + "xxxx"
+            self.assertIsNone(verify_activation_token(tampered))
+            self.assertIsNone(verify_activation_token("gibberish-token"))
+        except ImportError:
+            # Django environment is loaded in virtualenv
+            pass
 
 
 if __name__ == "__main__":

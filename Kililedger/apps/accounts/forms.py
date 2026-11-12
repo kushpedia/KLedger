@@ -1,15 +1,16 @@
 """
-Forms for Vendor Registration, Sign In, Reconciliation Rules (SCR-15), and Team Management.
+Forms for Multi-Tenant Authentication, Vendor Registration, Staff Invitations,
+and Reconciliation Rules Configuration (`apps.accounts`).
 """
 from django import forms
 from django.contrib.auth import authenticate
 from django.db import transaction
+
 from apps.accounts.models import VendorTenant, VendorUser
 
-
 INPUT_CLASSES = (
-    "w-full rounded-md border border-slate-300 bg-white px-3.5 py-2 text-sm text-slate-900 "
-    "placeholder-slate-400 shadow-sm focus:border-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-600/20"
+    "w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-xs text-slate-900 "
+    "placeholder:text-slate-400 focus:border-[#0F766E] focus:outline-none focus:ring-2 focus:ring-[#0F766E]/20"
 )
 
 
@@ -17,6 +18,7 @@ class VendorRegistrationForm(forms.Form):
     """
     Creates both an isolated `VendorTenant` and the primary `VendorUser (ROLE_OWNER)`
     inside an atomic database transaction (SCR-01).
+    Supports `is_active=False` for email verification activation workflows.
     """
 
     business_name = forms.CharField(
@@ -46,7 +48,7 @@ class VendorRegistrationForm(forms.Form):
         return email
 
     @transaction.atomic
-    def save(self) -> VendorUser:
+    def save(self, is_active: bool = False, commit: bool = True) -> VendorUser:
         email = self.cleaned_data["email"]
         tenant = VendorTenant.objects.create(
             business_name=self.cleaned_data["business_name"].strip(),
@@ -55,6 +57,7 @@ class VendorRegistrationForm(forms.Form):
             default_accounting_basis="CASH_FLOW",
             pending_aging_threshold_days=14,
             critical_aging_threshold_days=21,
+            is_active=is_active,
         )
         user = VendorUser.objects.create_user(
             username=email,
@@ -64,6 +67,7 @@ class VendorRegistrationForm(forms.Form):
             role=VendorUser.ROLE_OWNER,
             phone_number=self.cleaned_data["phone_number"].strip(),
             first_name=self.cleaned_data["business_name"].strip()[:30],
+            is_active=is_active,
         )
         return user
 
@@ -75,7 +79,7 @@ class VendorLoginForm(forms.Form):
         widget=forms.TextInput(attrs={"class": INPUT_CLASSES, "placeholder": "seller@kushpedia.co.ke"}),
     )
     password = forms.CharField(
-        widget=forms.PasswordInput(attrs={"class": INPUT_CLASSES, "placeholder": "••••••••"}),
+        widget=forms.PasswordInput(attrs={"class": INPUT_CLASSES, "placeholder": "Your account password"}),
     )
 
     def __init__(self, request=None, *args, **kwargs):
@@ -84,78 +88,64 @@ class VendorLoginForm(forms.Form):
         super().__init__(*args, **kwargs)
 
     def clean(self):
-        cleaned_data = super().clean()
-        identifier = cleaned_data.get("email", "").strip().lower()
-        password = cleaned_data.get("password")
+        email_or_user = (self.cleaned_data.get("email") or "").strip().lower()
+        password = self.cleaned_data.get("password")
 
-        if identifier and password:
-            # Allow login by email or username
-            user_obj = VendorUser.objects.filter(email__iexact=identifier).first()
-            username = user_obj.username if user_obj else identifier
-            self.user_cache = authenticate(self.request, username=username, password=password)
-            if self.user_cache is None:
+        if email_or_user and password:
+            user = authenticate(self.request, username=email_or_user, password=password)
+            if user is None:
+                user_match = VendorUser.objects.filter(email__iexact=email_or_user).first()
+                if user_match:
+                    user = authenticate(self.request, username=user_match.username, password=password)
+
+            if user is None:
                 raise forms.ValidationError("Invalid email or password. Please verify your credentials.")
-            if not self.user_cache.is_active:
-                raise forms.ValidationError("This user account has been suspended.")
-        return cleaned_data
+            self.user_cache = user
+        return self.cleaned_data
 
     def get_user(self):
         return self.user_cache
 
 
-class ReconciliationRulesForm(forms.ModelForm):
-    """
-    Allows Vendor Owners to update their reconciliation aging thresholds,
-    default accounting basis, and package size anomaly guards (SCR-15).
-    """
-
-    class Meta:
-        model = VendorTenant
-        fields = [
-            "business_name",
-            "contact_phone",
-            "default_accounting_basis",
-            "pending_aging_threshold_days",
-            "critical_aging_threshold_days",
-            "target_net_margin_pct",
-            "flag_package_size_anomalies",
-            "cogs_update_policy",
-        ]
-        widgets = {
-            "business_name": forms.TextInput(attrs={"class": INPUT_CLASSES}),
-            "contact_phone": forms.TextInput(attrs={"class": INPUT_CLASSES}),
-            "default_accounting_basis": forms.Select(attrs={"class": INPUT_CLASSES}),
-            "pending_aging_threshold_days": forms.NumberInput(attrs={"class": INPUT_CLASSES, "min": 3, "max": 60}),
-            "critical_aging_threshold_days": forms.NumberInput(attrs={"class": INPUT_CLASSES, "min": 7, "max": 90}),
-            "target_net_margin_pct": forms.NumberInput(attrs={"class": INPUT_CLASSES, "step": "0.5"}),
-            "cogs_update_policy": forms.Select(attrs={"class": INPUT_CLASSES}),
-        }
-
-    def clean(self):
-        cleaned = super().clean()
-        pending_days = cleaned.get("pending_aging_threshold_days") or 14
-        critical_days = cleaned.get("critical_aging_threshold_days") or 21
-        if critical_days <= pending_days:
-            self.add_error(
-                "critical_aging_threshold_days",
-                "Critical escalation window must be greater than the initial Overdue Pending threshold.",
-            )
-        return cleaned
-
-
 class StaffMemberInviteForm(forms.Form):
-    """Allows Vendor Owners to create sub-accounts for Finance Managers or Operations Assistants (SCR-15)."""
+    """Invites a sub-account user (Finance Auditor or Ops Assistant) to a tenant workspace (SCR-15)."""
 
-    full_name = forms.CharField(max_length=100, widget=forms.TextInput(attrs={"class": INPUT_CLASSES}))
-    email = forms.EmailField(widget=forms.EmailInput(attrs={"class": INPUT_CLASSES}))
+    email = forms.EmailField(
+        widget=forms.EmailInput(attrs={"class": INPUT_CLASSES, "placeholder": "accountant@kushpedia.co.ke"}),
+    )
+    full_name = forms.CharField(
+        max_length=120,
+        widget=forms.TextInput(attrs={"class": INPUT_CLASSES, "placeholder": "Jane Mwangi"}),
+    )
     role = forms.ChoiceField(
-        choices=[
-            (VendorUser.ROLE_FINANCE, "Finance Manager (Statements, COGS & Reports)"),
-            (VendorUser.ROLE_OPERATIONS, "Operations Assistant (Pending Orders & Penalties Only)"),
-        ],
+        choices=(
+            (VendorUser.ROLE_FINANCE, "Finance & Reconciliation Auditor (Full Financials, Read/Write COGS)"),
+            (VendorUser.ROLE_OPERATIONS, "Operations Assistant (Shipment Tracking & Returns, Zero Financials)"),
+        ),
         widget=forms.Select(attrs={"class": INPUT_CLASSES}),
     )
     temporary_password = forms.CharField(
         min_length=8,
-        widget=forms.PasswordInput(attrs={"class": INPUT_CLASSES}),
+        widget=forms.PasswordInput(attrs={"class": INPUT_CLASSES, "placeholder": "Temporary Password"}),
     )
+
+
+class ReconciliationRulesForm(forms.ModelForm):
+    """Configures store reconciliation and threshold preferences (SCR-15)."""
+
+    class Meta:
+        model = VendorTenant
+        fields = (
+            "default_accounting_basis",
+            "cogs_update_policy",
+            "target_net_margin_pct",
+            "pending_aging_threshold_days",
+            "critical_aging_threshold_days",
+        )
+        widgets = {
+            "default_accounting_basis": forms.Select(attrs={"class": INPUT_CLASSES}),
+            "cogs_update_policy": forms.Select(attrs={"class": INPUT_CLASSES}),
+            "target_net_margin_pct": forms.NumberInput(attrs={"class": INPUT_CLASSES, "step": "0.1"}),
+            "pending_aging_threshold_days": forms.NumberInput(attrs={"class": INPUT_CLASSES}),
+            "critical_aging_threshold_days": forms.NumberInput(attrs={"class": INPUT_CLASSES}),
+        }

@@ -1,7 +1,9 @@
 """
-Views for Authentication (SCR-01), Vendor Settings & Reconciliation Rules (SCR-15),
-Slide-Over Notifications Drawer (SCR-15), and Platform Administration Console (SCR-16).
+Views for Authentication (SCR-01), Account Activation & Email Verification,
+Vendor Settings & Reconciliation Rules (SCR-15), Slide-Over Notifications Drawer (SCR-15),
+and Platform Administration Console (SCR-16).
 """
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.db.models import Count
@@ -18,12 +20,15 @@ from apps.accounts.forms import (
 )
 from apps.accounts.middleware import PlatformAdminRequiredMixin, VendorRequiredMixin
 from apps.accounts.models import ParserSchemaDiagnosticLog, VendorNotification, VendorTenant, VendorUser
+from apps.accounts.tokens import verify_activation_token
+from services.email_service import send_vendor_activation_email
 
 
 class AuthSplitPortalView(View):
     """
     Implements SCR-01: Split-Screen Authentication & Vendor Registration Portal.
-    Supports switching between 'Sign In' and 'Create Vendor Account' tabs.
+    - Vendor Registration creates user with `is_active=False` and dispatches an activation email.
+    - Vendor Sign In checks `is_active` and prompts verification if unconfirmed.
     """
 
     template_name = "accounts/auth_split.html"
@@ -52,13 +57,24 @@ class AuthSplitPortalView(View):
             register_form = VendorRegistrationForm(request.POST)
             login_form = VendorLoginForm(request)
             if register_form.is_valid():
-                user = register_form.save()
-                login(request, user)
-                messages.success(
+                # Creates inactive VendorTenant and inactive VendorUser
+                user = register_form.save(is_active=False)
+                tenant = user.tenant
+
+                # Send activation email with secure 48-hour link
+                send_vendor_activation_email(user, request=request)
+
+                is_dev = getattr(settings, "DEBUG", False)
+                return render(
                     request,
-                    f"Welcome to KiliLedger Pro, {user.tenant.business_name}! Let's connect your first Kilimall store.",
+                    "accounts/activation_sent.html",
+                    {
+                        "email": user.email,
+                        "business_name": tenant.business_name if tenant else "Your Business",
+                        "is_development": is_dev,
+                    },
                 )
-                return redirect("stores:onboarding_wizard")
+
             return render(
                 request,
                 self.template_name,
@@ -70,6 +86,21 @@ class AuthSplitPortalView(View):
         register_form = VendorRegistrationForm()
         if login_form.is_valid():
             user = login_form.get_user()
+            if not user.is_active:
+                messages.warning(
+                    request,
+                    "Your account has not been activated yet. Please check your email for the verification link.",
+                )
+                return render(
+                    request,
+                    "accounts/activation_sent.html",
+                    {
+                        "email": user.email,
+                        "business_name": user.tenant.business_name if user.tenant else "Your Business",
+                        "is_development": getattr(settings, "DEBUG", False),
+                    },
+                )
+
             login(request, user)
             if user.is_platform_operator and not user.tenant_id:
                 return redirect("accounts:platform_admin_console")
@@ -80,6 +111,67 @@ class AuthSplitPortalView(View):
             self.template_name,
             {"active_tab": "login", "login_form": login_form, "register_form": register_form},
         )
+
+
+class ActivateAccountView(View):
+    """
+    Handles `/activate/<token>/` email activation link clicks.
+    Validates token cryptographic signature and 48-hour expiration,
+    activates `user` and `tenant`, logs in the user, and redirects to onboarding.
+    """
+
+    def get(self, request, token):
+        user = verify_activation_token(token, max_age_hours=48)
+        if user is None:
+            return render(request, "accounts/activation_invalid.html")
+
+        if not user.is_active:
+            user.is_active = True
+            user.save(update_fields=["is_active"])
+
+        if user.tenant and not user.tenant.is_active:
+            user.tenant.is_active = True
+            user.tenant.save(update_fields=["is_active"])
+
+        # Auto-authenticate the verified user
+        login(request, user)
+        messages.success(
+            request,
+            f"Email verified successfully! Welcome to KiliLedger Pro, {user.tenant.business_name if user.tenant else ''}.",
+        )
+        return redirect("stores:onboarding_wizard")
+
+
+class ResendActivationLinkView(View):
+    """Allows unverified users to request a fresh activation link if expired or lost."""
+
+    def get(self, request):
+        email = request.GET.get("email", "")
+        return render(request, "accounts/activation_invalid.html", {"prefill_email": email})
+
+    def post(self, request):
+        email = request.POST.get("email", "").strip().lower()
+        user = VendorUser.objects.filter(email__iexact=email).first()
+
+        if user:
+            if user.is_active:
+                messages.info(request, "Your account is already active. Please sign in.")
+                return redirect("accounts:login")
+
+            send_vendor_activation_email(user, request=request)
+            messages.success(request, f"A fresh activation link has been sent to {email}.")
+            return render(
+                request,
+                "accounts/activation_sent.html",
+                {
+                    "email": email,
+                    "business_name": user.tenant.business_name if user.tenant else "Your Business",
+                    "is_development": getattr(settings, "DEBUG", False),
+                },
+            )
+
+        messages.error(request, "No account was found with that email address.")
+        return render(request, "accounts/activation_invalid.html", {"prefill_email": email})
 
 
 class VendorLogoutView(View):
@@ -195,7 +287,6 @@ class NotificationsDrawerPartialView(VendorRequiredMixin, View):
         )
 
     def post(self, request):
-        # Mark all notifications as read
         VendorNotification.objects.filter(tenant=request.tenant, is_read=False).update(is_read=True)
         if request.headers.get("HX-Request"):
             return self.get(request)

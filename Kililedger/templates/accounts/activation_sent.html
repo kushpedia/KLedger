@@ -1,0 +1,60 @@
+{% extends "base_auth.html" %}
+
+{% block title %}Check Your Email — KiliLedger Pro{% endblock %}
+
+{% block content %}
+<div class="min-h-screen w-full flex items-center justify-center bg-[#F8FAFC] px-4 py-12">
+    <div class="w-full max-w-md bg-white rounded-2xl border border-slate-200 shadow-xl p-8 text-center space-y-6">
+        <!-- Brand Badge -->
+        <div class="flex items-center justify-center gap-2">
+            <div class="w-10 h-10 rounded-lg bg-[#0F766E] flex items-center justify-center text-white shadow-sm font-bold text-lg">
+                KL
+            </div>
+            <div class="flex items-center gap-1.5">
+                <span class="text-xl font-bold tracking-tight text-slate-900">KiliLedger</span>
+                <span class="px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider bg-teal-50 text-[#0F766E] border border-teal-200/80 rounded">Pro</span>
+            </div>
+        </div>
+
+        <!-- Mail Icon -->
+        <div class="mx-auto w-16 h-16 rounded-full bg-teal-50 border border-teal-100 flex items-center justify-center text-[#0F766E]">
+            <span class="material-symbols-outlined text-[32px]">mark_email_read</span>
+        </div>
+
+        <div class="space-y-2">
+            <h1 class="text-2xl font-bold tracking-tight text-slate-900">Verify your email address</h1>
+            <p class="text-xs text-slate-600 leading-relaxed">
+                We've sent an activation link to <strong class="text-slate-900 font-mono">{{ email }}</strong> for your workspace <strong class="text-[#0F766E]">{{ business_name }}</strong>.
+            </p>
+        </div>
+
+        <!-- Instructions Box -->
+        <div class="rounded-xl border border-slate-200 bg-slate-50/70 p-4 text-left text-xs text-slate-600 space-y-2">
+            <div class="flex items-start gap-2.5">
+                <span class="material-symbols-outlined text-[18px] text-teal-600 shrink-0 mt-0.5">check_circle</span>
+                <span>Click the link inside the email to activate your account and start importing statements.</span>
+            </div>
+            <div class="flex items-start gap-2.5">
+                <span class="material-symbols-outlined text-[18px] text-amber-600 shrink-0 mt-0.5">schedule</span>
+                <span>The link will expire in <strong>48 hours</strong>. Check your spam or promotions folder if you don't see it within 2 minutes.</span>
+            </div>
+            {% if is_development %}
+            <div class="mt-2 pt-2 border-t border-slate-200 text-[11px] text-slate-500 font-mono">
+                [Dev Note] Using console email backend: look at your Django terminal output to copy the activation link!
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="pt-2 flex flex-col gap-2">
+            <a href="{% url 'accounts:login' %}"
+               class="w-full inline-flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg bg-slate-900 text-white text-xs font-semibold hover:bg-slate-800 transition">
+                <span>Back to Sign In &rarr;</span>
+            </a>
+            <a href="{% url 'accounts:resend_activation' %}?email={{ email|urlencode }}"
+               class="text-xs text-[#0F766E] hover:underline font-semibold">
+                Didn't receive the email? Resend activation link
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
