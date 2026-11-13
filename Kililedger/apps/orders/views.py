@@ -1,7 +1,8 @@
 """
 Views for Master Order Reconciliation Workspace & Order 360° Slide-Over Drawer (SCR-09),
 Pending Settlement & DS Transit Escrow Tracker (SCR-10),
-and DS Processing Fee & Penalties Monitoring Center (SCR-13).
+DS Processing Fee, SLA Fines & Other Deductions Monitoring Center (SCR-13),
+and Customer Return Condition Toggle (`RESTOCKED` vs. `DAMAGED_LOST`).
 """
 from decimal import Decimal
 from django.contrib import messages
@@ -10,15 +11,14 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.views import View
 
 from apps.accounts.middleware import VendorRequiredMixin
-from apps.orders.models import LogisticsFee, Order, PenaltyFine
+from apps.orders.models import LogisticsFee, Order, OtherDeduction, PenaltyFine
+from apps.products.models import Product
 from services.reconciler import build_order_360_timeline, refresh_pending_order_aging
 
 
 class OrderReconciliationWorkspaceView(VendorRequiredMixin, View):
     """
     Implements SCR-09: Master Order Reconciliation Workspace & Order 360° Split/Drawer View.
-    Strictly separates `Settlement Status` (`Settled`, `Pending Settlement`, `Overdue Pending`)
-    from `Penalty Status` (`No Penalty`, `Overdue Dispatch -300 KES`, `Out-of-Stock -300 KES`).
     """
 
     template_name = "orders/reconciliation_grid.html"
@@ -32,7 +32,13 @@ class OrderReconciliationWorkspaceView(VendorRequiredMixin, View):
         if request.active_store_scope and request.active_store_scope != "all":
             base_qs = base_qs.filter(store__kilimall_store_id=request.active_store_scope)
 
-        # Pipeline Counts (Across all orders in active store scope)
+        returned_qs = base_qs.filter(settlement_status=Order.STATUS_RETURNED)
+
+        fines_sum = base_qs.exclude(penalty_status=Order.PENALTY_NONE).aggregate(
+            s=Sum("linked_fine_amount")
+        )["s"] or Decimal("0.00")
+        other_ded_sum = base_qs.aggregate(s=Sum("linked_other_deduction"))["s"] or Decimal("0.00")
+
         pipeline_counts = {
             "all_count": base_qs.count(),
             "settled_count": base_qs.filter(settlement_status=Order.STATUS_SETTLED).count(),
@@ -42,21 +48,24 @@ class OrderReconciliationWorkspaceView(VendorRequiredMixin, View):
             "prior_ds_settled_count": base_qs.filter(
                 settlement_status=Order.STATUS_SETTLED
             ).exclude(ds_match_type=Order.DS_MATCH_SAME_BILL).count(),
+            "returned_count": returned_qs.count(),
+            "restocked_returns_count": returned_qs.filter(return_condition=Order.RETURN_COND_RESTOCKED).count(),
+            "damaged_returns_count": returned_qs.filter(return_condition=Order.RETURN_COND_DAMAGED).count(),
+            "returned_clawback_sum": returned_qs.aggregate(s=Sum("net_settlement"))["s"] or Decimal("0.00"),
             "pending_count": base_qs.filter(settlement_status=Order.STATUS_PENDING).count(),
             "overdue_count": base_qs.filter(settlement_status=Order.STATUS_OVERDUE).count(),
             "penalized_count": base_qs.exclude(penalty_status=Order.PENALTY_NONE).count(),
             "settled_gross_sum": base_qs.filter(settlement_status=Order.STATUS_SETTLED).aggregate(
-                s=Sum("goods_price")
-            )["s"] or Decimal("0.00"),
+                s=Sum("complete_amount")
+            )["s"]
+            or base_qs.filter(settlement_status=Order.STATUS_SETTLED).aggregate(s=Sum("goods_price"))["s"]
+            or Decimal("0.00"),
             "pending_ds_sum": base_qs.filter(
                 settlement_status__in=[Order.STATUS_PENDING, Order.STATUS_OVERDUE]
             ).aggregate(s=Sum("linked_ds_fee"))["s"] or Decimal("0.00"),
-            "fines_sum": base_qs.exclude(penalty_status=Order.PENALTY_NONE).aggregate(
-                s=Sum("linked_fine_amount")
-            )["s"] or Decimal("0.00"),
+            "fines_sum": (fines_sum + other_ded_sum).quantize(Decimal("0.01")),
         }
 
-        # Apply Filters
         status_filter = request.GET.get("status", "all")
         penalty_filter = request.GET.get("penalty", "all")
         search_q = request.GET.get("q", "").strip()
@@ -84,7 +93,6 @@ class OrderReconciliationWorkspaceView(VendorRequiredMixin, View):
                 | Q(headline_name__icontains=search_q)
             )
 
-        # Select an order for the right-hand 360° Inspector Panel (defaults to 610287144669824 if present or first settled order)
         selected_sn = request.GET.get("inspect")
         selected_order = None
         if selected_sn:
@@ -115,8 +123,7 @@ class OrderReconciliationWorkspaceView(VendorRequiredMixin, View):
 
 class Order360DrawerPartialView(VendorRequiredMixin, View):
     """
-    HTMX endpoint (`/orders/<order_sn>/drawer/`) that loads the Order 360° Lifecycle Slide-Over Drawer
-    into `#drawer-container` when clicking any Order SN across the platform.
+    HTMX endpoint (`/orders/<order_sn>/drawer/`) that loads the Order 360° Lifecycle Slide-Over Drawer.
     """
 
     template_name = "orders/_order_360_drawer.html"
@@ -138,11 +145,62 @@ class Order360DrawerPartialView(VendorRequiredMixin, View):
         )
 
 
+class OrderReturnConditionToggleView(VendorRequiredMixin, View):
+    """
+    POST / HTMX endpoint (`/orders/<order_sn>/return-condition/`) allowing Store Owners, Finance Auditors,
+    and Operations Assistants to toggle a returned item (`goods_num < 0` or `STATUS_RETURNED`) between:
+    - `RESTOCKED` (Resellable / Returned to Inventory -> COGS recovered)
+    - `DAMAGED_LOST` (Damaged / Unsellable -> Wholesale COGS is written off as a loss)
+    """
+
+    def post(self, request, order_sn):
+        order = get_object_or_404(
+            Order.objects.select_related("store", "settlement_statement", "first_seen_statement"),
+            store__tenant=request.tenant,
+            order_sn=order_sn,
+        )
+        new_cond = request.POST.get("return_condition", Order.RETURN_COND_RESTOCKED)
+        if new_cond not in (Order.RETURN_COND_RESTOCKED, Order.RETURN_COND_DAMAGED):
+            new_cond = Order.RETURN_COND_RESTOCKED
+
+        if order.unit_buying_price is None and order.goods_id:
+            prod = Product.objects.filter(store=order.store, goods_id=order.goods_id).first()
+            if prod and prod.current_buying_price is not None:
+                order.unit_buying_price = prod.current_buying_price
+
+        order.settlement_status = Order.STATUS_RETURNED
+        order.return_condition = new_cond
+        order.recalculate_profit()
+        order.save()
+
+        cond_display = (
+            "Resellable / Restocked (COGS Recovered)"
+            if new_cond == Order.RETURN_COND_RESTOCKED
+            else f"Damaged / Lost (-KES {order.applied_cogs or Decimal('0.00'):,.2f} COGS Written Off)"
+        )
+        messages.success(
+            request,
+            f"Updated return condition for Order {order.order_sn} to: {cond_display}.",
+        )
+
+        if request.headers.get("HX-Request") == "true" and request.POST.get("context") == "drawer":
+            timeline = build_order_360_timeline(order)
+            return render(
+                request,
+                "orders/_order_360_drawer.html",
+                {
+                    "order": order,
+                    "timeline": timeline,
+                },
+            )
+
+        next_url = request.POST.get("next") or request.META.get("HTTP_REFERER") or "/orders/?status=returned"
+        return redirect(next_url)
+
+
 class PendingShipmentsTrackerView(VendorRequiredMixin, View):
     """
     Implements SCR-10: Pending Settlement & Unsettled DS Shipments Aging Tracker.
-    Tracks packages where Kilimall has deducted a DS Processing Fee (KES 50–250), grouped into aging buckets
-    (0–7d, 8–14d, >14d Overdue), and celebrates orders that automatically flipped from Pending -> Settled.
     """
 
     template_name = "orders/pending_tracker.html"
@@ -160,13 +218,15 @@ class PendingShipmentsTrackerView(VendorRequiredMixin, View):
             settlement_status__in=[Order.STATUS_PENDING, Order.STATUS_OVERDUE]
         ).order_by("ds_fee_scan_date")
 
-        # Recently Auto-Settled Orders (Prior-week DS orders that settled in the latest upload)
         auto_settled_orders = base_qs.filter(
             settlement_status=Order.STATUS_SETTLED,
         ).exclude(ds_match_type=Order.DS_MATCH_SAME_BILL)
-        auto_settled_gross = auto_settled_orders.aggregate(s=Sum("goods_price"))["s"] or Decimal("0.00")
+        auto_settled_gross = (
+            auto_settled_orders.aggregate(s=Sum("complete_amount"))["s"]
+            or auto_settled_orders.aggregate(s=Sum("goods_price"))["s"]
+            or Decimal("0.00")
+        )
 
-        # Classify pending orders into aging buckets
         all_pending_list = list(pending_qs)
         bucket_0_7 = [o for o in all_pending_list if o.aging_bucket == "NORMAL_0_7D"]
         bucket_8_14 = [o for o in all_pending_list if o.aging_bucket == "EXTENDED_8_14D"]
@@ -216,23 +276,30 @@ class PendingShipmentsTrackerView(VendorRequiredMixin, View):
         )
 
     def post(self, request):
-        # Manual Exception Resolution: Mark a Pending/Overdue parcel as Returned to Seller or Restore to Pending
         order_sn = request.POST.get("order_sn")
         resolution = request.POST.get("resolution_action")
+        return_cond = request.POST.get("return_condition", Order.RETURN_COND_RESTOCKED)
         notes = request.POST.get("resolution_notes", "").strip()
 
         order = get_object_or_404(Order, store__tenant=request.tenant, order_sn=order_sn)
         if resolution == "mark_returned":
             order.settlement_status = Order.STATUS_RETURNED
+            order.return_condition = (
+                return_cond
+                if return_cond in (Order.RETURN_COND_RESTOCKED, Order.RETURN_COND_DAMAGED)
+                else Order.RETURN_COND_RESTOCKED
+            )
             order.resolution_notes = notes or "Confirmed physical return by courier; DS fee logged as sunk logistics cost."
-            order.save(update_fields=["settlement_status", "resolution_notes", "updated_at"])
+            order.recalculate_profit()
+            order.save()
             messages.warning(
                 request,
-                f"Order {order.order_sn} (Shipment {order.linked_shipment_no}) marked as Returned to Seller (-KES {order.linked_ds_fee} DS fee recognized).",
+                f"Order {order.order_sn} marked as Returned ({order.get_return_condition_display()}).",
             )
         elif resolution == "restore_pending":
             order.settlement_status = Order.STATUS_PENDING
-            order.save(update_fields=["settlement_status", "updated_at"])
+            order.return_condition = Order.RETURN_COND_NA
+            order.save(update_fields=["settlement_status", "return_condition", "updated_at"])
             messages.info(request, f"Order {order.order_sn} restored to active Pending Settlement monitoring.")
 
         return redirect("orders:pending_tracker")
@@ -240,11 +307,10 @@ class PendingShipmentsTrackerView(VendorRequiredMixin, View):
 
 class FeePenaltyMonitoringCenterView(VendorRequiredMixin, View):
     """
-    Implements SCR-13: DS Processing Fee & Penalties Monitoring Center.
-    - Section A: Audits all 5 Drop-Shipping package size tiers (`Super Small @ 50` to `Super Large @ 250`)
-      and flags package size overcharge anomalies (e.g., Order `610272230744554` billed `Super Large @ KES 250` on a `KES 378` item).
-    - Section B: Audits all SLA penalty fines (`Seller overdue dispatch` vs `Seller confirmed out of stock`),
-      displaying cleaned elapsed dispatch delays (`7d 03h` to `13d 00h`) and store alias attribution (`Harambee Ⅰ`).
+    Implements SCR-13: DS Processing Fee, SLA Fines & Other Deductions Monitoring Center.
+    - Section A: Audits all 5 Drop-Shipping package size tiers (`Super Small @ 50` to `Super Large @ 250`).
+    - Section B: Audits all SLA penalty fines (`Seller overdue dispatch`, `Seller confirmed out of stock`, `DS late arrival`).
+    - Section C: Audits all `Other Deductions` rows (`violation` @ KES 500 & `After-sale return shipping` @ KES 200).
     """
 
     template_name = "orders/fees_penalties_audit.html"
@@ -256,12 +322,15 @@ class FeePenaltyMonitoringCenterView(VendorRequiredMixin, View):
         fines_qs = PenaltyFine.objects.filter(order__store__tenant=request.tenant).select_related(
             "order", "statement", "order__store"
         )
+        other_ded_qs = OtherDeduction.objects.filter(order__store__tenant=request.tenant).select_related(
+            "order", "statement", "order__store"
+        )
 
         if request.active_store_scope and request.active_store_scope != "all":
             fees_qs = fees_qs.filter(order__store__kilimall_store_id=request.active_store_scope)
             fines_qs = fines_qs.filter(order__store__kilimall_store_id=request.active_store_scope)
+            other_ded_qs = other_ded_qs.filter(order__store__kilimall_store_id=request.active_store_scope)
 
-        # Package Size Tier Breakdown
         tier_order = ["Super Small", "Small", "Medium", "Large", "Super Large"]
         tier_rates = {"Super Small": 50, "Small": 80, "Medium": 100, "Large": 200, "Super Large": 250}
         raw_tiers = fees_qs.values("package_size").annotate(pkg_count=Count("id"), fee_sum=Sum("amount"))
@@ -288,7 +357,6 @@ class FeePenaltyMonitoringCenterView(VendorRequiredMixin, View):
                 }
             )
 
-        # Package Size Anomaly Orders (DS fee >= 35% of selling price)
         size_anomalies = Order.objects.filter(
             store__tenant=request.tenant,
             has_package_size_anomaly=True,
@@ -296,10 +364,16 @@ class FeePenaltyMonitoringCenterView(VendorRequiredMixin, View):
         if request.active_store_scope and request.active_store_scope != "all":
             size_anomalies = size_anomalies.filter(store__kilimall_store_id=request.active_store_scope)
 
-        # Fines & Penalties Breakdown
+        # Section B: Fines & Penalties Breakdown ('fine' sheet)
         total_fines_amount = fines_qs.aggregate(s=Sum("fine_amount"))["s"] or Decimal("0.00")
         overdue_dispatch_fines = fines_qs.filter(penalty_code=Order.PENALTY_OVERDUE_DISPATCH)
         out_of_stock_fines = fines_qs.filter(penalty_code=Order.PENALTY_OUT_OF_STOCK)
+        ds_late_arrival_fines = fines_qs.filter(penalty_code=Order.PENALTY_DS_LATE_ARRIVAL)
+
+        # Section C: Other Deductions Breakdown ('Other Deductions' sheet)
+        total_other_deductions_amount = other_ded_qs.aggregate(s=Sum("amount"))["s"] or Decimal("0.00")
+        violation_deductions = other_ded_qs.filter(deduction_code=OtherDeduction.CODE_VIOLATION)
+        return_shipping_deductions = other_ded_qs.filter(deduction_code=OtherDeduction.CODE_RETURN_SHIPPING)
 
         active_section = request.GET.get("section", "all")
 
@@ -319,6 +393,16 @@ class FeePenaltyMonitoringCenterView(VendorRequiredMixin, View):
                 "overdue_dispatch_sum": overdue_dispatch_fines.aggregate(s=Sum("fine_amount"))["s"] or Decimal("0.00"),
                 "out_of_stock_count": out_of_stock_fines.count(),
                 "out_of_stock_sum": out_of_stock_fines.aggregate(s=Sum("fine_amount"))["s"] or Decimal("0.00"),
+                "ds_late_arrival_count": ds_late_arrival_fines.count(),
+                "ds_late_arrival_sum": ds_late_arrival_fines.aggregate(s=Sum("fine_amount"))["s"] or Decimal("0.00"),
+                # Section C: Other Deductions
+                "other_deductions": other_ded_qs,
+                "total_other_deductions_count": other_ded_qs.count(),
+                "total_other_deductions_amount": total_other_deductions_amount,
+                "violation_deductions_count": violation_deductions.count(),
+                "violation_deductions_sum": violation_deductions.aggregate(s=Sum("amount"))["s"] or Decimal("0.00"),
+                "return_shipping_count": return_shipping_deductions.count(),
+                "return_shipping_sum": return_shipping_deductions.aggregate(s=Sum("amount"))["s"] or Decimal("0.00"),
                 "active_section": active_section,
             },
         )

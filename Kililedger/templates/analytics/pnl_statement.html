@@ -17,7 +17,7 @@
                 Financial Analytics &amp; Multi-Store P&amp;L Workspace
             </h1>
             <p class="mt-1 text-xs leading-relaxed text-[#475569]">
-                Compare <strong>Settlement Cash-Flow Basis</strong> (matching your bank deposit) against <strong>Order-Matched Accrual Basis</strong> (matching DS fees directly to settled orders and isolating store-level penalties below product contribution margin so deductions are never double-counted).
+                Compare <strong>Settlement Cash-Flow Basis</strong> (matching your bank deposit) against <strong>Order-Matched Accrual Basis</strong> (matching DS fees directly to settled orders, separating <strong>Gross Completed Sales vs. Customer Returns (<code>goods_num &lt; 0</code>)</strong>, and isolating store-level penalties below product contribution margin).
             </p>
         </div>
 
@@ -48,13 +48,21 @@
             <div class="flex items-center justify-between border-b border-slate-200 bg-[#F1F5F9] px-6 py-4">
                 <div>
                     <h2 class="text-base font-bold text-[#0F172A]">Statement of Profit or Loss &amp; Cash Realization</h2>
-                    <p class="text-xs text-slate-500">Side-by-side comparison of Order-Accrual vs. Statement Cash-Flow Basis.</p>
+                    <p class="text-xs text-slate-500">Separates Gross Positive Sales (<code>goods_num &gt; 0</code>) from Customer Returns &amp; Clawbacks (<code>goods_num &lt; 0</code>).</p>
                 </div>
-                {% if is_profit_incomplete %}
-                <span class="rounded-full bg-[#FEF3C7] border border-[#FDE68A] px-2.5 py-0.5 font-mono text-[11px] font-bold text-[#B45309]">
-                    COGS: {{ priced_units_count }}/{{ settled_units_count }} Units Priced
-                </span>
-                {% endif %}
+                <div class="flex items-center gap-2">
+                    {% if returned_orders_count > 0 %}
+                    <a href="{% url 'orders:reconciliation_grid' %}?status=returned"
+                       class="rounded-full bg-rose-100 border border-rose-300 px-2.5 py-0.5 font-mono text-[11px] font-bold text-rose-800 hover:underline">
+                        Return Rate: {{ return_rate_units_pct }}% ({{ returned_units_count }} Units)
+                    </a>
+                    {% endif %}
+                    {% if is_profit_incomplete %}
+                    <span class="rounded-full bg-[#FEF3C7] border border-[#FDE68A] px-2.5 py-0.5 font-mono text-[11px] font-bold text-[#B45309]">
+                        COGS: {{ priced_units_count }}/{{ settled_units_count }} Units Priced
+                    </span>
+                    {% endif %}
+                </div>
             </div>
 
             <div class="overflow-x-auto">
@@ -68,56 +76,117 @@
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-200 bg-white font-mono">
+                        <!-- 1. Gross Positive Completed Sales (goods_num > 0) -->
                         <tr class="bg-slate-50/70 font-bold text-slate-900">
-                            <td class="px-5 py-3 font-sans">(+) Gross Merchandise Value (Completed Sales)</td>
-                            <td class="px-5 py-3 text-right">{{ gross_sales|floatformat:2|intcomma }}</td>
-                            <td class="px-5 py-3 text-right">{{ gross_sales|floatformat:2|intcomma }}</td>
+                            <td class="px-5 py-3 font-sans">
+                                (+) Gross Completed Sales (<code>goods_num &gt; 0</code>)
+                                <div class="text-[11px] font-normal text-slate-500">{{ settled_units_count }} positive delivered unit(s)</div>
+                            </td>
+                            <td class="px-5 py-3 text-right">{{ gross_positive_sales|floatformat:2|intcomma }}</td>
+                            <td class="px-5 py-3 text-right">{{ gross_positive_sales|floatformat:2|intcomma }}</td>
                             <td class="px-5 py-3 text-right">100.00%</td>
                         </tr>
+
+                        <!-- 2. Customer Returns & Post-Settlement Clawbacks (goods_num < 0) -->
+                        <tr class="{% if returned_orders_count > 0 %}bg-rose-50/35{% endif %}">
+                            <td class="px-5 py-3 font-sans text-rose-800">
+                                (–) Customer Returns &amp; Clawbacks (<code>goods_num &lt; 0</code>)
+                                <div class="text-[11px] text-slate-500">
+                                    {{ returned_units_count }} returned unit(s) ({{ return_rate_units_pct }}% unit return rate • Refunded Comm: +KES {{ returned_commission_refund|floatformat:2 }})
+                                </div>
+                            </td>
+                            <td class="px-5 py-3 text-right font-semibold text-rose-700">{{ returned_gross_deduction|floatformat:2|intcomma }}</td>
+                            <td class="px-5 py-3 text-right font-semibold text-rose-700">{{ returned_gross_deduction|floatformat:2|intcomma }}</td>
+                            <td class="px-5 py-3 text-right text-rose-700">-{{ return_rate_gmv_pct }}%</td>
+                        </tr>
+
+                        <!-- 3. Net Trading Merchandise Volume (Matches 'bill' Total Volume) -->
+                        <tr class="bg-slate-100/70 font-bold text-slate-900">
+                            <td class="px-5 py-2.5 font-sans">(=) Net Realized Merchandise Volume (<code>bill</code> Total Volume)</td>
+                            <td class="px-5 py-2.5 text-right">{{ gross_sales|floatformat:2|intcomma }}</td>
+                            <td class="px-5 py-2.5 text-right">{{ gross_sales|floatformat:2|intcomma }}</td>
+                            <td class="px-5 py-2.5 text-right">100.00%</td>
+                        </tr>
+
+                        <!-- 4. Net Kilimall Category Commissions (Sales Commission + Refunded Return Commission) -->
                         <tr>
-                            <td class="px-5 py-3 font-sans text-slate-700">(–) Kilimall Category Commissions (9%–16%)</td>
+                            <td class="px-5 py-3 font-sans text-slate-700">
+                                (–) Net Kilimall Category Commissions (9%–16%)
+                                {% if returned_commission_refund > 0 %}
+                                <div class="text-[11px] text-emerald-700">Includes +KES {{ returned_commission_refund|floatformat:2 }} commission refunded on returned items</div>
+                                {% endif %}
+                            </td>
                             <td class="px-5 py-3 text-right text-[#1D4ED8]">{{ total_commission|floatformat:2|intcomma }}</td>
                             <td class="px-5 py-3 text-right text-[#1D4ED8]">{{ total_commission|floatformat:2|intcomma }}</td>
                             <td class="px-5 py-3 text-right text-slate-500">{{ commission_pct_of_gross }}%</td>
                         </tr>
+
+                        <!-- 5. Settlement Payable 1 -->
                         <tr class="bg-blue-50/30 font-semibold text-slate-900">
                             <td class="px-5 py-3 font-sans">(=) Settlement Payable 1 (Trading Margin)</td>
                             <td class="px-5 py-3 text-right">{{ payable_1|floatformat:2|intcomma }}</td>
                             <td class="px-5 py-3 text-right">{{ payable_1|floatformat:2|intcomma }}</td>
                             <td class="px-5 py-3 text-right">{{ payable_1_pct_of_gross }}%</td>
                         </tr>
+
+                        <!-- 6. Drop-Shipping Processing Fees -->
                         <tr>
                             <td class="px-5 py-3 font-sans text-slate-700">
                                 (–) Drop-Shipping (DS) Processing Fees
-                                <div class="text-[11px] text-slate-400">Cash: All 22 billed pkgs | Accrual: Matched to 16 sold orders</div>
+                                <div class="text-[11px] text-slate-400">Cash: All statement billed pkgs | Accrual: Matched to settled &amp; returned orders</div>
                             </td>
                             <td class="px-5 py-3 text-right text-[#6D28D9]">{{ statement_ds_fees|floatformat:2|intcomma }}</td>
                             <td class="px-5 py-3 text-right text-[#6D28D9]">{{ accrual_matched_ds_fees|floatformat:2|intcomma }}</td>
                             <td class="px-5 py-3 text-right text-slate-500">{{ ds_fees_pct_of_gross }}%</td>
                         </tr>
+
+                        <!-- 7. Cost of Goods Sold (Settled Units + Damaged Return Write-Offs) -->
                         <tr>
                             <td class="px-5 py-3 font-sans text-slate-700">
                                 (–) Cost of Goods Sold (Verified Landed COGS)
+                                <div class="text-[11px] text-slate-500">
+                                    Sold COGS: KES {{ settled_cogs|floatformat:2|intcomma }}
+                                    • Restocked Returns ({{ restocked_returns_count }}): KES 0.00
+                                    • Damaged Returns Write-Off ({{ damaged_returns_count }}): KES {{ damaged_return_cogs_writeoff|floatformat:2|intcomma }}
+                                </div>
                             </td>
                             <td class="px-5 py-3 text-right text-slate-800">-{{ total_cogs|floatformat:2|intcomma }}</td>
                             <td class="px-5 py-3 text-right text-slate-800">-{{ total_cogs|floatformat:2|intcomma }}</td>
                             <td class="px-5 py-3 text-right text-slate-500">{{ cogs_pct_of_gross }}%</td>
                         </tr>
+
+                        <!-- 8. Gross Order Contribution Profit -->
                         <tr class="bg-teal-50/40 font-bold text-[#0F766E]">
                             <td class="px-5 py-3 font-sans">(=) GROSS ORDER CONTRIBUTION PROFIT (Before Store Fines)</td>
                             <td class="px-5 py-3 text-right">—</td>
                             <td class="px-5 py-3 text-right">{{ order_contribution_profit|floatformat:2|intcomma }}</td>
                             <td class="px-5 py-3 text-right">{{ order_contribution_margin_pct }}%</td>
                         </tr>
+
+                        <!-- 9a. Store-Level SLA Penalties ('fine' sheet) -->
                         <tr>
                             <td class="px-5 py-3 font-sans text-slate-700">
-                                (–) Unlinked Store-Level SLA Penalties &amp; Fines
-                                <div class="text-[11px] text-slate-400">5 Overdue Dispatch + 1 Out-of-Stock (Isolated from SKU margins)</div>
+                                (–) Store-Level SLA Penalties &amp; Fines (<code>fine</code> Sheet)
+                                <div class="text-[11px] text-slate-400">Overdue Dispatch (-300), Out-of-Stock (-300) &amp; DS Late Arrival (-200)</div>
                             </td>
                             <td class="px-5 py-3 text-right text-[#B91C1C]">{{ statement_fines|floatformat:2|intcomma }}</td>
                             <td class="px-5 py-3 text-right text-[#B91C1C]">{{ statement_fines|floatformat:2|intcomma }}</td>
                             <td class="px-5 py-3 text-right text-[#B91C1C]">{{ fines_pct_of_gross }}%</td>
                         </tr>
+                        <!-- 9b. Post-Sale Other Deductions ('Other Deductions' sheet) -->
+                        <tr>
+                            <td class="px-5 py-3 font-sans text-rose-800">
+                                (–) Post-Sale Other Deductions (<code>Other Deductions</code> Sheet)
+                                <div class="text-[11px] text-slate-500">
+                                    Violations (-KES {{ violation_deductions_sum|floatformat:2 }}) &amp; After-Sale Return Shipping (-KES {{ return_shipping_deductions_sum|floatformat:2 }})
+                                </div>
+                            </td>
+                            <td class="px-5 py-3 text-right font-semibold text-rose-700">{{ statement_other_deductions|floatformat:2|intcomma }}</td>
+                            <td class="px-5 py-3 text-right font-semibold text-rose-700">{{ statement_other_deductions|floatformat:2|intcomma }}</td>
+                            <td class="px-5 py-3 text-right text-rose-700">{{ other_deductions_pct_of_gross }}%</td>
+                        </tr>
+
+                        <!-- 10. Estimated Operating Net Profit -->
                         <tr class="border-t-2 border-slate-300 bg-emerald-50/50 text-sm font-bold text-[#15803D]">
                             <td class="px-5 py-3.5 font-sans">(=) ESTIMATED OPERATING NET PROFIT</td>
                             <td class="px-5 py-3.5 text-right">KES {{ cash_basis_profit|floatformat:2|intcomma }}</td>
@@ -165,10 +234,11 @@
                 </div>
             </div>
 
-            <div class="mt-4 rounded-lg border border-teal-200 bg-teal-50/50 p-3.5 text-xs text-slate-700">
-                <div class="font-bold text-[#0F766E]">Zero Double-Counting Guarantee:</div>
-                <p class="mt-0.5 text-[11px] leading-relaxed">
-                    Store penalties (<span class="font-mono">KES {{ statement_fines|floatformat:2 }}</span>) are deducted strictly at the store operating level and never artificially divided across individual SKU profit margins.
+            <div class="mt-4 rounded-lg border border-teal-200 bg-teal-50/50 p-3.5 text-xs text-slate-700 space-y-1.5">
+                <div class="font-bold text-[#0F766E]">Returns &amp; Zero Double-Counting Guarantee:</div>
+                <p class="text-[11px] leading-relaxed">
+                    • <strong>Resellable Returns:</strong> Recovery of physical stock credits COGS (`KES 0` inventory loss); only the non-refundable DS fee is expensed.<br>
+                    • <strong>Damaged Returns:</strong> Toggling a returned order to <em>Damaged / Lost</em> writes off its wholesale COGS directly in Section 7 above.
                 </p>
             </div>
         </div>
@@ -186,14 +256,14 @@
                     <tr>
                         <th class="px-5 py-3">Store Name &amp; ID</th>
                         <th class="px-5 py-3 text-right">Statements</th>
-                        <th class="px-5 py-3 text-right">Gross Volume</th>
+                        <th class="px-5 py-3 text-right">Net Volume</th>
                         <th class="px-5 py-3 text-right">Commission</th>
                         <th class="px-5 py-3 text-right">DS Fees</th>
                         <th class="px-5 py-3 text-right">SLA Fines</th>
                         <th class="px-5 py-3 text-right">Net Payout</th>
                         <th class="px-5 py-3 text-right">Verified COGS</th>
                         <th class="px-5 py-3 text-right">Net Pocket Profit</th>
-                        <th class="px-5 py-3 text-right">Pending Pkgs</th>
+                        <th class="px-5 py-3 text-right">Returns / Pending</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-200 bg-white font-mono">
@@ -221,7 +291,10 @@
                             KES {{ row.net_profit|floatformat:2|intcomma }} ({{ row.margin_pct }}%)
                         </td>
                         <td class="px-5 py-3.5 text-right">
-                            <span class="rounded-full bg-[#FEF3C7] px-2.5 py-0.5 text-xs font-bold text-[#B45309]">{{ row.pending_count }}</span>
+                            {% if row.returned_count > 0 %}
+                            <span class="rounded-full bg-rose-100 px-2 py-0.5 text-xs font-bold text-rose-800">{{ row.returned_count }} Ret</span>
+                            {% endif %}
+                            <span class="rounded-full bg-[#FEF3C7] px-2.5 py-0.5 text-xs font-bold text-[#B45309]">{{ row.pending_count }} Pend</span>
                         </td>
                     </tr>
                     {% endfor %}

@@ -8,13 +8,13 @@ Responsibilities:
 3. Maps known Kilimall column header typos (`Total Valume` -> `total_volume`, `finnshed_time` -> `finished_time`,
    `amout` -> `amount`, `Amount（ksh）` -> `amount`) and records schema diagnostics for `SCR-16`.
 4. Sanitizes leading commas on order numbers (`",610244462479107"` -> `"610244462479107"`).
-5. Converts Excel serial duration timestamps in the `fine` worksheet (`1900-01-13 00:08:45`) into
-   exact elapsed seconds and human-readable delay labels (`13d 00h 08m`).
-6. Verifies the Two-Stage Kilimall Payout Equation to the cent:
-   - Stage 1: `Total Volume + Total Commission + Quality Fee == Settlement Payable 1`
-   - Stage 2: `Settlement Payable 1 + DS Fee + Fine + Storage/Op/Other + Appeals/Compensations == Final Settlement Amount`
-7. Computes the pre-commit reconciliation impact preview (same-bill settled orders, prior-week DS orders
-   transitioning to Settled, new Pending Settlement orders, and auto-discovered unique products).
+5. Explicitly detects Customer Return / Payout Clawback rows in `bill details` where `goods_num < 0`.
+6. Converts Excel serial duration timestamps (`1900-01-13 00:08:45`) AND fractional float days
+   (`6.429745` -> `6d 10h 18m`) in the `fine` worksheet into exact elapsed seconds and delay badges,
+   and classifies `DS late arrival` (`-200 KES`), `Seller overdue dispatch` (`-300 KES`), and `Seller confirmed out of stock` (`-300 KES`).
+7. Parses all rows in Sheet 7 (`Other Deductions`), mapping full-width `Amount（ksh）` headers, cleaning
+   leading commas on `Order SN`, and classifying `violation` (`-500 KES`) vs. `After-sale return shipping` (`-200 KES`).
+8. Verifies the Two-Stage Kilimall Payout Equation to the cent.
 """
 from __future__ import annotations
 
@@ -62,7 +62,7 @@ def clean_identifier(raw_val: Any) -> str:
 
 
 def to_decimal(raw_val: Any, default: str = "0.00") -> Decimal:
-    """Converts cell values safely into 2-decimal or 4-decimal Decimal objects."""
+    """Converts cell values safely into 2-decimal Decimal objects."""
     if raw_val is None or str(raw_val).strip() == "" or str(raw_val).lower() == "nan":
         return Decimal(default)
     try:
@@ -93,10 +93,17 @@ def parse_timestamp_str(raw_val: Any) -> Optional[str]:
     return s if s and s.lower() != "nan" else None
 
 
-def parse_excel_spend_time(raw_val: Any, payment_time_str: Optional[str] = None, cancel_time_str: Optional[str] = None) -> Tuple[int, str]:
+def parse_excel_spend_time(
+    raw_val: Any,
+    payment_time_str: Optional[str] = None,
+    cancel_time_str: Optional[str] = None,
+) -> Tuple[int, str]:
     """
-    Converts Kilimall's Excel duration value in the `fine` tab (`spend_time`, e.g., `datetime(1900, 1, 13, 0, 8, 45)`)
-    into `(elapsed_seconds, human_readable_badge)` such as `(1123725, '13d 00h 08m')`.
+    Converts Kilimall's Excel duration value in the `fine` tab (`spend_time`):
+    - Supports `datetime(1900, 1, 13, 0, 8, 45)` -> `(1123725, '13d 00h 08m')`
+    - Supports float/int/numeric-string fractional days (e.g. `6.42974537` -> `(555530, '6d 10h 18m')`)
+    - Supports `datetime.timedelta`
+    - Falls back to difference between `cancel_time_str` (or `transfer_warehouse_time`) and `payment_time_str`.
     """
     if isinstance(raw_val, datetime.datetime) and raw_val.year == 1900:
         days = raw_val.day
@@ -113,16 +120,38 @@ def parse_excel_spend_time(raw_val: Any, payment_time_str: Optional[str] = None,
         minutes = (total_seconds % 3600) // 60
         return total_seconds, f"{days}d {hours:02d}h {minutes:02d}m"
 
-    if isinstance(raw_val, str) and raw_val.startswith("1900-01-"):
-        try:
-            dt = datetime.datetime.strptime(raw_val[:19], "%Y-%m-%d %H:%M:%S")
-            days = dt.day
-            total_seconds = (days * 86400) + (dt.hour * 3600) + (dt.minute * 60) + dt.second
-            return total_seconds, f"{days}d {dt.hour:02d}h {dt.minute:02d}m"
-        except ValueError:
-            pass
+    # Support float/int fractional days (e.g. 6.42974537036935 in bill (10).xlsx)
+    if isinstance(raw_val, (int, float, Decimal)) and not isinstance(raw_val, bool):
+        f_days = float(raw_val)
+        if f_days > 0:
+            total_seconds = int(round(f_days * 86400))
+            days = total_seconds // 86400
+            hours = (total_seconds % 86400) // 3600
+            minutes = (total_seconds % 3600) // 60
+            return total_seconds, f"{days}d {hours:02d}h {minutes:02d}m"
 
-    # Fallback: compute difference between cancel_time and payment_time if available
+    if isinstance(raw_val, str):
+        s_val = raw_val.strip()
+        if s_val.startswith("1900-01-"):
+            try:
+                dt = datetime.datetime.strptime(s_val[:19], "%Y-%m-%d %H:%M:%S")
+                days = dt.day
+                total_seconds = (days * 86400) + (dt.hour * 3600) + (dt.minute * 60) + dt.second
+                return total_seconds, f"{days}d {dt.hour:02d}h {dt.minute:02d}m"
+            except ValueError:
+                pass
+        else:
+            try:
+                f_days = float(s_val)
+                if f_days > 0:
+                    total_seconds = int(round(f_days * 86400))
+                    days = total_seconds // 86400
+                    hours = (total_seconds % 86400) // 3600
+                    minutes = (total_seconds % 3600) // 60
+                    return total_seconds, f"{days}d {hours:02d}h {minutes:02d}m"
+            except ValueError:
+                pass
+
     if payment_time_str and cancel_time_str:
         try:
             p_dt = datetime.datetime.strptime(payment_time_str[:19], "%Y-%m-%d %H:%M:%S")
@@ -162,7 +191,7 @@ class ParsedWorkbookResult:
     primary_store_name: str = ""
     discovered_aliases: List[Dict[str, str]] = field(default_factory=list)
 
-    # Period Window (Derived from finished_time and DS fee dates)
+    # Period Window
     period_start: Optional[str] = None
     period_end: Optional[str] = None
 
@@ -172,6 +201,7 @@ class ParsedWorkbookResult:
 
     # Sanitized Row Payloads
     completed_sales: List[Dict[str, Any]] = field(default_factory=list)
+    returned_sales: List[Dict[str, Any]] = field(default_factory=list)
     ds_fees: List[Dict[str, Any]] = field(default_factory=list)
     fines: List[Dict[str, Any]] = field(default_factory=list)
     other_deductions: List[Dict[str, Any]] = field(default_factory=list)
@@ -226,7 +256,6 @@ class KilimallWorkbookParser:
                 real_name = actual_sheets[norm_key]
                 ws = wb[real_name]
                 data_rows = max(0, ws.max_row - 1)
-                # Verify if row 2 actually has non-empty cells
                 if data_rows == 1:
                     row2_vals = [ws.cell(2, c).value for c in range(1, ws.max_column + 1)]
                     if not any(v is not None and str(v).strip() != "" for v in row2_vals):
@@ -332,26 +361,7 @@ class KilimallWorkbookParser:
             else Decimal("0.00")
         )
 
-        result.summary = {
-            "total_volume": str(total_volume),
-            "total_commission": str(total_commission),
-            "quality_inspection_fee": str(quality_fee),
-            "settlement_payable_1": str(payable_1),
-            "fines": str(fines_total),
-            "warehouse_operation_fee": str(warehouse_op_fee),
-            "warehouse_storage_fee": str(warehouse_storage_fee),
-            "ds_processing_fee": str(ds_fee_total),
-            "lite_shipping_fee": str(lite_shipping_fee),
-            "other_deductions": str(other_deductions_total),
-            "billing_appeal": str(billing_appeal_total),
-            "compensations": str(compensations_total),
-            "settlement_payable_2": str(payable_2),
-            "final_settlement_amount": str(final_settlement),
-            "effective_commission_pct": str(effective_comm_pct),
-            "payout_retention_pct": str(retention_pct),
-        }
-
-        # 3. Parse Sheet 2: 'bill details' (Completed Order Sales)
+        # 3. Parse Sheet 2: 'bill details' (Completed Order Sales AND Negative `goods_num` Customer Returns)
         ws_details = wb[actual_sheets["bill details"]]
         det_headers = {str(ws_details.cell(1, c).value or "").strip().lower(): c for c in range(1, ws_details.max_column + 1)}
         if "finnshed_time" in det_headers:
@@ -366,6 +376,14 @@ class KilimallWorkbookParser:
 
         products_by_id: Dict[str, Dict[str, Any]] = {}
         all_timestamps: List[str] = []
+
+        gross_positive_sales_sum = Decimal("0.00")
+        returned_sales_sum = Decimal("0.00")
+        positive_commission_sum = Decimal("0.00")
+        refunded_commission_sum = Decimal("0.00")
+        returned_net_clawback_sum = Decimal("0.00")
+        positive_units_sold = 0
+        returned_units_count = 0
 
         for r in range(2, ws_details.max_row + 1):
             raw_sn = ws_details.cell(r, det_headers.get("order_sn", 3)).value
@@ -391,26 +409,54 @@ class KilimallWorkbookParser:
             goods_price = to_decimal(ws_details.cell(r, det_headers.get("goods_price", 8)).value)
             goods_num = int(to_decimal(ws_details.cell(r, det_headers.get("goods_num", 9)).value, "1"))
             rate = to_rate_decimal(ws_details.cell(r, det_headers.get("rate", 10)).value)
+
+            raw_complete_amt = ws_details.cell(
+                r,
+                det_headers.get("complete amount")
+                or det_headers.get("complete_amount")
+                or 11,
+            ).value
+            if raw_complete_amt is not None and str(raw_complete_amt).strip() != "":
+                complete_amount = to_decimal(raw_complete_amt)
+            else:
+                complete_amount = (goods_price * Decimal(goods_num)).quantize(Decimal("0.01"))
+
             commission = to_decimal(ws_details.cell(r, det_headers.get("commission", 12)).value)
             settlement = to_decimal(ws_details.cell(r, det_headers.get("settlement", 14)).value)
 
-            result.completed_sales.append(
-                {
-                    "order_sn": order_sn,
-                    "store_name": row_store_name or store_name,
-                    "payment_time": payment_time,
-                    "finished_time": finished_time,
-                    "goods_id": goods_id,
-                    "goods_name": full_goods_name,
-                    "headline_name": headline_name[:95],
-                    "goods_price": str(goods_price),
-                    "goods_num": goods_num,
-                    "rate": str(rate),
-                    "rate_pct": str((rate * Decimal("100")).quantize(Decimal("0.1"))),
-                    "commission": str(commission),
-                    "settlement": str(settlement),
-                }
-            )
+            is_return = goods_num < 0 or complete_amount < Decimal("0.00") or settlement < Decimal("0.00")
+
+            if is_return:
+                returned_sales_sum += complete_amount
+                refunded_commission_sum += commission
+                returned_net_clawback_sum += settlement
+                returned_units_count += abs(goods_num)
+            else:
+                gross_positive_sales_sum += complete_amount
+                positive_commission_sum += commission
+                positive_units_sold += goods_num
+
+            row_dict = {
+                "order_sn": order_sn,
+                "store_name": row_store_name or store_name,
+                "payment_time": payment_time,
+                "finished_time": finished_time,
+                "goods_id": goods_id,
+                "goods_name": full_goods_name,
+                "headline_name": headline_name[:95],
+                "goods_price": str(goods_price),
+                "goods_num": goods_num,
+                "complete_amount": str(complete_amount),
+                "rate": str(rate),
+                "rate_pct": str((rate * Decimal("100")).quantize(Decimal("0.1"))),
+                "commission": str(commission),
+                "settlement": str(settlement),
+                "is_return": is_return,
+            }
+
+            result.completed_sales.append(row_dict)
+            if is_return:
+                result.returned_sales.append(row_dict)
 
             if goods_id:
                 if goods_id not in products_by_id:
@@ -421,13 +467,43 @@ class KilimallWorkbookParser:
                         "unit_price": str(goods_price),
                         "commission_rate": str(rate),
                         "commission_rate_pct": str((rate * Decimal("100")).quantize(Decimal("0.1"))),
-                        "units_in_statement": goods_num,
+                        "units_in_statement": goods_num if not is_return else 0,
+                        "returned_units_in_statement": abs(goods_num) if is_return else 0,
                         "is_new": existing_product_goods_ids is None or goods_id not in existing_product_goods_ids,
                     }
                 else:
-                    products_by_id[goods_id]["units_in_statement"] += goods_num
+                    if is_return:
+                        products_by_id[goods_id]["returned_units_in_statement"] += abs(goods_num)
+                    else:
+                        products_by_id[goods_id]["units_in_statement"] += goods_num
 
         result.discovered_products = list(products_by_id.values())
+
+        result.summary = {
+            "total_volume": str(total_volume),
+            "gross_positive_sales": str(gross_positive_sales_sum),
+            "returned_sales_amount": str(returned_sales_sum),
+            "positive_commission": str(positive_commission_sum),
+            "refunded_commission": str(refunded_commission_sum),
+            "returned_net_clawback": str(returned_net_clawback_sum),
+            "positive_units_sold": str(positive_units_sold),
+            "returned_units_count": str(returned_units_count),
+            "total_commission": str(total_commission),
+            "quality_inspection_fee": str(quality_fee),
+            "settlement_payable_1": str(payable_1),
+            "fines": str(fines_total),
+            "warehouse_operation_fee": str(warehouse_op_fee),
+            "warehouse_storage_fee": str(warehouse_storage_fee),
+            "ds_processing_fee": str(ds_fee_total),
+            "lite_shipping_fee": str(lite_shipping_fee),
+            "other_deductions": str(other_deductions_total),
+            "billing_appeal": str(billing_appeal_total),
+            "compensations": str(compensations_total),
+            "settlement_payable_2": str(payable_2),
+            "final_settlement_amount": str(final_settlement),
+            "effective_commission_pct": str(effective_comm_pct),
+            "payout_retention_pct": str(retention_pct),
+        }
 
         # 4. Parse Sheet 5: 'ds processing fee' (Drop Shipping Package Handling Fees)
         if "ds processing fee" in actual_sheets:
@@ -474,7 +550,7 @@ class KilimallWorkbookParser:
                     }
                 )
 
-        # 5. Parse Sheet 6: 'fine' (Overdue Dispatch & Out-of-Stock Cancellation Penalties)
+        # 5. Parse Sheet 6: 'fine' (Overdue Dispatch, Out-of-Stock & DS Late Arrival Penalties)
         if "fine" in actual_sheets:
             ws_fine = wb[actual_sheets["fine"]]
             fine_headers = {str(ws_fine.cell(1, c).value or "").strip().lower(): c for c in range(1, ws_fine.max_column + 1)}
@@ -491,25 +567,32 @@ class KilimallWorkbookParser:
 
                 payment_time = parse_timestamp_str(ws_fine.cell(r, fine_headers.get("payment_time", 5)).value)
                 cancel_time = parse_timestamp_str(ws_fine.cell(r, fine_headers.get("cancel_time", 7)).value)
+                transfer_wh_time = parse_timestamp_str(ws_fine.cell(r, fine_headers.get("transfer_warehouse_time", 8)).value)
                 raw_spend = ws_fine.cell(r, fine_headers.get("spend_time", 9)).value
-                elapsed_secs, elapsed_badge = parse_excel_spend_time(raw_spend, payment_time, cancel_time)
+                elapsed_secs, elapsed_badge = parse_excel_spend_time(
+                    raw_spend,
+                    payment_time,
+                    cancel_time or transfer_wh_time,
+                )
 
                 fine_amt = to_decimal(ws_fine.cell(r, fine_headers.get("fine(ksh)", 10)).value, "300.00")
                 notes = str(ws_fine.cell(r, fine_headers.get("notes", 11)).value or "").strip()
                 remark = str(ws_fine.cell(r, fine_headers.get("remark", 12)).value or "").strip()
 
-                penalty_code = (
-                    "OUT_OF_STOCK"
-                    if "out of stock" in notes.lower()
-                    else "OVERDUE_DISPATCH"
-                )
+                notes_low = notes.lower()
+                if "out of stock" in notes_low:
+                    penalty_code = "OUT_OF_STOCK"
+                elif "late arrival" in notes_low:
+                    penalty_code = "DS_LATE_ARRIVAL"
+                else:
+                    penalty_code = "OVERDUE_DISPATCH"
 
                 result.fines.append(
                     {
                         "order_sn": order_sn,
                         "store_name": row_store_name or store_name,
                         "payment_time": payment_time,
-                        "cancel_time": cancel_time,
+                        "cancel_time": cancel_time or transfer_wh_time,
                         "elapsed_seconds": elapsed_secs,
                         "elapsed_badge": elapsed_badge,
                         "fine_amount": str(fine_amt),
@@ -519,7 +602,76 @@ class KilimallWorkbookParser:
                     }
                 )
 
-        # Record all discovered store aliases (e.g., Kushpedia Stores4 + Harambee Ⅰ)
+        # 6. Parse Sheet 7: 'Other Deductions' (Violations & After-Sale Return Shipping Fees)
+        violation_deductions_sum = Decimal("0.00")
+        return_shipping_deductions_sum = Decimal("0.00")
+        other_misc_deductions_sum = Decimal("0.00")
+
+        if "other deductions" in actual_sheets:
+            ws_other = wb[actual_sheets["other deductions"]]
+            other_headers = {str(ws_other.cell(1, c).value or "").strip().lower(): c for c in range(1, ws_other.max_column + 1)}
+
+            if "amount（ksh）" in other_headers:
+                result.schema_diagnostics.append(
+                    {
+                        "sheet_name": "Other Deductions",
+                        "issue_type": "HEADER_ALIAS_MAPPED",
+                        "diagnostic_detail": "Mapped full-width header 'Amount（ksh）' -> 'amount'",
+                        "auto_resolved": True,
+                    }
+                )
+
+            amt_col_idx = (
+                other_headers.get("amount（ksh）")
+                or other_headers.get("amount(ksh)")
+                or other_headers.get("amount")
+                or 6
+            )
+
+            for r in range(2, ws_other.max_row + 1):
+                raw_sn = ws_other.cell(r, other_headers.get("order sn") or other_headers.get("order_sn", 3)).value
+                order_sn = clean_order_sn(raw_sn)
+                raw_amt = ws_other.cell(r, amt_col_idx).value
+                if not order_sn and (raw_amt is None or str(raw_amt).strip() == ""):
+                    continue
+
+                row_store_name = str(
+                    ws_other.cell(r, other_headers.get("store name") or other_headers.get("store_name", 2)).value or ""
+                ).strip()
+                if row_store_name and row_store_name not in aliases_map:
+                    aliases_map[row_store_name] = "Other Deductions"
+
+                sku_str = clean_identifier(ws_other.cell(r, other_headers.get("sku", 4)).value)
+                ded_type_raw = str(ws_other.cell(r, other_headers.get("type", 5)).value or "Other Deduction").strip()
+                amt_dec = abs(to_decimal(raw_amt, "0.00"))
+                period_str = str(ws_other.cell(r, other_headers.get("period", 7)).value or "").strip()
+                note_str = str(ws_other.cell(r, other_headers.get("note", 8)).value or "").strip()
+
+                type_low = ded_type_raw.lower()
+                if "violation" in type_low:
+                    deduction_code = "VIOLATION"
+                    violation_deductions_sum += amt_dec
+                elif "return shipping" in type_low or "after-sale" in type_low:
+                    deduction_code = "AFTER_SALE_RETURN_SHIPPING"
+                    return_shipping_deductions_sum += amt_dec
+                else:
+                    deduction_code = "OTHER_DEDUCTION"
+                    other_misc_deductions_sum += amt_dec
+
+                result.other_deductions.append(
+                    {
+                        "order_sn": order_sn,
+                        "store_name": row_store_name or store_name,
+                        "sku": sku_str,
+                        "deduction_type": ded_type_raw,
+                        "deduction_code": deduction_code,
+                        "amount": str(amt_dec),
+                        "period": period_str,
+                        "note": note_str,
+                    }
+                )
+
+        # Record all discovered store aliases (e.g., Kushpedia Stores4 + Harambee Ⅰ + KUSHPEDIA STORES)
         for alias_name, src_sheet in aliases_map.items():
             result.discovered_aliases.append({"alias_name": alias_name, "source_sheet": src_sheet})
 
@@ -533,33 +685,40 @@ class KilimallWorkbookParser:
             result.period_start = now_str
             result.period_end = now_str
 
-        # 6. Compute Pre-Commit Cross-Week Reconciliation Impact
-        sales_sns = {row["order_sn"]: row for row in result.completed_sales}
+        # 7. Compute Pre-Commit Cross-Week Reconciliation Impact
+        positive_sales_sns = {row["order_sn"]: row for row in result.completed_sales if not row["is_return"]}
+        returned_sales_sns = {row["order_sn"]: row for row in result.completed_sales if row["is_return"]}
+        all_details_sns = {row["order_sn"]: row for row in result.completed_sales}
         ds_sns = {row["order_sn"]: row for row in result.ds_fees}
         prior_pending_sns = existing_pending_order_sns or set()
 
-        same_bill_settled_sns = set(sales_sns.keys()).intersection(set(ds_sns.keys()))
-        prior_bill_newly_settled_sns = set(sales_sns.keys()).intersection(prior_pending_sns) - same_bill_settled_sns
-        prior_untracked_ds_settled_sns = set(sales_sns.keys()) - same_bill_settled_sns - prior_bill_newly_settled_sns
-        new_pending_settlement_sns = set(ds_sns.keys()) - set(sales_sns.keys())
+        same_bill_settled_sns = set(positive_sales_sns.keys()).intersection(set(ds_sns.keys()))
+        prior_bill_newly_settled_sns = set(positive_sales_sns.keys()).intersection(prior_pending_sns) - same_bill_settled_sns
+        prior_untracked_ds_settled_sns = set(positive_sales_sns.keys()) - same_bill_settled_sns - prior_bill_newly_settled_sns
+        new_pending_settlement_sns = set(ds_sns.keys()) - set(all_details_sns.keys())
 
         pending_ds_fee_total = sum(
             (Decimal(ds_sns[sn]["amount"]) for sn in new_pending_settlement_sns),
             Decimal("0.00"),
         )
 
-        # Enrich completed sales rows with their matched DS fee in this workbook if present
         package_anomalies = []
         for sale_row in result.completed_sales:
             sn = sale_row["order_sn"]
+            if sale_row["is_return"]:
+                sale_row["matched_ds_fee"] = ds_sns[sn]["amount"] if sn in ds_sns else None
+                sale_row["matched_package_size"] = ds_sns[sn]["package_size"] if sn in ds_sns else "Return Clawback"
+                sale_row["matched_shipment_no"] = ds_sns[sn]["shipment_no"] if sn in ds_sns else "Returned Item"
+                sale_row["ds_match_source"] = "Customer Return (goods_num < 0)"
+                continue
+
             if sn in ds_sns:
                 ds_info = ds_sns[sn]
                 sale_row["matched_ds_fee"] = ds_info["amount"]
                 sale_row["matched_package_size"] = ds_info["package_size"]
                 sale_row["matched_shipment_no"] = ds_info["shipment_no"]
                 sale_row["ds_match_source"] = "Matched in This Bill"
-                # Check package size anomaly (DS fee > 35% of goods price)
-                price_dec = Decimal(sale_row["goods_price"])
+                price_dec = Decimal(sale_row["complete_amount"])
                 ds_dec = Decimal(ds_info["amount"])
                 if price_dec > 0 and (ds_dec / price_dec) >= Decimal("0.35"):
                     ratio_pct = (ds_dec / price_dec * Decimal("100")).quantize(Decimal("0.1"))
@@ -569,7 +728,7 @@ class KilimallWorkbookParser:
                             "order_sn": sn,
                             "goods_id": sale_row["goods_id"],
                             "headline_name": sale_row["headline_name"],
-                            "goods_price": sale_row["goods_price"],
+                            "goods_price": sale_row["complete_amount"],
                             "package_size": ds_info["package_size"],
                             "ds_fee": ds_info["amount"],
                             "shipment_no": ds_info["shipment_no"],
@@ -587,14 +746,18 @@ class KilimallWorkbookParser:
                 sale_row["matched_shipment_no"] = "—"
                 sale_row["ds_match_source"] = "Prior Cycle DS"
 
-        # Enrich ds_fees rows with whether they settled in this bill or remain Pending Settlement
         for ds_row in result.ds_fees:
             sn = ds_row["order_sn"]
-            if sn in same_bill_settled_sns:
+            if sn in returned_sales_sns:
+                ds_row["reconciliation_status"] = "RETURNED_UNSETTLED"
+                ds_row["status_label"] = "Returned / Clawback"
+                ds_row["matched_goods_name"] = returned_sales_sns[sn]["headline_name"]
+                ds_row["matched_goods_price"] = returned_sales_sns[sn]["complete_amount"]
+            elif sn in same_bill_settled_sns:
                 ds_row["reconciliation_status"] = "SETTLED"
                 ds_row["status_label"] = "Settled in This Bill"
-                ds_row["matched_goods_name"] = sales_sns[sn]["headline_name"]
-                ds_row["matched_goods_price"] = sales_sns[sn]["goods_price"]
+                ds_row["matched_goods_name"] = positive_sales_sns[sn]["headline_name"]
+                ds_row["matched_goods_price"] = positive_sales_sns[sn]["complete_amount"]
             else:
                 ds_row["reconciliation_status"] = "PENDING_SETTLEMENT"
                 ds_row["status_label"] = "Pending Future Settlement"
@@ -604,9 +767,19 @@ class KilimallWorkbookParser:
         new_products_count = sum(1 for p in result.discovered_products if p["is_new"])
 
         result.reconciliation_impact = {
-            "completed_sales_count": len(result.completed_sales),
+            "completed_sales_count": len(positive_sales_sns),
+            "returned_orders_count": len(returned_sales_sns),
+            "returned_units_count": returned_units_count,
+            "gross_positive_sales": str(gross_positive_sales_sum),
+            "returned_sales_amount": str(returned_sales_sum),
+            "returned_net_clawback": str(returned_net_clawback_sum),
+            "refunded_commission": str(refunded_commission_sum),
             "ds_fees_count": len(result.ds_fees),
             "fines_count": len(result.fines),
+            "other_deductions_count": len(result.other_deductions),
+            "other_deductions_total": str(abs(other_deductions_total)),
+            "violation_deductions_sum": str(violation_deductions_sum),
+            "return_shipping_deductions_sum": str(return_shipping_deductions_sum),
             "same_bill_settled_count": len(same_bill_settled_sns),
             "prior_pending_auto_settled_count": len(prior_bill_newly_settled_sns),
             "prior_untracked_ds_settled_count": len(prior_untracked_ds_settled_sns),

@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load humanize %}
 
-{% block title %}DS Processing Fee &amp; Penalties Monitoring Center — KiliLedger Pro{% endblock %}
+{% block title %}DS Processing Fee, Penalties &amp; Other Deductions Center — KiliLedger Pro{% endblock %}
 
 {% block content %}
 <div class="space-y-8">
@@ -18,10 +18,10 @@
                 </span>
             </div>
             <h1 class="text-2xl font-bold text-[#0F172A] tracking-tight">
-                DS Processing Fee &amp; Penalties Monitoring Center
+                DS Processing Fee, SLA Penalties &amp; Other Deductions Center
             </h1>
-            <p class="mt-1 text-xs text-[#64748B] max-w-3xl">
-                Audit drop-shipping package size tiers across <span class="font-mono font-semibold">{{ total_ds_pkgs }} shipments (-KES {{ total_ds_amount|floatformat:2|intcomma }})</span> alongside merchant SLA penalty deductions across <span class="font-mono font-semibold">{{ total_fines_count }} incidents (-KES {{ total_fines_amount|floatformat:2|intcomma }})</span>.
+            <p class="mt-1 text-xs text-[#64748B] max-w-4xl">
+                Audit drop-shipping package size tiers across <span class="font-mono font-semibold">{{ total_ds_pkgs }} shipments (-KES {{ total_ds_amount|floatformat:2|intcomma }})</span>, merchant SLA fines across <span class="font-mono font-semibold">{{ total_fines_count }} incidents (-KES {{ total_fines_amount|floatformat:2|intcomma }})</span>, and post-sale <span class="font-mono font-semibold">Other Deductions ({{ total_other_deductions_count }} rows • -KES {{ total_other_deductions_amount|floatformat:2|intcomma }})</span>.
             </p>
         </div>
         <div class="flex items-center gap-2.5">
@@ -39,7 +39,7 @@
     <div class="space-y-4">
         <div class="flex items-center justify-between">
             <div>
-                <h2 class="text-lg font-bold text-[#0F172A]">Section A: DS Processing Fee &amp; Package Size Tier Audit</h2>
+                <h2 class="text-lg font-bold text-[#0F172A]">Section A: DS Processing Fee &amp; Package Size Tier Audit ('ds processing fee' Sheet)</h2>
                 <p class="text-xs text-slate-500">Standard Kilimall Drop-Shipping handling tiers: Super Small (50), Small (80), Medium (100), Large (200), Super Large (250).</p>
             </div>
             <span class="font-mono text-sm font-bold text-[#6D28D9]">Total Deducted: -KES {{ total_ds_amount|floatformat:2|intcomma }} ({{ total_ds_pkgs }} Pkgs)</span>
@@ -62,7 +62,7 @@
             {% endfor %}
         </div>
 
-        <!-- Package Size Overcharge Anomaly Callout (Grounded in Order 610272230744554) -->
+        <!-- Package Size Overcharge Anomaly Callout -->
         {% if size_anomalies %}
         <div class="rounded-[10px] border-2 border-[#FCA5A5] bg-[#FEE2E2]/50 p-5 space-y-3">
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
@@ -121,24 +121,25 @@
     </div>
 
     <!-- ========================================================================= -->
-    <!-- SECTION B: FINES, OVERDUE DISPATCH & OUT-OF-STOCK MONITOR                 -->
+    <!-- SECTION B: FINES, OVERDUE DISPATCH, OOS & DS LATE ARRIVAL ('fine' Sheet)  -->
     <!-- ========================================================================= -->
     <div class="space-y-4 pt-2">
         <div class="flex items-center justify-between">
             <div>
                 <h2 class="text-lg font-bold text-[#0F172A]">Section B: Merchant SLA Fines &amp; Penalties Monitor ('fine' Worksheet)</h2>
                 <p class="text-xs text-slate-500">
-                    Tracks overdue dispatch and out-of-stock cancellation penalties, preserving workbook store alias attribution (e.g., <span class="font-mono font-semibold">Harambee Ⅰ</span> under Store ID <span class="font-mono font-semibold">10344</span>).
+                    Tracks Overdue Dispatch (-300 KES), Confirmed Out-of-Stock (-300 KES), and DS Late Arrival (-200 KES) penalties.
                 </p>
             </div>
             <span class="font-mono text-sm font-bold text-[#B91C1C]">Total Fines: -KES {{ total_fines_amount|floatformat:2|intcomma }} ({{ total_fines_count }} Incidents)</span>
         </div>
 
-        <!-- 3 Penalty KPI Cards -->
-        <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
-            {% include "components/_kpi_card.html" with label="TOTAL FINES DEDUCTED" amount=total_fines_amount|floatformat:2|intcomma pill_text="KES 300 / Incident" pill_tone="red" subtext="Store-Level Overhead Deduction" %}
-            {% include "components/_kpi_card.html" with label="SELLER OVERDUE DISPATCH" amount=overdue_dispatch_sum|floatformat:2|intcomma pill_text=overdue_dispatch_count|stringformat:"s Incidents" pill_tone="amber" subtext="Delayed 7d to 13d before cancel" %}
-            {% include "components/_kpi_card.html" with label="CONFIRMED OUT OF STOCK" amount=out_of_stock_sum|floatformat:2|intcomma pill_text=out_of_stock_count|stringformat:"s Incident(s)" pill_tone="red" subtext="Cancelled due to stockout" %}
+        <!-- 4 Penalty KPI Cards -->
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {% include "components/_kpi_card.html" with label="TOTAL FINES DEDUCTED" amount=total_fines_amount|floatformat:2|intcomma pill_text="Sheet: fine" pill_tone="red" subtext="Store-Level SLA Fines" %}
+            {% include "components/_kpi_card.html" with label="OVERDUE DISPATCH (-300)" amount=overdue_dispatch_sum|floatformat:2|intcomma pill_text=overdue_dispatch_count|stringformat:"s Incidents" pill_tone="amber" subtext="Cancelled for late handover" %}
+            {% include "components/_kpi_card.html" with label="OUT OF STOCK (-300)" amount=out_of_stock_sum|floatformat:2|intcomma pill_text=out_of_stock_count|stringformat:"s Incident(s)" pill_tone="red" subtext="Cancelled due to stockout" %}
+            {% include "components/_kpi_card.html" with label="DS LATE ARRIVAL (-200)" amount=ds_late_arrival_sum|floatformat:2|intcomma pill_text=ds_late_arrival_count|stringformat:"s Incident(s)" pill_tone="amber" subtext="Late warehouse transfer scan" %}
         </div>
 
         <!-- Fines & Penalties Audit Table -->
@@ -150,9 +151,9 @@
                             <th class="px-5 py-3">Order SN</th>
                             <th class="px-5 py-3">Store ID &amp; Workbook Alias</th>
                             <th class="px-5 py-3">Payment Timestamp</th>
-                            <th class="px-5 py-3">Cancel Timestamp</th>
+                            <th class="px-5 py-3">Cancel / Transfer Time</th>
                             <th class="px-5 py-3">Elapsed Dispatch Delay</th>
-                            <th class="px-5 py-3">Penalty Reason Badge</th>
+                            <th class="px-5 py-3">Penalty Classification</th>
                             <th class="px-5 py-3">Remark</th>
                             <th class="px-5 py-3 text-right">Fine (KES)</th>
                         </tr>
@@ -190,8 +191,95 @@
                         </tr>
                         {% empty %}
                         <tr>
-                            <td colspan="8" class="px-6 py-10 text-center text-emerald-700 font-semibold">
+                            <td colspan="8" class="px-6 py-8 text-center text-emerald-700 font-semibold">
                                 Zero SLA penalty fines recorded for this store selection!
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- SECTION C: OTHER DEDUCTIONS MONITOR ('Other Deductions' Worksheet)        -->
+    <!-- ========================================================================= -->
+    <div class="space-y-4 pt-2">
+        <div class="flex items-center justify-between">
+            <div>
+                <h2 class="text-lg font-bold text-[#0F172A]">Section C: Post-Sale 'Other Deductions' Monitor ('Other Deductions' Worksheet)</h2>
+                <p class="text-xs text-slate-500">
+                    Tracks post-sale <code>violation</code> penalties (-KES 500) and <code>After-sale return shipping</code> courier fees (-KES 200) tied to specific Order SNs and SKUs.
+                </p>
+            </div>
+            <span class="font-mono text-sm font-bold text-rose-700">Total Other Deductions: -KES {{ total_other_deductions_amount|floatformat:2|intcomma }} ({{ total_other_deductions_count }} Rows)</span>
+        </div>
+
+        <!-- 3 Other Deductions KPI Cards -->
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+            {% include "components/_kpi_card.html" with label="TOTAL OTHER DEDUCTIONS" amount=total_other_deductions_amount|floatformat:2|intcomma pill_text="Sheet: Other Deductions" pill_tone="red" subtext="Post-sale violations & return shipping" %}
+            {% include "components/_kpi_card.html" with label="POST-SALE VIOLATION FINES" amount=violation_deductions_sum|floatformat:2|intcomma pill_text=violation_deductions_count|stringformat:"s Violation(s)" pill_tone="red" subtext="Type: 'violation' (e.g. KES 500 / order)" %}
+            {% include "components/_kpi_card.html" with label="AFTER-SALE RETURN SHIPPING" amount=return_shipping_sum|floatformat:2|intcomma pill_text=return_shipping_count|stringformat:"s Return(s)" pill_tone="amber" subtext="Type: 'After-sale return shipping' (e.g. KES 200)" %}
+        </div>
+
+        <!-- Other Deductions Table -->
+        <div class="rounded-[10px] border border-[#E2E8F0] bg-white shadow-sm overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-slate-200 text-left text-[13px] tabular-nums">
+                    <thead class="bg-[#F1F5F9] text-[11px] font-semibold uppercase tracking-wider text-[#475569]">
+                        <tr>
+                            <th class="px-5 py-3">Order SN</th>
+                            <th class="px-5 py-3">Store ID &amp; Name</th>
+                            <th class="px-5 py-3">SKU (Goods ID)</th>
+                            <th class="px-5 py-3">Deduction Type</th>
+                            <th class="px-5 py-3">Billing Period</th>
+                            <th class="px-5 py-3">Statement File</th>
+                            <th class="px-5 py-3 text-right">Amount Deducted (KES)</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-200 bg-white">
+                        {% for od in other_deductions %}
+                        <tr class="hover:bg-rose-50/30">
+                            <td class="px-5 py-3.5">
+                                <button type="button"
+                                        hx-get="{% url 'orders:order_360_drawer' od.order.order_sn %}"
+                                        hx-target="#drawer-container"
+                                        hx-swap="innerHTML"
+                                        class="font-mono font-bold text-[#0F766E] hover:underline">
+                                    {{ od.order.order_sn }}
+                                </button>
+                            </td>
+                            <td class="px-5 py-3.5">
+                                <span class="rounded bg-orange-100 px-1.5 py-0.5 font-mono text-xs font-bold text-[#EA580C]">
+                                    {{ od.order.store.kilimall_store_id }}
+                                </span>
+                                <span class="ml-1 font-mono text-xs font-semibold text-slate-800">{{ od.workbook_store_alias }}</span>
+                            </td>
+                            <td class="px-5 py-3.5 font-mono text-xs font-bold text-[#0F766E]">{{ od.sku|default:"—" }}</td>
+                            <td class="px-5 py-3.5">
+                                {% if od.deduction_code == 'VIOLATION' %}
+                                    <span class="rounded-full bg-rose-100 border border-rose-300 px-2.5 py-0.5 font-mono text-xs font-bold text-rose-800">
+                                        {{ od.deduction_type }} (-KES {{ od.amount|floatformat:0 }})
+                                    </span>
+                                {% elif od.deduction_code == 'AFTER_SALE_RETURN_SHIPPING' %}
+                                    <span class="rounded-full bg-amber-100 border border-amber-300 px-2.5 py-0.5 font-mono text-xs font-bold text-amber-900">
+                                        {{ od.deduction_type }} (-KES {{ od.amount|floatformat:0 }})
+                                    </span>
+                                {% else %}
+                                    <span class="rounded-full bg-slate-100 px-2.5 py-0.5 font-mono text-xs font-semibold text-slate-700">
+                                        {{ od.deduction_type }}
+                                    </span>
+                                {% endif %}
+                            </td>
+                            <td class="px-5 py-3.5 font-mono text-xs text-slate-600">{{ od.period|default:"—" }}</td>
+                            <td class="px-5 py-3.5 font-mono text-xs text-slate-500">{{ od.statement.filename }}</td>
+                            <td class="px-5 py-3.5 text-right font-mono font-bold text-rose-700">-KES {{ od.amount|floatformat:2 }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="7" class="px-6 py-8 text-center text-emerald-700 font-semibold">
+                                Zero 'Other Deductions' (violations or after-sale return shipping) recorded for this store selection!
                             </td>
                         </tr>
                         {% endfor %}

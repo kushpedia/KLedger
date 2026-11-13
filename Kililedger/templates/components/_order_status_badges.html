@@ -12,6 +12,14 @@ Usage: {% include "components/_order_status_badges.html" with settlement_status=
         <span class="inline-flex items-center gap-1 rounded-full border border-red-400 bg-red-100 px-2.5 py-0.5 font-mono text-[11px] font-semibold text-red-900">
             Out-of-Stock Cancelled (-300 KES)
         </span>
+    {% elif penalty_status == 'DS_LATE_ARRIVAL' %}
+        <span class="inline-flex items-center gap-1 rounded-full border border-amber-300 bg-amber-100 px-2.5 py-0.5 font-mono text-[11px] font-semibold text-amber-900">
+            DS Late Arrival (-200 KES)
+        </span>
+    {% elif penalty_status == 'POST_SALE_VIOLATION' %}
+        <span class="inline-flex items-center gap-1 rounded-full border border-rose-300 bg-rose-100 px-2.5 py-0.5 font-mono text-[11px] font-semibold text-rose-900">
+            Other Deduction (Violation / Return)
+        </span>
     {% else %}
         <span class="font-mono text-xs text-slate-400">—</span>
     {% endif %}
@@ -32,12 +40,13 @@ Usage: {% include "components/_order_status_badges.html" with settlement_status=
             Overdue Pending
         </span>
     {% elif settlement_status == 'RETURNED_UNSETTLED' %}
-        <span class="inline-flex items-center gap-1.5 rounded-full border border-slate-300 bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-700">
-            Returned to Seller
+        <span class="inline-flex items-center gap-1.5 rounded-full border border-rose-300 bg-rose-50 px-2.5 py-0.5 text-xs font-semibold text-rose-800">
+            <span class="h-1.5 w-1.5 rounded-full bg-rose-600"></span>
+            Returned / Clawback
         </span>
     {% else %}
         <span class="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-600">
-            Penalty Only / Unsettled
+            Penalty / Deduction Only
         </span>
     {% endif %}
 {% endif %}

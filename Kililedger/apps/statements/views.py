@@ -165,12 +165,9 @@ class StatementUploadWizardView(VendorRequiredMixin, View):
                         auto_resolved=diag.get("auto_resolved", True),
                     )
 
-                # 5. Invoke Cross-Week Order & Product Reconciliation Hook if Milestone 3/4 models are active
-                try:
-                    from services.reconciler import commit_statement_orders_and_products
-                    commit_statement_orders_and_products(statement=statement, preview_data=preview_data, user=request.user)
-                except ImportError:
-                    pass
+                # 5. Invoke Cross-Week Order & Product Reconciliation Hook
+                from services.reconciler import commit_statement_orders_and_products
+                commit_statement_orders_and_products(statement=statement, preview_data=preview_data, user=request.user)
 
                 # 6. Create Actionable Vendor Notifications (SCR-15 Drawer)
                 VendorNotification.objects.create(
@@ -215,7 +212,7 @@ class StatementUploadWizardView(VendorRequiredMixin, View):
             excel_file = form.cleaned_data["excel_file"]
             selected_store = form.cleaned_data.get("store")
 
-            # Gather any existing pending order_sns & product goods_ids if Milestone 3/4 tables are populated
+            # Gather any existing pending order_sns & product goods_ids
             existing_pending_sns = set()
             existing_goods_ids = set()
             try:
@@ -303,19 +300,31 @@ class StatementLedgerView(VendorRequiredMixin, View):
         )
 
     def post(self, request):
-        # Rollback / Delete a Settlement Statement (Vendor Owner only)
+        # Rollback / Delete a Settlement Statement atomically (Vendor Owner only)
         if not request.user.can_manage_stores_and_rollback:
             messages.error(request, "Only the Vendor Owner can rollback an imported settlement statement.")
             return redirect("statements:statement_list")
 
         stmt_id = request.POST.get("statement_id")
+        purge_unpriced = request.POST.get("purge_unpriced_products") == "1"
         stmt = get_object_or_404(SettlementStatement, pk=stmt_id, store__tenant=request.tenant)
         filename = stmt.filename
         store_name = stmt.store.store_name
-        stmt.delete()
+
+        from services.reconciler import rollback_statement
+
+        rb_stats = rollback_statement(
+            statement=stmt,
+            purge_unreferenced_unpriced_products=purge_unpriced,
+        )
         messages.warning(
             request,
-            f"Rolled back and removed settlement statement '{filename}' for {store_name}.",
+            (
+                f"Rolled back statement '{filename}' for {store_name}: removed {rb_stats['orders_deleted']} "
+                f"statement-exclusive orders, reverted {rb_stats['orders_reverted_to_pending']} cross-week orders "
+                f"back to Pending Settlement, and deleted {rb_stats['logistics_fees_deleted']} DS fee records "
+                f"and {rb_stats['penalties_deleted']} SLA fine records (wholesale COGS preserved)."
+            ),
         )
         return redirect("statements:statement_list")
 
@@ -354,6 +363,7 @@ class StatementDetailView(VendorRequiredMixin, View):
                 "completed_sales": payload.get("completed_sales", []),
                 "ds_fees": ds_fees_list,
                 "fines": payload.get("fines", []),
+                "other_deductions": payload.get("other_deductions", []),
                 "discovered_products": payload.get("discovered_products", []),
                 "sheet_checklist": payload.get("sheet_checklist", []),
                 "impact": payload.get("reconciliation_impact", {}),

@@ -2,16 +2,19 @@
 {% comment %}
 HTMX Slide-Over Drawer for Order 360° Lifecycle & Cross-Statement Reconciliation Record (SCR-09).
 Loaded asynchronously via `hx-get="/orders/<order_sn>/drawer/"` into `#drawer-container`.
+Includes interactive Resellable / Restocked vs. Damaged / Lost Toggle for Returned Orders (`goods_num < 0`).
 {% endcomment %}
 <div class="fixed inset-0 z-50 overflow-hidden bg-slate-900/45 backdrop-blur-[1px]" onclick="if(event.target === this) this.remove()">
     <div class="fixed inset-y-0 right-0 flex max-w-full pl-10">
-        <div class="w-screen max-w-[520px] bg-white shadow-2xl border-l border-[#E2E8F0] flex flex-col">
+        <div class="w-screen max-w-[540px] bg-white shadow-2xl border-l border-[#E2E8F0] flex flex-col">
             <!-- Drawer Header -->
             <div class="flex items-start justify-between border-b border-slate-200 bg-[#F8FAFC] px-6 py-4">
                 <div>
                     <div class="flex items-center gap-2">
                         <span class="font-label-caps text-[10px] uppercase tracking-wider text-[#0F766E] font-bold">Order 360° Reconciliation Record</span>
-                        {% if order.was_auto_flipped_from_pending %}
+                        {% if order.is_return_clawback or order.goods_num < 0 %}
+                        <span class="rounded bg-rose-100 px-2 py-0.5 font-mono text-[10px] font-bold text-rose-800">Customer Return (Qty {{ order.goods_num }})</span>
+                        {% elif order.was_auto_flipped_from_pending %}
                         <span class="rounded bg-emerald-100 px-2 py-0.5 font-mono text-[10px] font-bold text-emerald-800">Auto-Flipped to Settled</span>
                         {% endif %}
                     </div>
@@ -41,8 +44,10 @@ Loaded asynchronously via `hx-get="/orders/<order_sn>/drawer/"` into `#drawer-co
                     </div>
                     {% if order.goods_id %}
                     <div class="flex items-center justify-between text-xs">
-                        <span class="font-semibold text-slate-500">Goods ID (SKU):</span>
-                        <span class="font-mono font-bold text-[#0F766E]">{{ order.goods_id }}</span>
+                        <span class="font-semibold text-slate-500">Goods ID (SKU) &amp; Quantity:</span>
+                        <span class="font-mono font-bold text-[#0F766E]">
+                            {{ order.goods_id }} • Qty: <span class="{% if order.goods_num < 0 %}text-rose-700{% else %}text-slate-900{% endif %}">{{ order.goods_num }}</span>
+                        </span>
                     </div>
                     {% endif %}
                     {% if order.headline_name %}
@@ -59,6 +64,69 @@ Loaded asynchronously via `hx-get="/orders/<order_sn>/drawer/"` into `#drawer-co
                     </div>
                     {% endif %}
                 </div>
+
+                <!-- RETURNED ITEM CONDITION TOGGLE (RESELLABLE vs DAMAGED/LOST) -->
+                {% if order.settlement_status == 'RETURNED_UNSETTLED' or order.goods_num < 0 %}
+                <div class="rounded-xl border-2 {% if order.return_condition == 'DAMAGED_LOST' %}border-rose-300 bg-rose-50/60{% else %}border-teal-300 bg-teal-50/50{% endif %} p-4 space-y-3">
+                    <div class="flex items-start justify-between gap-2">
+                        <div>
+                            <div class="text-xs font-bold uppercase tracking-wider {% if order.return_condition == 'DAMAGED_LOST' %}text-rose-800{% else %}text-[#0F766E]{% endif %}">
+                                Physical Return Condition &amp; COGS Treatment
+                            </div>
+                            <p class="mt-0.5 text-[11px] text-slate-600 leading-relaxed">
+                                Choose whether this returned item (<code>goods_num = {{ order.goods_num }}</code>) came back in <strong>Resellable</strong> condition (COGS recovered back to inventory) or <strong>Damaged / Lost</strong> (wholesale COGS written off as a loss).
+                            </p>
+                        </div>
+                        <span class="rounded-full px-2.5 py-0.5 font-mono text-[10px] font-bold uppercase whitespace-nowrap {% if order.return_condition == 'DAMAGED_LOST' %}bg-rose-200 text-rose-900{% else %}bg-emerald-200 text-emerald-900{% endif %}">
+                            {% if order.return_condition == 'DAMAGED_LOST' %}Damaged / COGS Lost{% else %}Resellable / Restocked{% endif %}
+                        </span>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2.5 pt-1">
+                        <!-- Option 1: Resellable / Restocked -->
+                        <form method="post"
+                              action="{% url 'orders:toggle_return_condition' order.order_sn %}"
+                              hx-post="{% url 'orders:toggle_return_condition' order.order_sn %}"
+                              hx-target="#drawer-container"
+                              hx-swap="innerHTML">
+                            {% csrf_token %}
+                            <input type="hidden" name="return_condition" value="RESTOCKED">
+                            <input type="hidden" name="context" value="drawer">
+                            <button type="submit"
+                                    class="w-full rounded-lg border px-3 py-2.5 text-left transition {% if order.return_condition != 'DAMAGED_LOST' %}border-2 border-[#0F766E] bg-white shadow-xs{% else %}border-slate-200 bg-white/70 hover:bg-white{% endif %}">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-xs font-bold text-[#0F766E]">✓ Resellable / Restocked</span>
+                                    {% if order.return_condition != 'DAMAGED_LOST' %}
+                                    <span class="h-2 w-2 rounded-full bg-[#0F766E]"></span>
+                                    {% endif %}
+                                </div>
+                                <div class="mt-0.5 font-mono text-[10px] text-slate-500">COGS Recovered (KES 0 Loss)</div>
+                            </button>
+                        </form>
+
+                        <!-- Option 2: Damaged / Lost -->
+                        <form method="post"
+                              action="{% url 'orders:toggle_return_condition' order.order_sn %}"
+                              hx-post="{% url 'orders:toggle_return_condition' order.order_sn %}"
+                              hx-target="#drawer-container"
+                              hx-swap="innerHTML">
+                            {% csrf_token %}
+                            <input type="hidden" name="return_condition" value="DAMAGED_LOST">
+                            <input type="hidden" name="context" value="drawer">
+                            <button type="submit"
+                                    class="w-full rounded-lg border px-3 py-2.5 text-left transition {% if order.return_condition == 'DAMAGED_LOST' %}border-2 border-rose-600 bg-white shadow-xs{% else %}border-slate-200 bg-white/70 hover:bg-white{% endif %}">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-xs font-bold text-rose-700">✕ Damaged / Lost</span>
+                                    {% if order.return_condition == 'DAMAGED_LOST' %}
+                                    <span class="h-2 w-2 rounded-full bg-rose-600"></span>
+                                    {% endif %}
+                                </div>
+                                <div class="mt-0.5 font-mono text-[10px] text-slate-500">Write Off Wholesale COGS</div>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                {% endif %}
 
                 <!-- Cross-Statement Audit Timeline (Vertical Connected Stepper) -->
                 <div>
@@ -93,25 +161,39 @@ Loaded asynchronously via `hx-get="/orders/<order_sn>/drawer/"` into `#drawer-co
                         Order Unit Economics Breakdown
                     </div>
                     <div class="flex justify-between">
-                        <span class="font-sans text-slate-600">Gross Sale Price:</span>
-                        <span class="font-bold text-slate-900">
-                            {% if order.goods_price is not None %}KES {{ order.goods_price|floatformat:2|intcomma }}{% else %}Pending Settlement{% endif %}
+                        <span class="font-sans text-slate-600">Unit Price × Quantity ({{ order.goods_num }}):</span>
+                        <span class="font-bold {% if order.goods_num < 0 %}text-rose-700{% else %}text-slate-900{% endif %}">
+                            {% if order.effective_gross_amount is not None %}KES {{ order.effective_gross_amount|floatformat:2|intcomma }}{% else %}Pending Settlement{% endif %}
                         </span>
                     </div>
                     <div class="flex justify-between">
-                        <span class="font-sans text-slate-600">Kilimall Commission:</span>
-                        <span class="text-[#1D4ED8]">
-                            {% if order.commission_amount is not None %}KES {{ order.commission_amount|floatformat:2|intcomma }}{% else %}—{% endif %}
+                        <span class="font-sans text-slate-600">Kilimall Commission {% if order.goods_num < 0 %}(Refunded){% endif %}:</span>
+                        <span class="{% if order.commission_amount > 0 %}text-emerald-700 font-semibold{% else %}text-[#1D4ED8]{% endif %}">
+                            {% if order.commission_amount is not None %}{% if order.commission_amount > 0 %}+{% endif %}KES {{ order.commission_amount|floatformat:2|intcomma }}{% else %}—{% endif %}
                         </span>
                     </div>
+                    {% if order.net_settlement is not None %}
+                    <div class="flex justify-between">
+                        <span class="font-sans text-slate-600">Statement Settlement Line:</span>
+                        <span class="font-semibold {% if order.net_settlement < 0 %}text-rose-700{% else %}text-slate-900{% endif %}">
+                            KES {{ order.net_settlement|floatformat:2|intcomma }}
+                        </span>
+                    </div>
+                    {% endif %}
                     <div class="flex justify-between">
                         <span class="font-sans text-slate-600">Linked DS Processing Fee:</span>
                         <span class="text-[#6D28D9]">-KES {{ order.linked_ds_fee|floatformat:2 }}</span>
                     </div>
                     {% if order.linked_fine_amount > 0 %}
                     <div class="flex justify-between">
-                        <span class="font-sans text-slate-600">SLA Penalty Fine:</span>
+                        <span class="font-sans text-slate-600">SLA Penalty Fine (<code>fine</code>):</span>
                         <span class="text-[#B91C1C]">-KES {{ order.linked_fine_amount|floatformat:2 }}</span>
+                    </div>
+                    {% endif %}
+                    {% if order.linked_other_deduction > 0 %}
+                    <div class="flex justify-between">
+                        <span class="font-sans text-rose-800 font-semibold">Other Deductions (Violation / Return Ship):</span>
+                        <span class="font-bold text-rose-700">-KES {{ order.linked_other_deduction|floatformat:2 }}</span>
                     </div>
                     {% endif %}
                     <div class="flex justify-between border-t border-slate-200 pt-2">
@@ -121,13 +203,24 @@ Loaded asynchronously via `hx-get="/orders/<order_sn>/drawer/"` into `#drawer-co
                         </span>
                     </div>
                     <div class="flex justify-between">
-                        <span class="font-sans text-slate-600">Product Buying Cost (COGS):</span>
+                        <span class="font-sans text-slate-600">
+                            Product Buying Cost (COGS)
+                            {% if order.settlement_status == 'RETURNED_UNSETTLED' or order.goods_num < 0 %}
+                                [{{ order.return_condition }}]
+                            {% endif %}:
+                        </span>
                         <span>
-                            {% if order.applied_cogs is not None %}-KES {{ order.applied_cogs|floatformat:2|intcomma }}{% else %}<a href="{% url 'products:product_catalogue' %}" class="font-sans text-amber-700 underline">Enter Buying Price →</a>{% endif %}
+                            {% if order.settlement_status == 'RETURNED_UNSETTLED' and order.return_condition != 'DAMAGED_LOST' %}
+                                <span class="text-emerald-700 font-semibold">KES 0.00 (Restocked to Inventory)</span>
+                            {% elif order.applied_cogs is not None %}
+                                <span class="text-rose-700 font-semibold">-KES {{ order.applied_cogs|floatformat:2|intcomma }}</span>
+                            {% else %}
+                                <a href="{% url 'products:product_catalogue' %}" class="font-sans text-amber-700 underline">Enter Buying Price →</a>
+                            {% endif %}
                         </span>
                     </div>
                     <div class="flex justify-between border-t-2 border-slate-300 pt-2.5 text-sm font-bold">
-                        <span class="font-sans text-slate-900">Verified Net Order Profit:</span>
+                        <span class="font-sans text-slate-900">Verified Net Order Impact:</span>
                         {% if order.net_order_profit is not None %}
                             <span class="{% if order.net_order_profit >= 0 %}text-[#15803D]{% else %}text-[#B91C1C]{% endif %}">
                                 KES {{ order.net_order_profit|floatformat:2|intcomma }}

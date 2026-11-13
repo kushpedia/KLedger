@@ -3,6 +3,7 @@ from apps.orders.views import (
     FeePenaltyMonitoringCenterView,
     Order360DrawerPartialView,
     OrderReconciliationWorkspaceView,
+    OrderReturnConditionToggleView,
     PendingShipmentsTrackerView,
 )
 
@@ -13,4 +14,5 @@ urlpatterns = [
     path("pending/", PendingShipmentsTrackerView.as_view(), name="pending_tracker"),
     path("fees-penalties/", FeePenaltyMonitoringCenterView.as_view(), name="fees_penalties_audit"),
     path("<str:order_sn>/drawer/", Order360DrawerPartialView.as_view(), name="order_360_drawer"),
+    path("<str:order_sn>/return-condition/", OrderReturnConditionToggleView.as_view(), name="toggle_return_condition"),
 ]
